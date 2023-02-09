@@ -1,4 +1,16 @@
 # C++ primer -- some notes
+
+<!--toc:start-->
+- [C++ primer -- some notes](#c-primer-some-notes)
+  - [1 Getting start](#1-getting-start)
+    - [file type](#file-type)
+    - [literal](#literal)
+    - [comment](#comment)
+    - [flow of control](#flow-of-control)
+  - [2 Variables and Basic Types（变量和基本类型）](#2-variables-and-basic-types变量和基本类型)
+  - [3 Separate Compliation（复合类型）](#3-separate-compliation复合类型)
+<!--toc:end-->
+
 [C++ primer](https://www.bilibili.com/video/BV1B8411K71w/?spm_id_from=333.999.0.0)
 
 
