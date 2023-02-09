@@ -183,36 +183,6 @@ upper_bound(x)// 返回大于x的迭代器
 
 ## 库函数
 
-### lower_bound & upper_bound
-
-[A-B 数对](https://www.luogu.com.cn/problem/P1102)
-
-> 处理二分问题，使用前一定要`先排序`
-> lower_bound 的第三个参数传入一个元素 target，在两个迭代器（指针）指定的部分上执行二分查找，返回指向第一个大于等于 x 的元素的位置的迭代器（指针）。
-> upper_bound 的用法和 lower_bound 大致相同，唯一的区别是查找第一个大于 target 的元素。当然，两个迭代器（指针）指定的部分应该是`提前排好序的`。
-
-```c++
-//用法
-#include<iostream>
-#include<algorithm>
-using namespace std;
-const int N = 1e5 + 10;
-int a[N];
-int n , target;
-
-int main()
-{
-    cin >> n >> target;
-    for(int i = 0; i < n; i ++) cin >> a[i];
-    sort(a , a + n);
-    int i = lower_bound(a , a + n , target) - a;
-    //查找小于等于target的元素
-    int y = --(upper_bound(a , a + n , target) - a);
-
-    return 0;
-}
-```
-
 ### sort
 
 > 处理排序问题
@@ -242,11 +212,45 @@ int main()
     sort(a , a + n);
 
     //从大到小排序
-    sort(a , a + n , greater<int>)
+    sort(a , a + n , greater<int>())
 
     //特定函数排序(用于结构体排序、堆排序等等)
     sort(a , a + n , cmp(x))
     //如果返回1为较大，返回0为较小
+    return 0;
+
+
+}
+
+
+```
+
+### lower_bound & upper_bound
+
+[A-B 数对](https://www.luogu.com.cn/problem/P1102)
+
+> 处理二分问题，使用前一定要`先排序`
+> lower_bound 的第三个参数传入一个元素 target，在两个迭代器（指针）指定的部分上执行二分查找，返回指向第一个大于等于 x 的元素的位置的迭代器（指针）。
+> upper_bound 的用法和 lower_bound 大致相同，唯一的区别是查找第一个大于 target 的元素。当然，两个迭代器（指针）指定的部分应该是`提前排好序的`。
+
+```c++
+//用法
+#include<iostream>
+#include<algorithm>
+using namespace std;
+const int N = 1e5 + 10;
+int a[N];
+int n , target;
+
+int main()
+{
+    cin >> n >> target;
+    for(int i = 0; i < n; i ++) cin >> a[i];
+    sort(a , a + n);
+    int i = lower_bound(a , a + n , target) - a;
+    //查找小于等于target的元素
+    int y = --(upper_bound(a , a + n , target) - a);
+
     return 0;
 }
 ```
