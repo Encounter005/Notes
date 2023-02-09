@@ -1,6 +1,7 @@
 # STL
 
 <!--toc:start-->
+
 - [STL](#stl)
   - [容器](#容器)
     - [vector](#vector)
@@ -14,18 +15,16 @@
     - [map / multimap](#map-multimap)
     - [unordered_set / unordered_map / unordered_multiset / unordered_multimap](#unorderedset-unorderedmap-unorderedmultiset-unorderedmultimap)
     - [bitset](#bitset)
-  - [库函数](#库函数)
-    - [lower_bound & upper_bound](#lowerbound-upperbound)
-    - [sort](#sort)
-    - [reverse](#reverse)
-    - [nth_element](#nthelement)
-<!--toc:end-->
+  - [库函数](#库函数) - [lower_bound & upper_bound](#lowerbound-upperbound) - [sort](#sort) - [reverse](#reverse) - [nth_element](#nthelement)
+  <!--toc:end-->
 
 ## 容器
 
 ### vector
+
 > 倍增思想
 > 支持比较运算（字典序）
+
 ```c++
     vector<int> a(10 , 3);
     a.size();//返回容器的大小
@@ -37,9 +36,12 @@
     a.push_back();//往容器末尾插入一个元素
     a.pop_back();//删除容器末尾元素
 ```
+
 ### pair
+
 > 简单的二元组
 > 支持比较运算（字典序）
+
 ```c++
 pair<int ,  string> p;//类型可以任意
 p = make_pair(12 , "shjefkl");
@@ -50,12 +52,13 @@ p.second//返回pair的第二个元素
 ```
 
 ### string
+
 > 好用的字符串类
 
 ```c++
 string a;
 string a[10];//字符串数组，每个元素都是一个字符串
-a.size(); 
+a.size();
 a.empty();
 a.clear();
 a.back();
@@ -65,6 +68,7 @@ a.find("char");//查找字符串，如果没有，会返回string::npos, 如果�
 ```
 
 ### queue
+
 > 队列 ， 先进先出
 
 ```c++
@@ -78,6 +82,7 @@ a = queue<int>(); //清空原队列
 ```
 
 ### priority_queue
+
 > 堆 , 默认是大根堆
 
 ```c++
@@ -91,12 +96,14 @@ a.size();
 a = priority_queue<int>(); //清空堆
 定义成小根堆的方式 priority_queue<int , vector<int , greater<int>> a;
 ```
+
 ### dueue
+
 > 双端队列
 
 ```c++
 dueue<int> a;
-a.size(); 
+a.size();
 a.empty();
 a.clear();
 a.front();
@@ -110,9 +117,10 @@ a.end();
 
 ```
 
-
 ### stack
+
 > 栈
+
 ```c++
 stack<int> a;
 a.push();//向栈顶插入一个元素
@@ -124,16 +132,18 @@ a.size();
 ```
 
 ### set / multiset
+
 > 基于平衡二叉树（红黑树）
 > 不存在重复元素的集合
 > multiset 允许重复元素存在
+
 ```c++
 
 set<int> a;
 a.insert();//插入一个元素
 a.find();//查找一个元素，如果不存在返回a.end();
-a.count(%d)//返回某一个数的个数 
-a.size(); 
+a.count(%d)//返回某一个数的个数
+a.size();
 a.empty();
 a.clear();
 a.erase(%d);//输入一个数x，删除所有x
@@ -147,9 +157,11 @@ a.end();
 ```
 
 ### map / multimap
+
 > 基于平衡二叉树（红黑树）
+
 ```c++
-insert(); //插入的数是一个pair 
+insert(); //插入的数是一个pair
 erase();//输入的参数可以是pair或者迭代器
 find();//
 a.lower_bound()/upper_bound() //
@@ -161,18 +173,23 @@ upper_bound(x)// 返回大于x的迭代器
 ```
 
 ### unordered_set / unordered_map / unordered_multiset / unordered_multimap
-> 哈希表
-> 不支持lower_bound() , upper_bound()
 
+> 哈希表
+> 不支持 lower_bound() , upper_bound()
 
 ### bitset
+
 > 压位
 
 ## 库函数
+
 ### lower_bound & upper_bound
-> 处理二分问题，使用前一定要```先排序```
-> lower_bound的第三个参数传入一个元素target，在两个迭代器（指针）指定的部分上执行二分查找，返回指向第一个大于等于x的元素的位置的迭代器（指针）。
-> upper_bound的用法和lower_bound大致相同，唯一的区别是查找第一个大于target的元素。当然，两个迭代器（指针）指定的部分应该是```提前排好序的```。
+
+[A-B 数对](https://www.luogu.com.cn/problem/P1102)
+
+> 处理二分问题，使用前一定要`先排序`
+> lower_bound 的第三个参数传入一个元素 target，在两个迭代器（指针）指定的部分上执行二分查找，返回指向第一个大于等于 x 的元素的位置的迭代器（指针）。
+> upper_bound 的用法和 lower_bound 大致相同，唯一的区别是查找第一个大于 target 的元素。当然，两个迭代器（指针）指定的部分应该是`提前排好序的`。
 
 ```c++
 //用法
@@ -197,10 +214,12 @@ int main()
 ```
 
 ### sort
+
 > 处理排序问题
 > 底层逻辑：快排
 
-[结构体排序](https://www.acwing.com/problem/content/864/ "三元组排序")
+[结构体排序](https://www.acwing.com/problem/content/864/ '三元组排序')
+
 ```c++
 //用法
 #include<iostream>
@@ -231,8 +250,11 @@ int main()
     return 0;
 }
 ```
-### reverse 
+
+### reverse
+
 > 反转一个容器(string , vector , array , set ....)
+
 ```c++
 #include<iostream>
 #include<algorithm>
@@ -253,7 +275,11 @@ int main()
 ```
 
 ### nth_element
+
 > 可以从某个序列中找到第 n 小的元素 K，并将 K 移动到序列中第 n 的位置处
+
+> [求第 k 小的数](https://www.luogu.com.cn/problem/P1923)
+
 ```c++
 #include<iostream>
 #include<algorithm>
@@ -267,7 +293,7 @@ int main()
     int k , n ;
     cin >> n >> k;
     for(int i = 0; i < n; i ++) cin >> a[i];
-    
+
     nth_element(a , a + k - 1, a + n);
     nth_element(A.begin() , A.begin() + k - 1 , A.end());
     cout << a[k] << endl;
