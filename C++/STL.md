@@ -278,7 +278,7 @@ int main()
 
 > 可以从某个序列中找到第 n 小的元素 K，并将 K 移动到序列中第 n 的位置处
 
-> [求第 k 小的数](https://www.luogu.com.cn/problem/P1923)
+[求第 k 小的数](https://www.luogu.com.cn/problem/P1923)
 
 ```c++
 #include<iostream>
