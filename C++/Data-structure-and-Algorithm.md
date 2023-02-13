@@ -1591,6 +1591,9 @@ int main()
 ### 存储
 [树的重心](https://www.acwing.com/problem/content/848/)
 
+
+
+#### 邻接表
 ```c++
 int h[N] , e[N] , ne[N] , idx;
 
