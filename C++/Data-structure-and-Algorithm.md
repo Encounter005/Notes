@@ -1215,6 +1215,10 @@ int find(int x) // 找到第一个大于等于x的位置
 > 可用在容器中找到符合条件的数
 
 ### 整数二分
+
+![Screenshot_20230215_104956.png](https://img1.imgtp.com/2023/02/15/Qdhxm6Ir.png)
+
+
 ```c++
 bool check(int x) {/* ... */} // 检查x是否满足某种性质
 
