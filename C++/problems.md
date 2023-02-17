@@ -191,3 +191,52 @@ int main() {
   return 0;
 }
 ```
+
+## 双指针算法
+
+找到某种性质来优化暴力
+
+[字符串删减](https://www.acwing.com/problem/content/3771/)
+
+![Screenshot_20230217_084959_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/17/OVsZSesj.jpg)
+
+用一个指针`i`来遍历字符串，如果发现有一个字符是`x`，那就用另一个指针'j'来扫描'x'的个数，这样就得到了连续'x'有
+$j - i$，考虑到如果只删掉一个'x'，后面会补上x的情况，所以必须删掉两个'x'
+
+设连续的'x'字符串长度为k，则有
+
+$ \begin{cases} K \lt 3 , 0 \\ k \leq 3 , K - 2 \end{cases} $
+
+
+
+### AC 代码
+
+```c++
+
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <algorithm>
+using namespace std;
+using LL = long long;
+using PII = pair<int , int>;
+string str;
+int k , n;
+void solution()
+{
+  cin >> n >> str;
+
+  for(int i = 0; i < n; i ++)
+  {
+    if(str[i] == 'x')
+    {
+      int j = i;
+      while(j < n && str[j] == 'x') j ++;
+      k += max(j - i - 2 , 0);
+      i = j - 1;
+    }
+  }
+
+  printf("%d" , k);
+}
+```
