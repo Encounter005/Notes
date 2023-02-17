@@ -205,7 +205,7 @@ $j - i$，考虑到如果只删掉一个'x'，后面会补上x的情况，所以
 
 设连续的'x'字符串长度为k，则有
 
-$ \begin{cases} K \lt 3 , 0 \\ k \leq 3 , K - 2 \end{cases} $
+$ \begin{cases} K = i - j \\K \lt 3 , 0 \\ K \leq 3 , K - 2 \end{cases} $
 
 
 

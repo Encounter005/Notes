@@ -1629,7 +1629,7 @@ add(a , b) , add(b , a);
 ![Y5ylO.png](https://c2.im5i.com/2023/01/20/Y5ylO.png)
 ![Y5B9R.png](https://c2.im5i.com/2023/01/20/Y5B9R.png)
 
-
+[树的重心](https://www.acwing.com/problem/content/848/)
 ```c++
 void dfs(int u)
 {
@@ -1645,8 +1645,122 @@ void dfs(int u)
 
 ### 宽度优先遍历
 
+> 队列维护
+
+![Screenshot_20230217_103432_com.huawei.browser.jpg](https://img1.imgtp.com/2023/02/17/vTe7vnRf.jpg)
+
+[图中点的层次](https://www.acwing.com/problem/content/description/849/)
 
 
+```c++
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+const int N = 1e5 + 10;
+int h[N], e[N], ne[N], idx;
+int d[N], q[N];
+int n, m;
+void add(int a, int b) {
+  e[idx] = b;
+  ne[idx] = h[a];
+  h[a] = idx++;
+}
+
+int bfs() {
+  int hh = 0, tt = -1;
+  q[0] = 1;
+  memset(d, -1, sizeof(d));
+
+  d[1] = 0;
+  while (hh <= tt) {
+    int t = q[hh++];
+
+    for (int i = h[t]; i != -1; i = ne[i]) {
+      int j = e[i];
+      if (d[j] == -1) {
+        d[j] = d[t] + 1;
+        q[++tt] = j;
+      }
+    }
+  }
+
+  return d[n];
+}
+int main() {
+
+  cin >> n >> m;
+  memset(h, -1, sizeof(h));
+
+  for (int i = 0; i < m; i++) {
+    int a, b;
+    cin >> a >> b;
+    add(a, b);
+  }
+
+  cout << bfs() << endl;
+  return 0;
+}
+
+```
 
 ## 拓补排序
 
+> 图的bfs的应用，针对有向图
+
+![Screenshot_20230217_113622_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/17/Nw4h8fR6.jpg)
+[有向图的拓补排序](https://www.acwing.com/problem/content/850/)
+
+
+```c++
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+const int N = 1e5 + 10;
+int h[N], e[N], ne[N], idx;
+int n, m;
+int q[N], d[N];        // d[]表示每个点的出度
+void add(int a, int b) // 建图
+{
+  e[idx] = b;
+  ne[idx] = h[a];
+  h[a] = idx++;
+}
+bool topsort() {
+  int hh = 0, tt = -1; // 初始化队列
+  for (int i = 1; i <= n; i++)
+    if (!d[i])
+      q[++tt] = i; // 将入度为0的节点入队
+  // 一个有向无环图一定至少存在一个入度为0的点
+  while (hh <= tt) {
+    int t = q[hh++];                         // 将起点入队
+    for (int i = h[t]; i != -1; i = ne[i]) { // 枚举出边
+      int j = e[i];
+      d[j]--; // 删掉t->j的出边
+      if (d[j] == 0)
+        q[++tt] = j; // 如果这个节点的入度为0，入队
+    }
+  }
+  return tt == n - 1; // 如果所有的点都完成排序且不带环，返回true
+}
+int main() {
+  cin >> n >> m;
+  memset(h, -1, sizeof(h));
+  for (int i = 0; i < m; i++) {
+    int a, b;
+    cin >> a >> b;
+    add(a, b);
+    d[b]++;
+  }
+  if (topsort()) {
+    for (int i = 0; i < n; i++)
+      cout
+          << q[i]
+          << ' '; // 由于所有的节点都入过队，值都存在队列里面，所以直接遍历队列就可以输出
+  } else
+    puts("-1");
+  return 0;
+}
+
+```
