@@ -5,6 +5,10 @@
   - [宽度优先搜索(BFS)](#宽度优先搜索bfs)
     - [1. [蛇形矩阵](https://www.acwing.com/problem/content/758/)](#1-蛇形矩阵httpswwwacwingcomproblemcontent758)
     - [2. [走迷宫](https://www.acwing.com/problem/content/846/)](#2-走迷宫httpswwwacwingcomproblemcontent846)
+    - [[树的遍历](https://www.acwing.com/problem/content/1499/)](#树的遍历httpswwwacwingcomproblemcontent1499)
+      - [思路](#思路)
+        - [如何有中序和后序确定一颗二叉树](#如何有中序和后序确定一颗二叉树)
+      - [AC 代码](#ac-代码)
   - [结构体排序](#结构体排序)
   - [双指针算法](#双指针算法)
     - [1. [字符串删减](https://www.acwing.com/problem/content/3771/)](#1-字符串删减httpswwwacwingcomproblemcontent3771)
@@ -111,6 +115,81 @@ int main() {
   return 0;
 }
 ```
+
+### [树的遍历](https://www.acwing.com/problem/content/1499/)
+
+![Screenshot_20230218_094238_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/18/v9wg1l20.jpg)
+
+#### 思路
+
+##### 如何有中序和后序确定一颗二叉树
+
+1. 后序遍历的最后一个点一定是该树或者子树的根节点
+2. 中序遍历根的左右分左子树和右子树
+
+因此可以先通过找到后序遍历中的最后一个点的值，然后再到中序序列找到根的位置``用哈希表来实现``，在将该树分为左子树和右子树不断递归，这样就可以重新构造一棵二叉树
+
+#### AC 代码
+
+```c++
+ 
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <unordered_map>
+#include <queue>
+using namespace std;
+
+const int N = 40;
+int n;
+unordered_map<int, int> l , r , pos; //存储每个点的左儿子、右儿子，在中序遍历里面每个值对应的下标
+int postorder[N] , inorder[N]; //后序遍历 ， 中序遍历
+queue<int> q;
+int build(int il , int ir , int pl , int pr)
+{
+  int root = postorder[pr]; // 找到后序遍历中根节点的下标
+  int k = pos[root]; // 通过哈希表找到中序遍历中根节点的下标
+
+  if(il < k) l[root] = build(il , k - 1 ,pl ,k - 1 - il + pl); //找到左儿子
+  if(ir > k) r[root] = build(k + 1 , ir , k - 1 - il + pl + 1 , pr - 1); // 找到右儿子
+
+  return root;
+}
+
+
+void bfs(int root)
+{
+  q.push(root);
+  while(q.size())
+  {
+    auto t = q.front();
+    q.pop();
+    cout << t << ' ';
+    if(l.count(t)) q.push(l[t]); // 如果存在左儿子，就将左儿子入队
+    if(r.count(t)) q.push(r[t]); // 如果存在右儿子，就将右儿子入队
+  }
+}
+
+
+int main()
+{
+  cin >> n;
+  for(int i = 0; i < n; i ++) cin >> postorder[i];
+
+  for(int i = 0; i < n; i ++)
+  {
+    cin >> inorder[i];
+    pos[inorder[i]] = i;
+  }
+
+  int root = build(0 , n - 1 , 0 , n - 1); // 当前子树中序遍历的区间，后序遍历的区间
+  bfs(root);
+  return 0;
+}
+
+```
+
+
 ## 结构体排序
 > 实现方式
 > bool函数(cmp)
