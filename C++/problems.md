@@ -1,18 +1,31 @@
-# 题目类型
+﻿# 题目类型
 
 <!--toc:start-->
 - [题目类型](#题目类型)
-  - [坐标偏移量](#坐标偏移量)
+  - [宽度优先搜索(BFS)](#宽度优先搜索bfs)
+    - [1. [蛇形矩阵](https://www.acwing.com/problem/content/758/)](#1-蛇形矩阵httpswwwacwingcomproblemcontent758)
+    - [2. [走迷宫](https://www.acwing.com/problem/content/846/)](#2-走迷宫httpswwwacwingcomproblemcontent846)
   - [结构体排序](#结构体排序)
+  - [双指针算法](#双指针算法)
+    - [1. [字符串删减](https://www.acwing.com/problem/content/3771/)](#1-字符串删减httpswwwacwingcomproblemcontent3771)
+      - [思路](#思路)
+      - [AC 代码](#ac-代码)
+    - [2. [最长连续不重复子序列](https://www.acwing.com/problem/content/801/)](#2-最长连续不重复子序列httpswwwacwingcomproblemcontent801)
+      - [思路](#思路)
+      - [AC 代码](#ac-代码)
+  - [递推](#递推)
+    - [1. [砖块](https://www.acwing.com/problem/content/3780/)](#1-砖块httpswwwacwingcomproblemcontent3780)
+      - [思路](#思路)
+      - [AC 代码](#ac-代码)
 <!--toc:end-->
 
 
 
-## 坐标偏移量
+## 宽度优先搜索(BFS)
 > 利用坐标偏移量来处理题目
 > 省略四个判断
 
-[蛇形矩阵](https://www.acwing.com/problem/content/758/)
+### 1. [蛇形矩阵](https://www.acwing.com/problem/content/758/)
 
 ```c++
 #include <iostream>
@@ -48,7 +61,7 @@ int main() {
 }
 
 ```
-[走迷宫](https://www.acwing.com/problem/content/846/)
+### 2. [走迷宫](https://www.acwing.com/problem/content/846/)
 
 
 ```c++
@@ -106,7 +119,6 @@ int main() {
 [分数线划定](https://www.luogu.com.cn/problem/P1068)
 
 
-```bool cmp```
 
 
 ```c++
@@ -196,10 +208,11 @@ int main() {
 
 找到某种性质来优化暴力
 
-[字符串删减](https://www.acwing.com/problem/content/3771/)
+### 1. [字符串删减](https://www.acwing.com/problem/content/3771/)
 
 ![Screenshot_20230217_084959_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/17/OVsZSesj.jpg)
 
+#### 思路
 用一个指针`i`来遍历字符串，如果发现有一个字符是`x`，那就用另一个指针'j'来扫描'x'的个数，这样就得到了连续'x'有
 $j - i$，考虑到如果只删掉一个'x'，后面会补上x的情况，所以必须删掉两个'x'
 
@@ -209,7 +222,7 @@ $ \begin{cases} K = i - j \\K \lt 3 , 0 \\ K \leq 3 , K - 2 \end{cases} $
 
 
 
-### AC 代码
+#### AC 代码
 
 ```c++
 
@@ -239,4 +252,116 @@ void solution()
 
   printf("%d" , k);
 }
+```
+
+### 2. [最长连续不重复子序列](https://www.acwing.com/problem/content/801/)
+
+![Screenshot_20230218_083534_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/18/13ZISuLr.jpg)
+
+#### 思路
+
+用一个`a[]`来记录题目给的数据，用一个`s[]`来记录每个数据出现的次数，用i指针来遍历`a[]`,如果一个数据出现的次数大于1，j指针就往右移动一位，同时`s[a[j]] --`, `res`表示最长的子序列长度
+
+#### AC 代码
+
+```c++
+
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <algorithm>
+using namespace std;
+using LL = long long;
+using PII = pair<int , int>;
+const int N = 1e5 + 10;
+int n , a[N] , s[N];
+
+int res;
+void solution()
+{
+  cin >> n;
+  int i = 0 , j = 0;
+  for(i = 0 , j = 0; i < n; i ++)
+  {
+    cin >> a[i];
+    s[a[i]] ++;
+    while(s[a[i]] > 1 && j < n)
+    {
+      s[a[j]] --;
+      j ++;
+    }
+    res = max(res , i - j + 1);
+  }
+  
+  cout << res << endl;
+
+
+}
+```
+
+## 递推
+
+> 从已知到未知
+
+### 1. [砖块](https://www.acwing.com/problem/content/3780/)
+
+![Screenshot_20230218_081223_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/18/XTac17uQ.jpg)
+
+#### 思路
+由题目得，对于每一组砖块是否要翻转，要看每组的第一个砖块的颜色是否与目标颜色一致，这题目的数据范围很小，所以可以枚举全是黑的情况和全是白的情况，并且这道题的最终结果就两种`黑或白`，另外操作顺序也是无影响的
+
+
+#### AC 代码
+
+```c++
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int n ;
+string str;
+
+void up(char &c)
+{
+  if(c == 'W') c = 'B';
+  else c = 'W';
+}
+
+bool check(char c)
+{
+  string s = str;
+  vector<int> res;
+
+  for(int i = 0; i + 1 < n; i ++)
+  {
+    if(s[i] != c)
+    {
+      up(s[i]);
+      up(s[i + 1]);
+      res.push_back(i);
+    }
+
+  }
+    if(s.back() != c) return false;
+    cout << res.size() << endl;
+    for(auto x : res) cout << x + 1 << ' ';
+    if(res.size()) cout << endl;
+    return true;
+}
+
+int main()
+{
+  int T;
+  cin >> T;
+  while(T --)
+  {
+    cin >> n >> str;
+    if(!check('B') && !check('W')) puts("-1");
+  }
+
+  return 0;
+}
+
 ```
