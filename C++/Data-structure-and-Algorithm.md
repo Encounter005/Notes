@@ -67,8 +67,6 @@
 
 
 ## 目录
-
-
 ***
 
 
@@ -77,8 +75,12 @@
 
 
 ## 链表
-![YwArL.png](https://c2.im5i.com/2023/01/01/YwArL.png)
-![YwDjs.png](https://c2.im5i.com/2023/01/01/YwDjs.png)
+
+![微信图片_20230101222021.png](https://img1.imgtp.com/2023/02/18/Hf9jMWkb.png)
+![edrtfyghujk.png](https://img1.imgtp.com/2023/02/18/0UNbeGFA.png)
+
+
+
 > 初始化
 
 ```c++
@@ -383,8 +385,7 @@ if (tt > 0)
 ### 单调栈
 [单调栈](https://www.acwing.com/problem/content/832/)
 
-![YUWSz.jpeg](https://c2.im5i.com/2023/01/17/YUWSz.jpeg)
-
+![1616738kj1l431.jpg](https://img1.imgtp.com/2023/02/18/jgudFwiz.jpg)
 > 常见模型：找出每个数左边离它最近的比它大/小的数
 
 ```c++
@@ -445,8 +446,8 @@ if (hh != tt)
 ```
 ### 单调队列
 [单调队列](https://www.acwing.com/problem/content/156/)
-![YU286.jpeg](https://c2.im5i.com/2023/01/17/YU286.jpeg)
 
+![1616738kjl431.jpg](https://img1.imgtp.com/2023/02/18/IlTEwaLG.jpg)
 > 常见模型：找出滑动窗口中的最大值/最小值
 
 ```c++
@@ -461,7 +462,9 @@ for (int i = 0; i < n; i ++ )
 ```
 ## Trie树
 
-![YwHq8.png](https://c2.im5i.com/2023/01/01/YwHq8.png)
+![Screenshot_20230101_174144.png](https://img1.imgtp.com/2023/02/18/wJxs07ix.png)
+
+
 
 [Trie字符串统计](https://www.acwing.com/problem/content/837/)
 [Trie存储整数](https://www.acwing.com/problem/content/145/)
@@ -514,7 +517,7 @@ int query(char str[])
 ## 并查集
 
 
-![YwuL6.png](https://c2.im5i.com/2023/01/01/YwuL6.png)
+![Screenshot_20230101_174216.png](https://img1.imgtp.com/2023/02/18/5Kr3MoWp.png)
 
 [合并集合](https://www.acwing.com/problem/content/838/)
 
@@ -578,12 +581,12 @@ int main()
 > 完全二叉树
 
 ### 小根堆
-![ROoHU.png](https://c2.im5i.com/2022/12/29/ROoHU.png)
+![20190412193512956.png](https://img1.imgtp.com/2023/02/18/5TAILlqa.png)
 ### 大根堆
-![ROnG8.png](https://c2.im5i.com/2022/12/29/ROnG8.png)
+![20190412193413102.png](https://img1.imgtp.com/2023/02/18/BLbwtwTA.png)
 ### 堆的存储
-![RO3Lw.png](https://c2.im5i.com/2022/12/29/RO3Lw.png)
 
+![Screenshot_20221229_203502.png](https://img1.imgtp.com/2023/02/18/rlFxwPCq.png)
 ### 如何手写一个堆
 1. 插入一个数  ``` heap[++ size] = x; up(size); ```
 2. 求集合当中的最小值 ``` heap[1] ```
@@ -624,7 +627,7 @@ up(int x)
 [字符串哈希](https://www.acwing.com/problem/content/843/)
 
 ##### 1. 开放寻址法
-![YF0K5.png](https://c2.im5i.com/2022/12/30/YF0K5.png)
+![Screenshot_20221230_222421.png](https://img1.imgtp.com/2023/02/18/AmhLaxkw.png)
 1. 找大于最大值的一个质数
 2. 插入 && 查找操作
 > 先求哈希值 ```int k = (x % N + N) % N;```
@@ -692,7 +695,10 @@ int main()
 ```
 
 ##### 2. 拉链法
-![YFoH3.png](https://c2.im5i.com/2022/12/30/YFoH3.png)
+
+![Screenshot_20221230_211314.png](https://img1.imgtp.com/2023/02/18/F0oiyKb9.png)
+
+
 1. 找大于最大值的一个质数
 2. 插入操作
 > 先求哈希值 ```int k = (x % N + N) % N;```
@@ -747,7 +753,7 @@ bool find(int x)
 ### 字符串哈希方式
 > 比kmp好使
 > 记录不能从0开始
-![YSPG4.png](https://c2.im5i.com/2023/01/06/YSPG4.png)
+![Screenshot_20230106_195755.png](https://img1.imgtp.com/2023/02/18/a3X3ObmV.png)
 
 ```c++
 #include<iostream>
@@ -1149,7 +1155,7 @@ int main()
 ```
 
 ## 位运算
-![YwoH7.jpeg](https://c2.im5i.com/2023/01/01/YwoH7.jpeg)
+![微信图片_20230101222016.jpg](https://img1.imgtp.com/2023/02/18/73U1u52i.jpg)
 [位运算](https://www.acwing.com/problem/content/803/)
 
 ```c++
@@ -1187,8 +1193,7 @@ int main()
 ## 离散化
 > 遇到数轴，并在数轴上进行操作可以用
 
-![YURw8.jpeg](https://c2.im5i.com/2023/01/17/YURw8.jpeg)
-
+![321769773.jpg](https://img1.imgtp.com/2023/02/18/6RA4jHZF.jpg)
 ```c++
 vector<int> alls; // 存储所有待离散化的值
 sort(alls.begin(), alls.end()); // 将所有值排序
@@ -1307,7 +1312,8 @@ int main() {
 
 ## 差分
 > 经常用于维护一个特定的区间
-![nwWoS.png](https://c2.im5i.com/2023/02/02/nwWoS.png)
+![20201217174809672.png](https://img1.imgtp.com/2023/02/18/3nThneQf.png)
+![20201213222213524.png](https://img1.imgtp.com/2023/02/18/9fQAgQiU.png)
 
 ### 一维
 
@@ -1355,9 +1361,12 @@ int main() {
 
 ### 二维
 
+
+![20201214201734653.png](https://img1.imgtp.com/2023/02/18/umJspYCq.png)
+![20201216215336857.png](https://img1.imgtp.com/2023/02/18/JoBcD4z9.png)
 ## 区间合并
 
-![YUXu5.jpeg](https://c2.im5i.com/2023/01/17/YUXu5.jpeg)
+![321hbjkm9773.jpg](https://img1.imgtp.com/2023/02/18/5ZmJlCxk.jpg)
 ```c++
 // 将所有存在交集的区间合并
 void merge(vector<PII> &segs)
@@ -1475,7 +1484,7 @@ int gcd(int a , int b)
 ### BFS
 
 > BFS
-![Ygkuq.png](https://c2.im5i.com/2023/01/09/Ygkuq.png)
+![Screenshot_20230108_204554.png](https://img1.imgtp.com/2023/02/18/Hj4X8U0p.png)
 
 [走迷宫](https://www.acwing.com/problem/content/846/)
 
@@ -1538,8 +1547,7 @@ int main() {
 ### DFS
 
 > DFS
-![YgOSt.png](https://c2.im5i.com/2023/01/09/YgOSt.png)
-
+![Screenshot_20230109_113350.png](https://img1.imgtp.com/2023/02/18/OSBqCfLG.png)
 
 [排列数字](https://www.acwing.com/problem/content/844/)
 [n皇后问题](https://www.acwing.com/problem/content/845/)
@@ -1590,7 +1598,7 @@ int main()
 
 > 树是一种特殊的图
 
-![Y5r1y.png](https://c2.im5i.com/2023/01/20/Y5r1y.png)
+![Screenshot_20230120_173932.png](https://img1.imgtp.com/2023/02/18/Y0e3Y8sb.png)
 
 ### 存储
 [树的重心](https://www.acwing.com/problem/content/848/)
@@ -1625,9 +1633,8 @@ add(a , b) , add(b , a);
 
 ### 深度优先遍历
 
-
-![Y5ylO.png](https://c2.im5i.com/2023/01/20/Y5ylO.png)
-![Y5B9R.png](https://c2.im5i.com/2023/01/20/Y5B9R.png)
+![Screenshot_20230120_175205.png](https://img1.imgtp.com/2023/02/18/SmLox7Uq.png)
+![Screenshot_20230120_175256.png](https://img1.imgtp.com/2023/02/18/E70ECaDL.png)
 
 [树的重心](https://www.acwing.com/problem/content/848/)
 ```c++
