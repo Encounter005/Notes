@@ -1,35 +1,83 @@
 ﻿# 题目类型
 
 <!--toc:start-->
+
 - [题目类型](#题目类型)
+  - [差分](#差分)
+    - [1. 浇花](#1-浇花)
+      - [思路：利用差分数组来进行一个维护，对于每一天的编号用`day[]`来存储，之后求一次差分前缀和，这题其实暴力也可以过;-;](#思路利用差分数组来进行一个维护对于每一天的编号用day来存储之后求一次差分前缀和这题其实暴力也可以过)
+      - [AC 代码](#ac-代码)
   - [宽度优先搜索(BFS)](#宽度优先搜索bfs)
-    - [1. [蛇形矩阵](https://www.acwing.com/problem/content/758/)](#1-蛇形矩阵httpswwwacwingcomproblemcontent758)
-    - [2. [走迷宫](https://www.acwing.com/problem/content/846/)](#2-走迷宫httpswwwacwingcomproblemcontent846)
-    - [[树的遍历](https://www.acwing.com/problem/content/1499/)](#树的遍历httpswwwacwingcomproblemcontent1499)
+    - [1. 蛇形矩阵](#1-蛇形矩阵)
+    - [2. 走迷宫](#2-走迷宫)
+    - [3. 树的遍历](#3-树的遍历)
       - [思路](#思路)
         - [如何有中序和后序确定一颗二叉树](#如何有中序和后序确定一颗二叉树)
       - [AC 代码](#ac-代码)
   - [结构体排序](#结构体排序)
-  - [双指针算法](#双指针算法)
-    - [1. [字符串删减](https://www.acwing.com/problem/content/3771/)](#1-字符串删减httpswwwacwingcomproblemcontent3771)
+    - [1.分数线划定](#1分数线划定)
       - [思路](#思路)
       - [AC 代码](#ac-代码)
-    - [2. [最长连续不重复子序列](https://www.acwing.com/problem/content/801/)](#2-最长连续不重复子序列httpswwwacwingcomproblemcontent801)
+  - [双指针算法](#双指针算法)
+    - [1. 字符串删减](#1-字符串删减)
+      - [思路](#思路)
+      - [AC 代码](#ac-代码)
+    - [2. 最长连续不重复子序列](#2-最长连续不重复子序列)
       - [思路](#思路)
       - [AC 代码](#ac-代码)
   - [递推](#递推)
-    - [1. [砖块](https://www.acwing.com/problem/content/3780/)](#1-砖块httpswwwacwingcomproblemcontent3780)
+    - [1. 砖块](#1-砖块)
       - [思路](#思路)
       - [AC 代码](#ac-代码)
-<!--toc:end-->
+  - [模拟题](#模拟题) - [](#)
+  <!--toc:end-->
 
+## 差分
 
+> 利用差分数组来维护一个区间
+
+### 1. 浇花
+
+[题目](https://www.acwing.com/problem/content/description/4865/)
+
+#### 思路：利用差分数组来进行一个维护，对于每一天的编号用`day[]`来存储，之后求一次差分前缀和，这题其实暴力也可以过;-
+
+#### AC 代码
+
+```c++
+const int N = 1e5 + 10;
+int day[N];
+int n , m;
+void solution()
+{
+  cin >> n >> m;
+  while(m --)
+  {
+    int a , b;
+    cin >> a >> b;
+    day[a] ++, day[b + 1] --;
+  }
+
+  for(int i = 1; i <= n; i ++) day[i] += day[i - 1];
+
+  for(int i = 1; i <= n; i ++)
+    if(!day[i] || day[i] > 1)
+    {
+      printf("%d %d" , i , day[i]);
+      return;
+    }
+  puts("OK");
+}
+```
 
 ## 宽度优先搜索(BFS)
+
 > 利用坐标偏移量来处理题目
 > 省略四个判断
 
-### 1. [蛇形矩阵](https://www.acwing.com/problem/content/758/)
+### 1. 蛇形矩阵
+
+[题目](https://www.acwing.com/problem/content/758/)
 
 ```c++
 #include <iostream>
@@ -65,8 +113,10 @@ int main() {
 }
 
 ```
-### 2. [走迷宫](https://www.acwing.com/problem/content/846/)
 
+### 2. 走迷宫
+
+[题目](https://www.acwing.com/problem/content/846/)
 
 ```c++
 #include <cstring>
@@ -116,7 +166,9 @@ int main() {
 }
 ```
 
-### [树的遍历](https://www.acwing.com/problem/content/1499/)
+### 3. 树的遍历
+
+[题目](https://www.acwing.com/problem/content/1499/)
 
 ![Screenshot_20230218_094238_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/18/v9wg1l20.jpg)
 
@@ -127,12 +179,12 @@ int main() {
 1. 后序遍历的最后一个点一定是该树或者子树的根节点
 2. 中序遍历根的左右分左子树和右子树
 
-因此可以先通过找到后序遍历中的最后一个点的值，然后再到中序序列找到根的位置``用哈希表来实现``，在将该树分为左子树和右子树不断递归，这样就可以重新构造一棵二叉树
+因此可以先通过找到后序遍历中的最后一个点的值，然后再到中序序列找到根的位置`用哈希表来实现`，在将该树分为左子树和右子树不断递归，这样就可以重新构造一棵二叉树
 
 #### AC 代码
 
 ```c++
- 
+
 #include <iostream>
 #include <algorithm>
 #include <cstring>
@@ -189,16 +241,21 @@ int main()
 
 ```
 
-
 ## 结构体排序
+
 > 实现方式
-> bool函数(cmp)
+> bool 函数(cmp)
 > 运算符重载
 
-[分数线划定](https://www.luogu.com.cn/problem/P1068)
+### 1.分数线划定
 
+[题目](https://www.luogu.com.cn/problem/P1068)
 
+#### 思路
 
+这题主要是一个对象有多个数据要存，可以练习结构体排序，根据题意写一个`cmp`函数就好
+
+#### AC 代码
 
 ```c++
 #include<iostream>
@@ -247,7 +304,7 @@ int main()
 
 ```
 
-```运算符重载```
+`运算符重载`
 
 ```c++
 
@@ -287,19 +344,20 @@ int main() {
 
 找到某种性质来优化暴力
 
-### 1. [字符串删减](https://www.acwing.com/problem/content/3771/)
+### 1. 字符串删减
+
+[题目](https://www.acwing.com/problem/content/3771/)
 
 ![Screenshot_20230217_084959_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/17/OVsZSesj.jpg)
 
 #### 思路
-用一个指针`i`来遍历字符串，如果发现有一个字符是`x`，那就用另一个指针'j'来扫描'x'的个数，这样就得到了连续'x'有
-$j - i$，考虑到如果只删掉一个'x'，后面会补上x的情况，所以必须删掉两个'x'
 
-设连续的'x'字符串长度为k，则有
+用一个指针`i`来遍历字符串，如果发现有一个字符是`x`，那就用另一个指针'j'来扫描'x'的个数，这样就得到了连续'x'有
+$j - i$，考虑到如果只删掉一个'x'，后面会补上 x 的情况，所以必须删掉两个'x'
+
+设连续的'x'字符串长度为 k，则有
 
 $ \begin{cases} K = i - j \\K \lt 3 , 0 \\ K \leq 3 , K - 2 \end{cases} $
-
-
 
 #### AC 代码
 
@@ -333,13 +391,15 @@ void solution()
 }
 ```
 
-### 2. [最长连续不重复子序列](https://www.acwing.com/problem/content/801/)
+### 2. 最长连续不重复子序列
+
+[题目](https://www.acwing.com/problem/content/801/)
 
 ![Screenshot_20230218_083534_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/18/13ZISuLr.jpg)
 
 #### 思路
 
-用一个`a[]`来记录题目给的数据，用一个`s[]`来记录每个数据出现的次数，用i指针来遍历`a[]`,如果一个数据出现的次数大于1，j指针就往右移动一位，同时`s[a[j]] --`, `res`表示最长的子序列长度
+用一个`a[]`来记录题目给的数据，用一个`s[]`来记录每个数据出现的次数，用 i 指针来遍历`a[]`,如果一个数据出现的次数大于 1，j 指针就往右移动一位，同时`s[a[j]] --`, `res`表示最长的子序列长度
 
 #### AC 代码
 
@@ -371,7 +431,7 @@ void solution()
     }
     res = max(res , i - j + 1);
   }
-  
+
   cout << res << endl;
 
 
@@ -382,13 +442,15 @@ void solution()
 
 > 从已知到未知
 
-### 1. [砖块](https://www.acwing.com/problem/content/3780/)
+### 1. 砖块
+
+[题目](https://www.acwing.com/problem/content/3780/)
 
 ![Screenshot_20230218_081223_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/18/XTac17uQ.jpg)
 
 #### 思路
-由题目得，对于每一组砖块是否要翻转，要看每组的第一个砖块的颜色是否与目标颜色一致，这题目的数据范围很小，所以可以枚举全是黑的情况和全是白的情况，并且这道题的最终结果就两种`黑或白`，另外操作顺序也是无影响的
 
+由题目得，对于每一组砖块是否要翻转，要看每组的第一个砖块的颜色是否与目标颜色一致，这题目的数据范围很小，所以可以枚举全是黑的情况和全是白的情况，并且这道题的最终结果就两种`黑或白`，另外操作顺序也是无影响的
 
 #### AC 代码
 
@@ -441,6 +503,43 @@ int main()
   }
 
   return 0;
+}
+
+```
+
+## 模拟题
+
+### 1. 构造数列模拟
+
+[题目](https://www.acwing.com/problem/content/description/4864/)
+
+#### 思路
+
+用string读入每一个数字，按题目要求操作一下就好
+
+
+#### AC 代码
+
+```c++
+
+int T;
+string str;
+void solution()
+{
+  cin >> T;
+  while(T --)
+  {
+    int cnt = 0;
+    cin >> str;
+    for(auto &c : str)
+      if(c != '0') cnt ++;
+    cout << cnt << endl;
+
+    for(int i = str.size() - 1 , t = 1; i >= 0; i -- , t *= 10)
+      if(str[i] != '0')
+        cout << (str[i] - '0') * t << ' ';
+    cout << endl;
+  }
 }
 
 ```
