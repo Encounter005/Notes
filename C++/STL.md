@@ -87,6 +87,8 @@ a = queue<int>(); //清空原队列
 
 ```c++
 priority_queue<int> a;
+priority_queue<int , vector<int> , less<int>> q; // 大根堆
+priority_queue<int, vector , greater<int>> q; // 小根堆
 a.push();//插入一个元素
 a.top();//返回堆顶元素
 a.pop();//弹出堆顶元素
