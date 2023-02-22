@@ -2,22 +2,25 @@
 
 <!-- vim-markdown-toc GFM -->
 
-  * [Clsas](#clsas)
+  * [类](#类)
+    * [1. 类的介绍、构造函数、析构函数](#1-类的介绍构造函数析构函数)
+    * [2. 类的权限修饰](#2-类的权限修饰)
   * [函数重载 overload](#函数重载-overload)
   * [内联函数](#内联函数)
-  * [(\*)new 关键字](#new-关键字)
+  * [new 关键字 (\*)](#new-关键字-)
     * [1. new 关键字是 C++用来动态分配内存的主要方式](#1-new-关键字是-c用来动态分配内存的主要方式)
     * [2. 内存泄露（常见 bug）](#2-内存泄露常见-bug)
   * [const 关键字](#const-关键字)
-  * [(\*\*)auto 关键字](#auto-关键字)
-  * [（\*）静态变量，指针和引用](#静态变量指针和引用)
-  * [（\*\*）左值，右值，左值引用，右值引用](#左值右值左值引用右值引用)
+  * [auto 关键字(\*\*)](#auto-关键字)
+  * [静态变量，指针和引用(\*)](#静态变量指针和引用)
+    * [关于 const 和 pointer](#关于-const-和-pointer)
+  * [左值，右值，左值引用，右值引用(\*\*)](#左值右值左值引用右值引用)
     * [1. 左值和右值](#1-左值和右值)
     * [2. 引用的分类](#2-引用的分类)
-  * [(\*\*)move 函数，临时对象](#move-函数临时对象)
+  * [move 函数，临时对象(\*\*)](#move-函数临时对象)
     * [1. move 函数](#1-move-函数)
     * [2. 临时对象](#2-临时对象)
-  * [(\*\*)可调用对象](#可调用对象)
+  * [可调用对象(\*\*)](#可调用对象)
     * [1. 函数](#1-函数)
     * [2. 仿函数](#2-仿函数)
     * [3. lambda 表达式](#3-lambda-表达式)
@@ -27,104 +30,211 @@
 
 <!-- vim-markdown-toc -->
 
-## Clsas
+## 类
 
-类的内部分为两个部分
+C 语言的结构体
 
-1. private
+```c
+struct TEST
+{ // NOTE: C语言的结构体不能有函数
+  // why： 因为一个结构体对象是要声明在栈或者堆中，而任何一个函数都要声明在代码区中
+  int i;
+  int t;
+};
 
-   > private 内的变量只能通过类里面的函数进行调用
+```
 
-2. public
+### 1. 类的介绍、构造函数、析构函数
 
-   > public 的变量可以在任何地方被调用
+1. 面试的时候经常会听到一个问题，谈一下对面向对象和面向过程的理解 1. 面向对象和面向过程是一个相对的概念 2. 面向过程是按照计算机的工作逻辑来编码的方式，最典型的面向过程的语言就是 C 语言了，C 语言直接对应汇编，汇编又对应电路 3. 面向对象是按照人类的思维来编码的一种方式，C++完全支持面向对象功能，可以按照人类的思维来处理问题 4. 举个例子，要把大象装冰箱，按照人类的思路自然是分三步，打开冰箱，将大象装进去，关上冰箱。
+   要实现这三步，我们就要首先有人，冰箱这两个对象。人有给冰箱发指令的能 力，冰箱有能够接受指令并打开或关闭门的能力。
+   但是从计算机的角度讲，计算机只能定义一个叫做人和冰箱的结构体。人有手这个部位，冰箱有门这个部位。然后从天而降一个函数，是这个函数让手打开了冰箱，又是另一个函数让大象进去，再是另一个函数让冰箱门关上。
+   那么，如何用面向过程的 c 语言模拟出面向对象的能力呢？类就诞生了，在类中可以定义专属于类的函数，让类有了自己的动作。回到那个例子，人的类有了让冰箱开门的能力，冰箱有了让人打 开的能力，不再需要天降神秘力量了。
+   从开发者的角度讲，面向对象显然更利于程序设计。用面色过程的开发方式，程序一旦大了，各种从天而降的函数会非常繁琐，一些用纯 c 写的大型程序，实际上也是模拟了面向对象的方式。
 
 ```c++
 #include <iostream>
-using namespace std;
 
-class Player {
-private:
+// NOTE: 面向对象一大的特点就是能在类中定义函数
+
+class IceChest {
+
 public:
-  int x, y;
-  int speed;
+  // NOTE: 冰箱开门或关门
+  void openDoor() {}
+  void closeDoor() {}
+};
 
-  void Move(int xa, int ya) {
-    x += xa * speed;
-    y += ya * speed;
-  }
+class Person {
+public:
+  // NOTE: 人能打开或关闭冰箱
+  void openIceChest(const IceChest &iceChest) {}
+};
+
+int main() { return 0; }
+
+```
+
+2. 构造函数
+
+类相当于定义了一个新类型，该类型生成在堆或栈上的对象时内存排布和 C 语言相同。但是 C++规定，C++有在类对象创建时就在对应内存将数据初始化的能力，这就是构造函数
+
+![Screenshot_20230222_101927_com.baidu.netdisk.jpg](https://img1.imgtp.com/2023/02/22/X5acsPGz.jpg)
+
+```c++
+#include <iostream>
+
+// 仿C写法
+struct CTest { // NOTE: C语言是无法在定义对象是将里面的数据初始化的
+  int i;
+  int i2;
+};
+
+struct CPPTest {
+public:
+  CPPTest(int i_, int i2_) : i(i_), i2(i2_) {}
+
+  //复制构造函数
+  CPPTest(const CPPTest& t2) :i(t2.i) , i2(t2.i2) {}
+  // NOTE: 加const是为了只读取成员变量的值，不能修改值
+
+  int i;
+  int i2;
 };
 
 int main() {
-  Player player;
-  player.x = 5;
-  player.y = 10;
-  player.speed = 10;
-
-  player.Move(1, 1);
-
-  cout << player.x << endl;
-  cout << player.y << endl;
-
+  CTest t1;
+  CPPTest t2( 1,2 ); // NOTE: C++中如果未初始化对象，会调用构造函数，但是默认的构造函数是什么都不做的
+  std::cout << t1.i << std::endl << t1.i2 << std::endl;
+  std::cout << t2.i << std::endl << t2.i2 << std::endl;
   return 0;
 }
 
 ```
 
-struct & class
+构造函数的类型
 
-> 结构体全是 public，class 存在 private
+    1. 普通构造函数：
 
-这种写法不咋滴;-;
+    2. 复制构造函数：
+
+> 用另一个对象来初始化对象对应内存
+
+    3. 移动构造函数：
+
+> 也是用一个对象来初始化对象
+
+    4. 默认构造函数：
+
+> 当类中没有构造函数是，编译器会为该类生成一个默认的构造函数，在最普通的类中，默认构造函数什么都没做，对象对应的内存没有初始化
+
+总结： 构造函数就是 C++提供的`必须有的`在对象创建时初始化对象的方法
+
+> 默认什么也不做也是一种初始化方式
+
+3. 析构函数
+
+当类对象被销毁时，就会调用析构函数。栈上对象的销毁时机就是函数栈销毁时
+
+堆上的对象销毁时机就是该堆内存被手动释放是，如果用`new`申请的这块堆内存，那调用`delete`销毁这块内存是就会调用析构函数
+
+![Screenshot_20230222_112347_com.baidu.netdisk.jpg](https://img1.imgtp.com/2023/02/22/gXavxkxC.jpg)
 
 ```c++
 #include <iostream>
-using namespace std;
 
-class Log {
+// 仿C写法
+struct CTest { // NOTE: C语言是无法在定义对象是将里面的数据初始化的
+  int i;
+  int i2;
+};
+
+struct CPPTest {
 public:
-    const int LogLevelError = 0;
-    const int LogLevelWarning = 1;
-    const int LogLevelInfo = 2;
-private:
-    int m_LogLevel = LogLevelInfo;
+  CPPTest(int i_, int i2_ , int i3) : i(i_), i2(i2_) , pi(new int(i3)) {}
 
-public:
-  void SetLevel(int level)
-  {
-    m_LogLevel = level;
+  //复制构造函数
+  CPPTest(const CPPTest& t2) :i(t2.i) , i2(t2.i2) , pi(new int (*t2.pi)) {}
+  // NOTE: 加const是为了只读取成员变量的值，不能修改值
 
-  }
-  void Error(const char * mess)
-  {
-    if(m_LogLevel >= LogLevelError)
-      cout << "[Error]: " << mess << endl;
-  }
 
-  void Info(const char * mess)
-  {
-    if(m_LogLevel >= LogLevelInfo)
-       cout << "[Info]: " << mess << endl;
-  }
-  void Warn(const char * mess)
-  {
-    cout << "[Warning]: " << mess << endl;
-  }
+  //模拟默认构造函数
+  // CPPTest(){}
+
+
+  //析构函数
+  ~CPPTest() {
+
+    delete pi;
+  } // NOTE:因为析构函数不带参数，所以无法重载
+
+  int i;
+  int i2;
+
+  int* pi;
 };
 
 int main() {
-  Log log;
-
-  // log.SetLevel(log.LogLevelWarning);//可以改变警告等级
-  log.Warn("hello!");
-  log.Info("hello!");
-  log.Error("hello!");
+  CTest t1;
+  CPPTest t2( 1,2 , 3); // NOTE: C++中如果未初始化对象，会调用构造函数，但是默认的构造函数是什么都不做的
+  std::cout << t1.i << std::endl << t1.i2 << std::endl;
+  std::cout << t2.i << std::endl << t2.i2 << std::endl;
 
 
+  CPPTest* pt2 = new CPPTest(1 , 2 , 3); // NOTE:调用在堆上
+
+  delete pt2;
   return 0;
 }
 
 ```
+
+总结：当类对象销毁时有一些我们必须手动操作的步骤时，析构函数就排上了用场。所以，几乎所有的类我们都要写构造函数，析构函数未必需要
+
+### 2. 类的权限修饰
+
+1. 访问限定符
+
+C++ 通过 public、protected、private 三个关键字来控制成员变量和成员函数的访问权限(也成为可见性)，分别表示:公有的、受保护的、私有的
+
+- public
+- protected
+- private
+
+```c++
+
+class Base
+{
+  public:
+  protected:
+  private:
+};
+
+
+```
+
+2. 访问权限
+
+> 能不能使用该类中的成员
+
+一般地，在类的内部，无论成员被声明为哪种，都是可以互相访问的；但在类的外部，如通过类的对象，则只能访问 public 属性的成员，不能访问 protected、private 属性的成员。
+
+> 对象(object)是类(class)的一个实例(instance)
+> 具体如下：
+
+- public: 可以被该类中的函数、子类的函数、友元函数访问，也可以由该类的对象访问
+
+- protected: 可以被该类中的函数、子类的函数、友元函数访问，但不可以由该类的对象访问
+
+- private：可以被该类中的函数、友元函数访问，但不可以由子类的函数、该类的对象访问
+
+> private 关键字的作用在于更好地隐藏类的实现
+
+3. 注意事项
+
+   1. 如果声明不写`public、protected、private`,则默认为`private`
+   2. 声明`public、protected、private`的顺序可以任意
+   3. 在一个类中，`public、protected、private`可以出现多次，每个限定符的有效范围到出现另一个限定符或类结束为止。但为了使程序清晰，应该每种限定符只出现一次
 
 ---
 
@@ -310,7 +420,7 @@ b = 25;
 
 ---
 
-## (\*)new 关键字
+## new 关键字 (\*)
 
 ### 1. new 关键字是 C++用来动态分配内存的主要方式
 
@@ -408,7 +518,7 @@ int main() {
 
 2. const 修饰的变量仍然存储在堆区或栈区中，从内存分布的角度讲，和普通变量没有区别。const 修饰的变量并非不可更改，C++本身就提供了`mutable`关键字用来修改 const 修饰的变量，从汇编的角度讲，const 修饰的变量也是可以修改的
 
-## (\*\*)auto 关键字
+## auto 关键字(\*\*)
 
 关于输出 auto 推断的变量类型 -- boost 库
 
@@ -530,7 +640,7 @@ int main() {
 
 ---
 
-## （\*）静态变量，指针和引用
+## 静态变量，指针和引用(\*)
 
 > 变量的存储位置有三种，分别是静态变量区，栈区，堆区。
 
@@ -575,9 +685,76 @@ int main() {
 
 ```
 
+### 关于 const 和 pointer
+
+常见表达式
+
+```c++
+1. const int p; // p is a int const. p是一个int型常量 这个很简单
+
+2. const int *p; //p is a point to int const. p是一个指针，指向int型常量。即p是一个指向int型常量的指针。
+
+3. int const *p; //与2相同 const int 和 int const 是一样的意思。《C++ primer》中采用第一种写法。
+
+4. int * const p; // p is a const point to int. p是一个指向int的const指针
+
+5. const int * const p; //p is a const point to int const. p是一个指向int型常量的const指针。
+
+6. int const * const p; //同5
+```
+
+1. 指向常量的指针不能用于改变其所指对象的值
+
+```c++
+const double pi = 3.14; // pi是一个常量，不能改变它的值
+
+const double *cptr = &pi; //cptr指向pi,注意这里的const不能丢，因为普通指针不能指向常量对象，即，不能用非const变量初始化指向常量的指针.
+
+*cptr = 3.33;  //错误,试图改变所指对象的值。不能改变指针所指对象的值
+
+cout << cptr << endl；//输出cptr的值
+
+//虽然不能改变其所指对象的值，但是它可以指向别的常量对象
+//这样的话 指针的值（也就是存放在指针中的那个地址）也会改变 比如：
+cosnt double pi2 = 6.28;
+
+cptr = &pi2; //正确  *cptr为6.28
+
+cout << cptr << endl； //cptr的值变了
+```
+
+2. const 指针表示指针本身是一个常量。由于指针是对象，因此就像其他对象一样，允许把指针本身定位常量。const 指针必须初始化，并且一旦初始化，const 指针的值就不能改变了。const 指针的值到底是什么？起始就是指针所指向的地址，这个地址就是一个对象的地址
+
+3. 把`*`放在 const 前面就表示指针是个常量，这样的书写行使意味着不变的是指针本身的值，而不是指向的对象的值(内容)，也就是说，这个地址不能再变了，但是我们可以改变那个地址上存放的内容
+
+```c++
+int i = 42;
+
+int * cosnt p = &i； //p是一个const指针
+
+cosnt int i2 = 44;
+
+p = &i2; //错误 不能改变p的值，即地址
+
+//虽然不能给p赋值，也就是不能改变p的值，但是我们可以改变p所指的对象的内容。比如：
+
+*p = 46; //正确 此时i为46
+复制代码
+```
+
+4. 指针本身是一个常量(即 const 指针)并不意味着不能通过指针修改其所指对象的值，能否这样做完全依赖于所指对象的类型
+
+```c++
+const double pi = 4.4;
+
+const double *const pip = &pi // pip是一个指向常量对象的const指针
+```
+
+pip 是一个指向常量的常量指针，则不论 pip 所指的对象值还是 pip 自己存储的那个地址都不能改变。
+
 ---
 
-## （\*\*）左值，右值，左值引用，右值引用
+## 左值，右值，左值引用，右值引用(\*\*)
 
 ### 1. 左值和右值
 
@@ -659,7 +836,9 @@ int main() {
 
 ```
 
-## (\*\*)move 函数，临时对象
+---
+
+## move 函数，临时对象(\*\*)
 
 ### 1. move 函数
 
@@ -703,7 +882,9 @@ int main()
 }
 ```
 
-## (\*\*)可调用对象
+---
+
+## 可调用对象(\*\*)
 
 如果一个对象可以使用调用运算符"()",()里面可以放参数，这个对象就是可调用对象。
 
@@ -790,6 +971,68 @@ int main() {
 3. ->ret 表示指定 lambda 的返回值，如果不指定，lambda 表达式也会推断出一个返回值的
 
 4. {}就是函数体了，和普通函数的函数体功能完全相同
+
+```c++
+#include <iostream>
+
+int main() {
+  int i = 10;
+  auto t = [&i](int element)-> int{
+    std::cout << i << std::endl;
+    std::cout << "hello world" << std::endl;
+    std::cout << element << std::endl;
+    return element - 1;
+  }(100);
+
+  std::cout << t << std::endl;
+
+  return 0;
+}
+
+```
+
+```c++
+#include <functional> // NOTE: 可以提供函数指针完全相同的效果
+#include <iostream>
+using pf_type = void (*)(int);
+using func_type = std::function<void(int)>;
+
+void test() { std::cout << "This is test()function " << std::endl; }
+
+void myFunc(pf_type pf, int i) { pf(i); }
+
+void newFunc(func_type fun, int i) { fun(i); }
+
+int main() {
+  int i = 10;
+
+  myFunc(
+      [](int i) { // NOTE:
+                  // myFunc参数里面有一个函数指针和一个整型变量，lambda表达式用过函数指针被调用
+        std::cout
+            << i
+            << std::
+                   endl; // NOTE:
+                         // 当一个lambda表达式作为一个函数指针对象时，它的捕获列表必须为空
+        std::cout << "lambda" << std::endl;
+      },
+      200);
+
+  newFunc(
+      [i](int i1) { // NOTE:
+                    // 使用<functional>库的函数指针，使得lambda可以捕获变量
+        std::cout << i << std::endl;
+        std::cout << i1 << std::endl;
+      },
+      100);
+
+  return 0;
+}
+
+
+```
+
+---
 
 # 稀碎的小知识点
 
