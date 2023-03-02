@@ -48,6 +48,7 @@
 5. contrast $n.$ 差别 $v.$ 对比
 6. conserve $n.$ 果酱 $v.$ 保存
 
+
 ## D
 
 1. dedicate $v.$ 致力于
@@ -140,6 +141,23 @@
 ## Y
 
 ## Z
+
+
+
+## synonym
+
+
+1. zucheng
+
+```
+1. compose
+2. comprise
+3. consist of
+4. make up of
+```
+
+
+
 
 ## Phase
 
