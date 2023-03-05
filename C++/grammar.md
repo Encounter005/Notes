@@ -7,6 +7,12 @@
     * [2. 类的权限修饰](#2-类的权限修饰)
     * [3. This , 常成员函数与常对象](#3-this--常成员函数与常对象)
       * [this 关键字](#this-关键字)
+      * [常成员函数、常对象](#常成员函数常对象)
+    * [inline, mutable, default, delete](#inline-mutable-default-delete)
+      * [1. inline 关键字](#1-inline-关键字)
+      * [2. mutable 关键字](#2-mutable-关键字)
+      * [3. default 关键字](#3-default-关键字)
+      * [4. delete 关键字](#4-delete-关键字)
   * [函数重载 overload](#函数重载-overload)
   * [内联函数](#内联函数)
   * [new 关键字 (\*)](#new-关键字-)
@@ -254,6 +260,259 @@ class Base
 1. 什么是 this
 
 编译器将 this 解释为指向函数所作用的对象的指针
+
+```c++
+#include <iostream>
+
+class Test {
+private:
+  std::string name;
+  unsigned old;
+
+public:
+  Test(const std::string &name_, unsigned old_);
+  ~Test();
+
+  void outPut() const {
+    // std::cout << "name = " << name << " old = " << old;
+    std::cout << "name = " << this->name << " old = " << this->old;
+  }
+};
+
+Test::Test(const std::string &name_, unsigned old_) : name(name_), old(old_) {}
+
+Test::~Test() {}
+
+int main() {
+  Test test("cxy", 100);
+  test.outPut();
+  return 0;
+}
+
+```
+
+当然，这么说并非完全正确，this 是一个关键字，只是我们将它当做指针理解罢了
+
+#### 常成员函数、常对象
+
+> 在大型程序中，尽量加上 const 关键字可以减少很多不必要的错误
+
+1. 常成员函数就是无法修改成员变量的函数，可以理解为将 this 指针指向对象用 const 修饰的函数
+2. 常对象就是用 const 修饰的对象，定义好之后就再也不需要修改成员变量的值了
+
+常成员函数注意事项
+
+> 因为类成员函数已将 this 指针省略了，只能在函数后面加 const 关键字来实现无法修改类成员变量的功能了
+
+```c++
+  void outPut()const { std::cout << this->name << ' ' << this->old << std::endl; }
+
+```
+
+1. 注意: 常函数无法调用普通函数，否则常函数的这个“常”字还有什么用？
+2. 成员函数能写作常成员就尽量写作常成员函数，可以减少出错几率
+3. 同名的常成员函数和普通成员函数是可以重载的，常量对象会优先调用常成员函数，普通对象会优先调用普通成员函数
+
+```c++
+#include <iostream>
+
+class Test {
+public:
+  Test(const std::string &name_, unsigned old);
+  ~Test();
+  void outPut() const {
+    std::cout << this->name << ' ' << this->old << std::endl;
+  }
+  void outPut() { std::cout << this->name << ' ' << this->old << std::endl; }
+
+private:
+  std::string name;
+  unsigned old;
+};
+
+Test::Test(const std::string &name_, unsigned old_) : name(name_), old(old_) {}
+
+Test::~Test() {}
+
+int main() {
+  const Test test("cxy", 1010);
+  test.outPut();
+  Test test2("yxc" , 1000);
+  test2.outPut();
+  return 0;
+}
+
+```
+
+常对象注意事项
+
+1. 常对象不能调用普通函数
+2. 常函数在大型程序中真的很重要，很多时候我们都需要创建好就不再改变的对象，不要怕麻烦
+
+总结： 常成员函数和常对象要多用
+
+### inline, mutable, default, delete
+
+> `inline`和`mutable`只要知道就好
+> `default`和`delete`关键字是需要掌握的
+
+#### 1. inline 关键字
+
+1. inline 关键字有什么作用
+
+   1. 在函数声明或者定义中函数返回类型加上关键字`inline`就可以把函数指定为内联函数，关键字`inline`必须与函数定义放在一起才能使函数成为内联，仅仅`inline`放在函数声明前不起任何作用
+   2. 内联函数的作用，普通函数在调用时需要给函数分配栈空间以供函数执行，压栈等操作会影响成员运行效率，于是 C++提供了内联函数将函数体放到需要调用函数的地方，用空间换效率
+
+```c++
+#include <iostream>
+
+class Test {
+public:
+  void outPut();
+};
+
+inline void Test::outPut() { std::cout << "hello world" << std::endl; }
+
+int main() {
+
+  Test test;
+  test.outPut();
+  return 0;
+}
+
+```
+
+2. inline 关键字的注意事项
+
+inline 关键字只是一个建议，开发者建议编译器将成员函数当做内联函数，一般适合搞内联情况编译器都会采纳建议
+
+3. inline 关键字总结
+
+使用 inline 关键字就是一种提高效率，但加大编译后文件大的方式，现在很少用了
+
+#### 2. mutable 关键字
+
+> 一般来说只有在统计函数调用次数才会用到
+
+1. mutable 关键字的作用
+
+   1. `mutable`意为可变的，与 const 相对，被`mutable`修饰的成员变量，永远处于可变的状态，即使处于一个常函数中，该变量也可以被更改
+
+```c++
+#include <iostream>
+
+class Test {
+
+public:
+  void outPut() const;
+  mutable unsigned outPutCallcnt = 0;
+};
+
+void Test::outPut() const {
+  ++outPutCallcnt;
+  std::cout << "hello world" << std::endl;
+}
+
+int main() {
+  Test test;
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+  test.outPut();
+
+  std::cout << test.outPutCallcnt << std::endl;
+
+  return 0;
+}
+
+```
+
+2. mutable 关键字的注意事项
+
+   1. `mutable`是一种万不得以的写法，但一个程序不得不使用`mutable`关键字时，可以认为这部分程序是一个糟糕的设计
+   2. `mutable`不能修饰静态成员变量和常成员变量
+
+3. 总结
+
+`mutalbe`关键字是一种没有办法的办法，设计时应该尽量避免
+
+#### 3. default 关键字
+
+1. default 关键字的作用
+
+   1. 在编译时不会生成默认构造函数便于书写
+   2. 也可以对默认复制构造函数，默认的复制运算符和默认的析构函数使用，表示使用的是系统默认提供的函数，可以使代码更加明显
+   3. 现代 C++中，哪怕没有构造函数，也推荐将构造函数用`default`关键字来标记，可以让代码看起来更加直观，方便
+
+```c++
+#include <iostream>
+
+class Test {
+public:
+  Test(unsigned old_) : old(old_) {}
+  Test(const Test& test) = default;
+  Test() = default;
+  Test& operator=(const Test& test) = default;
+  ~Test() = default;
+
+  unsigned old;
+};
+
+
+int main() {
+
+
+  return 0;
+}
+
+```
+
+2. 总结
+
+`default`关键字还是推荐使用，在现代 C++代码中，如果需要使用一些默认的函数，推荐用`default`标记出来
+
+#### 4. delete 关键字
+
+1. delete 关键字的作用：C++会为程序生成默认构造函数，默认复制构造函数，默认重载赋值运算符  
+   很多情况下，我们并不希望这些默认的函数被生成，在 C++11 以前，只能有将此函数声明为私有函数或是将函数只声明不定义两种方式
+
+
+```c++
+#include <iostream>
+
+class Test {
+public:
+  Test(unsigned old_) : old(old_) {}
+  Test(const Test& test) = delete;
+  Test() = delete;
+  Test& operator=(const Test& test) = delete;
+  ~Test() = delete;
+
+  unsigned old;
+};
+
+
+int main() {
+
+
+  return 0;
+}
+
+```
+
+2. 总结
+
+`delete`关键字还是推荐使用的，在现代 C++代码中，如果不希望一些函数默认生成，就用 delete 表示，这个功能还是很有用的，例如单例模式中
 
 ---
 
