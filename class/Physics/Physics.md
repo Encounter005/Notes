@@ -1,4 +1,4 @@
-# 大学物理
+﻿# 大学物理
 
 ----
 
@@ -165,6 +165,14 @@ $$
 $$
 
 
+##### 旋转矢量图
+将$x = A\cos (\omega t + \phi)$ 映射到几何图形上
+![Screenshot_20230310_081139_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/03/10/RSKkMmpc.jpg)
+
+
+
+例题1. 已知一个质点沿$x$轴方向作简谐运动，振幅$A = 0.06m$，周期$T = 2s$，初始时刻质点位于$x_{0} = 0.03m$处且向$x$轴正方向运动。求： (1)初相位 (2)在$x = -0.03m$处且向$x$轴负方向运动时物体回到平衡位置所需要的最短时间[例题1答案](#4_4.2_problem1)
+
 ----
 
 ## 习题答案
@@ -186,3 +194,42 @@ x = R\sin{\omega t}, y = R\cos{\omega t}\\
 轨道方程可归纳为：\\
 x^2 + y^2 = 9
 $$
+
+
+### 4. 机械振动与机械波
+
+#### 4.2 简谐运动方程
+
+<span id='4_4.2_problem1'></span>
+
+例题1.
+(1)
+$$
+由题意得
+
+\omega = \frac{2\pi}{T} \\ 
+
+$$
+
+由题意得，初相位在第四象限
+![Screenshot_20230310_083845_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/03/10/l5ALF4O2.jpg)
+
+$$
+所以 \phi = -\frac{\pi}{3} = \frac{5\pi}{3} \\
+$$
+
+(2)
+由题意得，质点位于第二象限的$M_{0}$,移动到平衡位置$M_{2}$
+![Screenshot_20230310_085951_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/03/10/rcyqipYq.jpg)$$
+
+由图可得 \theta = \frac{\pi}{3} \\
+
+\omega \Delta t = \frac{\pi}{3} + \frac{\pi}{2} = \frac{5\pi}{6} \\
+
+所以\Delta t = \frac{5}{6}s
+
+
+$$
+
+
+
