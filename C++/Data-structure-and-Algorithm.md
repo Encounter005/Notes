@@ -1,5 +1,7 @@
 # 数据结构
+
 <!--toc:start-->
+
 - [数据结构](#数据结构)
   - [目录](#目录)
   - [链表](#链表)
@@ -12,7 +14,7 @@
   - [队列](#队列)
     - [数组模拟](#数组模拟)
     - [单调队列](#单调队列)
-  - [Trie树](#trie树)
+  - [Trie 树](#trie树)
   - [并查集](#并查集)
   - [堆](#堆)
     - [小根堆](#小根堆)
@@ -21,8 +23,8 @@
     - [如何手写一个堆](#如何手写一个堆)
   - [哈希表](#哈希表)
     - [存储结构](#存储结构)
-        - [1. 开放寻址法](#1-开放寻址法)
-        - [2. 拉链法](#2-拉链法)
+      - [1. 开放寻址法](#1-开放寻址法)
+      - [2. 拉链法](#2-拉链法)
     - [字符串哈希方式](#字符串哈希方式)
 - [算法](#算法)
   - [排序](#排序)
@@ -34,7 +36,7 @@
     - [高精度减法](#高精度减法)
     - [高精度乘法](#高精度乘法)
     - [高精度除法](#高精度除法)
-  - [KMP算法](#kmp算法)
+  - [KMP 算法](#kmp算法)
   - [位运算](#位运算)
   - [离散化](#离散化)
   - [双指针](#双指针)
@@ -62,24 +64,16 @@
     - [深度优先遍历](#深度优先遍历)
     - [宽度优先遍历](#宽度优先遍历)
   - [拓补排序](#拓补排序)
-<!--toc:end-->
-
-
+  <!--toc:end-->
 
 ## 目录
-***
 
-
-
-
-
+---
 
 ## 链表
 
 ![微信图片_20230101222021.png](https://img1.imgtp.com/2023/02/18/Hf9jMWkb.png)
 ![edrtfyghujk.png](https://img1.imgtp.com/2023/02/18/0UNbeGFA.png)
-
-
 
 > 初始化
 
@@ -95,9 +89,8 @@ struct ListNode
 
 };
 ```
+
 > 遍历链表 + 添加头节点 + 删除一个节点
-
-
 
 ```c++
 
@@ -127,7 +120,8 @@ int main()
 }
 ```
 
->  生成链表
+> 生成链表
+
 ```c++
 class LinkedList{
 
@@ -151,25 +145,29 @@ class LinkedList{
     }
 
 ```
+
 > 反转链表
+
 ```c++
 ListNode *reverseLinked(ListNode *head)
 {
-	ListNode *preNode = NULL;
-	ListNode *curNode = head;
-	
-	while(curNode != NULL)
-	{
-		ListNode *nextNode = curNode->next;
-		curNode->next = preNode;
-		preNode = curNode;
-		curNode = nextNode;
-	}
-	//preNode变成头节点
-	return preNode;
+ ListNode *preNode = NULL;
+ ListNode *curNode = head;
+
+ while(curNode != NULL)
+ {
+  ListNode *nextNode = curNode->next;
+  curNode->next = preNode;
+  preNode = curNode;
+  curNode = nextNode;
+ }
+ //preNode变成头节点
+ return preNode;
 }
 ```
-> 移除值为val的所有节点
+
+> 移除值为 val 的所有节点
+
 ```c++
  ListNode* removeElements(ListNode *head, int val){
 
@@ -193,7 +191,9 @@ ListNode *reverseLinked(ListNode *head)
         return returnNode;
     }
 ```
+
 > 合并两个有序的链表
+
 ```c++
  ListNode *mergeTwoLists(ListNode *headA, ListNode *headB){
 
@@ -219,8 +219,10 @@ ListNode *reverseLinked(ListNode *head)
         return mergedHead;
     }
 ```
+
 > 找到两个链表的交点
-[两个链表的第一个公共节点](200~https://www.acwing.com/problem/content/62/)
+> [两个链表的第一个公共节点](200~<https://www.acwing.com/problem/content/62/)>
+
 ```c++
 ListNode *findIntersectionNode(ListNode *headA, ListNode*headB){
 
@@ -264,10 +266,13 @@ ListNode *findIntersectionNode(ListNode *headA, ListNode*headB){
         return NULL;
     }
 ```
+
 ## 静态链表
 
 ### 单链表
+
 [单链表](https://www.acwing.com/problem/content/828/)
+
 ```c++
 #include<iostream>
 using namespace std;
@@ -319,7 +324,9 @@ void Remove(int k)
 ```
 
 ### 双链表
+
 [双链表](https://www.acwing.com/problem/content/829/)
+
 ```c++
 #include<iostream>
 using namespace std;
@@ -360,8 +367,11 @@ void Remove(int k)
 }
 
 ```
+
 ## 栈
+
 ### 数组模拟
+
 ```c++
 // tt表示栈顶
 int stk[N], tt = 0;
@@ -382,10 +392,13 @@ if (tt > 0)
 }
 
 ```
+
 ### 单调栈
+
 [单调栈](https://www.acwing.com/problem/content/832/)
 
 ![1616738kj1l431.jpg](https://img1.imgtp.com/2023/02/18/jgudFwiz.jpg)
+
 > 常见模型：找出每个数左边离它最近的比它大/小的数
 
 ```c++
@@ -397,9 +410,13 @@ stk[ ++ tt] = i;
 }
 
 ```
+
 ## 队列
+
 ### 数组模拟
+
 > 1. 普通队列
+
 ```c++
 // hh 表示队头，tt表示队尾
 int q[N], hh = 0, tt = -1;
@@ -419,8 +436,8 @@ if (hh <= tt)
 
 }
 ```
-> 2. 循环队列
 
+> 2. 循环队列
 
 ```c ++
 // hh 表示队头，tt表示队尾的后一个位置
@@ -444,10 +461,13 @@ if (hh != tt)
 }
 
 ```
+
 ### 单调队列
+
 [单调队列](https://www.acwing.com/problem/content/156/)
 
 ![1616738kjl431.jpg](https://img1.imgtp.com/2023/02/18/IlTEwaLG.jpg)
+
 > 常见模型：找出滑动窗口中的最大值/最小值
 
 ```c++
@@ -460,14 +480,14 @@ for (int i = 0; i < n; i ++ )
 }
 
 ```
-## Trie树
+
+## Trie 树
 
 ![Screenshot_20230101_174144.png](https://img1.imgtp.com/2023/02/18/wJxs07ix.png)
 
+[Trie 字符串统计](https://www.acwing.com/problem/content/837/)
+[Trie 存储整数](https://www.acwing.com/problem/content/145/)
 
-
-[Trie字符串统计](https://www.acwing.com/problem/content/837/)
-[Trie存储整数](https://www.acwing.com/problem/content/145/)
 > 高效的存储和查找字符串集合的数据结构
 
 ```c++
@@ -516,29 +536,26 @@ int query(char str[])
 
 ## 并查集
 
-
 ![Screenshot_20230101_174216.png](https://img1.imgtp.com/2023/02/18/5Kr3MoWp.png)
 
 [合并集合](https://www.acwing.com/problem/content/838/)
 
 [连通块中点的数量](https://www.acwing.com/problem/content/839/)
 
-
 > 将两个集合合并
 > 询问两个元素是否在一个集合当中
-
 
 ```markdown
 每一个集合用一棵树来表示
 树根的编号就是整个集合的编号
 每个节点存储它的父节点
-p[x]表示x的父节点
+p[x]表示 x 的父节点
 ```
-> Q1：  如何判断树根： if(p[x] == x)
-> Q2：如何求x的集合编号：while(p[x] != x) x = p[x]
-> Q3：如何合并两个集合： p[x]是x的集合编号，p[y]是y的集合编号 p[x] = y;
-> 优化：路径压缩
 
+> Q1： 如何判断树根： if(p[x] == x)
+> Q2：如何求 x 的集合编号：while(p[x] != x) x = p[x]
+> Q3：如何合并两个集合： p[x]是 x 的集合编号，p[y]是 y 的集合编号 p[x] = y;
+> 优化：路径压缩
 
 ```C++
 #include<iostream>
@@ -559,7 +576,7 @@ int main()
 {
     scanf("%d%d" , &n , &m);
     for(int i = 1; i <= n; i ++) p[i] = i;
-    
+
     while(m --)
     {
         char op[2];
@@ -576,30 +593,37 @@ int main()
     return 0;
 }
 ```
+
 ## 堆
 
 > 完全二叉树
 
 ### 小根堆
+
 ![20190412193512956.png](https://img1.imgtp.com/2023/02/18/5TAILlqa.png)
+
 ### 大根堆
+
 ![20190412193413102.png](https://img1.imgtp.com/2023/02/18/BLbwtwTA.png)
+
 ### 堆的存储
 
 ![Screenshot_20221229_203502.png](https://img1.imgtp.com/2023/02/18/rlFxwPCq.png)
+
 ### 如何手写一个堆
-1. 插入一个数  ``` heap[++ size] = x; up(size); ```
-2. 求集合当中的最小值 ``` heap[1] ```
-3. 删除最小值 ``` heap[1] = heap[size]; size --; down(1); ```
-4. 删除任意一个元素 ``` heap[k] = heap[size]; size --; down(k); up(k); ```
-5. 修改任意一个元素 ``` heap[k] = x; down(k); up(k); ```
+
+1. 插入一个数 `heap[++ size] = x; up(size);`
+2. 求集合当中的最小值 `heap[1]`
+3. 删除最小值 `heap[1] = heap[size]; size --; down(1);`
+4. 删除任意一个元素 `heap[k] = heap[size]; size --; down(k); up(k);`
+5. 修改任意一个元素 `heap[k] = x; down(k); up(k);`
 
 [模拟堆](https://www.acwing.com/problem/content/841/)
 
 ```c++
 down(int x)
 {
-  int t = x; //用于存储最小节点的下标 
+  int t = x; //用于存储最小节点的下标
   if(x * 2 <= size && x * 2 <  h[t]) t = x * 2;
   if(x * 2 + 1 <= size && x * 2 + 1 < h[t]) t = x * 2 + 1;
   if(u != t)
@@ -621,17 +645,23 @@ up(int x)
 ```
 
 ## 哈希表
+
 > 0~1e9 $\Rightarrow$ 0~1e5
+
 ### 存储结构
+
 [模拟散列表](https://www.acwing.com/problem/content/842/)
 [字符串哈希](https://www.acwing.com/problem/content/843/)
 
 ##### 1. 开放寻址法
+
 ![Screenshot_20221230_222421.png](https://img1.imgtp.com/2023/02/18/AmhLaxkw.png)
+
 1. 找大于最大值的一个质数
 2. 插入 && 查找操作
-> 先求哈希值 ```int k = (x % N + N) % N;```
-> 将哈希值插入h[k]，如果这个点上有存，就换下一个，如果到末尾都有值，就从下标0的位置开始找
+   > 先求哈希值 `int k = (x % N + N) % N;`
+   > 将哈希值插入 h[k]，如果这个点上有存，就换下一个，如果到末尾都有值，就从下标 0 的位置开始找
+
 ```c++
 #include<iostream>
 #include<cstring>
@@ -682,7 +712,7 @@ int main()
         cin >> op >> x;
         k = find(x);
         if(op == "I") h[k] = x;
-        else 
+        else
         {
             if(h[k] != null) puts("Yes");
             else puts("No");
@@ -698,13 +728,12 @@ int main()
 
 ![Screenshot_20221230_211314.png](https://img1.imgtp.com/2023/02/18/F0oiyKb9.png)
 
-
 1. 找大于最大值的一个质数
 2. 插入操作
-> 先求哈希值 ```int k = (x % N + N) % N;```
-> 如果有两个数的哈希值一样(哈希冲突)，用单链表的方式存储
+   > 先求哈希值 `int k = (x % N + N) % N;`
+   > 如果有两个数的哈希值一样(哈希冲突)，用单链表的方式存储
 3. 查找操作
-> 遍历整个哈希表
+   > 遍历整个哈希表
 
 ```c++
 //h[N] 为哈希表
@@ -751,9 +780,10 @@ bool find(int x)
 ```
 
 ### 字符串哈希方式
-> 比kmp好使
-> 记录不能从0开始
-![Screenshot_20230106_195755.png](https://img1.imgtp.com/2023/02/18/a3X3ObmV.png)
+
+> 比 kmp 好使
+> 记录不能从 0 开始
+> ![Screenshot_20230106_195755.png](https://img1.imgtp.com/2023/02/18/a3X3ObmV.png)
 
 ```c++
 #include<iostream>
@@ -794,14 +824,16 @@ int main()
 
 ```
 
-
 # 算法
 
 ## 排序
+
 ### 快速排序
+
 > 用两个指针不断递归交换
 
 [快排](https://www.acwing.com/problem/content/787/)
+
 ```c++
 #include<iostream>
 using namespace std;
@@ -835,10 +867,13 @@ int main()
 }
 
 ```
+
 ### 归并排序
+
 > 分治思想
 
 [逆序对的数量](https://www.acwing.com/problem/content/790/)
+
 ```c++
 #include<iostream>
 using namespace std;
@@ -869,7 +904,9 @@ int main(){
 ```
 
 ### 堆排序
+
 [堆排序](https://www.acwing.com/problem/content/840/)
+
 > 将一堆数构建成小根堆或者大根堆
 > 每次求得最小值或者最大值后删除根节点
 
@@ -909,20 +946,21 @@ int main()
     //删除操作
     h[1] = h[Size];
     Size --;
-    down(1); 
+    down(1);
   }
 
   return 0;
 }
 ```
 
-
 ## 高精度运算
 
 > 模拟人类四则运算的过程
 
 ### 高精度加法
+
 [高精度加法](https://www.acwing.com/problem/content/793/)
+
 ```c++
 #include<iostream>
 #include<vector>
@@ -964,7 +1002,9 @@ int main()
 ```
 
 ### 高精度减法
+
 [高精度减法](https://www.acwing.com/problem/content/794/)
+
 ```c++
 #include<iostream>
 #include<vector>
@@ -1007,7 +1047,7 @@ int main()
     cin >> a >> b;
     for(int i = a.size() - 1; i >= 0; i --) A.push_back(a[i] - '0');
     for(int i = b.size() - 1; i >= 0; i --) B.push_back(b[i] - '0');
-    
+
     if(cmp(A , B))
     {
         auto C = sub(A , B);
@@ -1026,8 +1066,8 @@ int main()
 
 ```
 
-
 ### 高精度乘法
+
 [高精度乘法](https://www.acwing.com/problem/content/795/)
 
 ```c++
@@ -1067,7 +1107,9 @@ int main()
 ```
 
 ### 高精度除法
+
 [高精度除法](https://www.acwing.com/problem/content/796/)
+
 ```c++
 #include<iostream>
 #include<vector>
@@ -1090,8 +1132,8 @@ vector<int> div(vector<int> &A , int b , int &r)
    while(C.size() > 1 && C.back() == 0) C.pop_back();
    return C;
 }
-    
-    
+
+
 
 int main()
 {
@@ -1107,12 +1149,13 @@ int main()
 
 ```
 
-## KMP算法
+## KMP 算法
+
 > next[]数组 -- 找到最长的模式串相等的前缀和后缀
 > 快速匹配两个字符串
 
+[kmp 算法](https://www.acwing.com/problem/content/833/)
 
-[kmp算法](https://www.acwing.com/problem/content/833/)
 ```c++
 #include<iostream>
 usin namespace std;
@@ -1122,7 +1165,7 @@ char p[N]  , s[M];
 int ne[N];
 
 int main()
-{   
+{
     cin >> n >> p + 1 >> m >> s + 1;
 
 
@@ -1155,6 +1198,7 @@ int main()
 ```
 
 ## 位运算
+
 ![微信图片_20230101222016.jpg](https://img1.imgtp.com/2023/02/18/73U1u52i.jpg)
 [位运算](https://www.acwing.com/problem/content/803/)
 
@@ -1162,6 +1206,7 @@ int main()
 求n的第k位数字: n >> k & 1
 返回n的最后一位1：lowbit(n) = n & -n
 ```
+
 ```c++
 #include<iostream>
 using namespace std;
@@ -1191,9 +1236,11 @@ int main()
 ```
 
 ## 离散化
+
 > 遇到数轴，并在数轴上进行操作可以用
 
 ![321769773.jpg](https://img1.imgtp.com/2023/02/18/6RA4jHZF.jpg)
+
 ```c++
 vector<int> alls; // 存储所有待离散化的值
 sort(alls.begin(), alls.end()); // 将所有值排序
@@ -1213,16 +1260,18 @@ int find(int x) // 找到第一个大于等于x的位置
 }
 
 ```
+
 ## 双指针
+
 > 一种对暴力的优化，需要找到一种性质
 
 ## 二分
+
 > 可用在容器中找到符合条件的数
 
 ### 整数二分
 
 ![Screenshot_20230215_104956.png](https://img1.imgtp.com/2023/02/15/Qdhxm6Ir.png)
-
 
 ```c++
 bool check(int x) {/* ... */} // 检查x是否满足某种性质
@@ -1252,8 +1301,8 @@ int bsearch_2(int l, int r)
 
 
 ```
-### 浮点数二分
 
+### 浮点数二分
 
 ```c++
 bool check(double x) {/* ... */} // 检查x是否满足某种性质
@@ -1271,10 +1320,10 @@ double bsearch_3(double l, double r)
 }
 ```
 
-
 ## 前缀和
-> 新建一个数组用于存储原数组的前n项和
-![nwXML.png](https://c2.im5i.com/2023/02/02/nwXML.png)
+
+> 新建一个数组用于存储原数组的前 n 项和
+> ![nwXML.png](https://c2.im5i.com/2023/02/02/nwXML.png)
 
 ### 一维
 
@@ -1307,16 +1356,14 @@ int main() {
 }
 ```
 
-
 ### 二维
 
 ## 差分
+
 > 经常用于维护一个特定的区间
-![20201217174809672.png](https://img1.imgtp.com/2023/02/18/3nThneQf.png)
-![20201213222213524.png](https://img1.imgtp.com/2023/02/18/9fQAgQiU.png)
+> ![20201217174809672.png](https://img1.imgtp.com/2023/02/18/3nThneQf.png) > ![20201213222213524.png](https://img1.imgtp.com/2023/02/18/9fQAgQiU.png)
 
 ### 一维
-
 
 ```c++
 #include <algorithm>
@@ -1355,18 +1402,15 @@ int main() {
 
 ```
 
-
-
-
-
 ### 二维
-
 
 ![20201214201734653.png](https://img1.imgtp.com/2023/02/18/umJspYCq.png)
 ![20201216215336857.png](https://img1.imgtp.com/2023/02/18/JoBcD4z9.png)
+
 ## 区间合并
 
 ![321hbjkm9773.jpg](https://img1.imgtp.com/2023/02/18/5ZmJlCxk.jpg)
+
 ```c++
 // 将所有存在交集的区间合并
 void merge(vector<PII> &segs)
@@ -1390,11 +1434,12 @@ void merge(vector<PII> &segs)
 }
 ```
 
-
 # 数学知识
+
 ## 斐波那契数列写法
 
 > 循环
+
 ```c++
 int search()
 {
@@ -1409,7 +1454,9 @@ int search()
     return 0;
 }
 ```
+
 > 递归
+
 ```
 int func(int n)
 {
@@ -1442,7 +1489,9 @@ void search()
 }
 
 ```
+
 ## 找最大公约数
+
 ```c++
 int lcm(int a , int b)
 {
@@ -1458,7 +1507,9 @@ int lcm(int a , int b)
 
 
 ```
+
 ## 找最小公倍数
+
 ```c++
 int gcd(int a , int b)
 {
@@ -1471,20 +1522,14 @@ int gcd(int a , int b)
 
 ```
 
-
 # 搜索与图论
 
 ## DFS(深度优先搜索) && BFS(宽度优先搜索)
 
-
-
-
-
-
 ### BFS
 
 > BFS
-![Screenshot_20230108_204554.png](https://img1.imgtp.com/2023/02/18/Hj4X8U0p.png)
+> ![Screenshot_20230108_204554.png](https://img1.imgtp.com/2023/02/18/Hj4X8U0p.png)
 
 [走迷宫](https://www.acwing.com/problem/content/846/)
 
@@ -1541,16 +1586,16 @@ int main() {
 
 
 ```
-***
 
+---
 
 ### DFS
 
 > DFS
-![Screenshot_20230109_113350.png](https://img1.imgtp.com/2023/02/18/OSBqCfLG.png)
+> ![Screenshot_20230109_113350.png](https://img1.imgtp.com/2023/02/18/OSBqCfLG.png)
 
 [排列数字](https://www.acwing.com/problem/content/844/)
-[n皇后问题](https://www.acwing.com/problem/content/845/)
+[n 皇后问题](https://www.acwing.com/problem/content/845/)
 
 ```c++
 const int N = 10;
@@ -1565,7 +1610,7 @@ void dfs(int u)
         for(int i = 0; i < n; i ++) cout << path[i] << ' ';
         cout << endl;
     }
-    
+
     for(int i = 1; i <= n; i ++)
     {
         if(!st[i])
@@ -1592,7 +1637,8 @@ int main()
     return 0;
 }
 ```
-***
+
+---
 
 ## 树与图(有向图)
 
@@ -1601,11 +1647,11 @@ int main()
 ![Screenshot_20230120_173932.png](https://img1.imgtp.com/2023/02/18/Y0e3Y8sb.png)
 
 ### 存储
+
 [树的重心](https://www.acwing.com/problem/content/848/)
 
-
-
 #### 邻接表
+
 ```c++
 int h[N] , e[N] , ne[N] , idx;
 
@@ -1614,7 +1660,7 @@ int h[N] , e[N] , ne[N] , idx;
 #include<cstring>
 void init()
 {
-  memset(h , -1 , sizeof(h));  
+  memset(h , -1 , sizeof(h));
 }
 
 void add(int a , int b)
@@ -1628,8 +1674,7 @@ void add(int a , int b)
 add(a , b) , add(b , a);
 ```
 
-
-***
+---
 
 ### 深度优先遍历
 
@@ -1637,6 +1682,7 @@ add(a , b) , add(b , a);
 ![Screenshot_20230120_175256.png](https://img1.imgtp.com/2023/02/18/E70ECaDL.png)
 
 [树的重心](https://www.acwing.com/problem/content/848/)
+
 ```c++
 void dfs(int u)
 {
@@ -1657,7 +1703,6 @@ void dfs(int u)
 ![Screenshot_20230217_103432_com.huawei.browser.jpg](https://img1.imgtp.com/2023/02/17/vTe7vnRf.jpg)
 
 [图中点的层次](https://www.acwing.com/problem/content/description/849/)
-
 
 ```c++
 #include <algorithm>
@@ -1713,11 +1758,10 @@ int main() {
 
 ## 拓补排序
 
-> 图的bfs的应用，针对有向图
+> 图的 bfs 的应用，针对有向图
 
 ![Screenshot_20230217_113622_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/02/17/Nw4h8fR6.jpg)
 [有向图的拓补排序](https://www.acwing.com/problem/content/850/)
-
 
 ```c++
 #include <algorithm>
@@ -1767,6 +1811,154 @@ int main() {
           << ' '; // 由于所有的节点都入过队，值都存在队列里面，所以直接遍历队列就可以输出
   } else
     puts("-1");
+  return 0;
+}
+
+```
+
+## 最短路径问题
+
+![Screenshot_20230312_104917_com.acwing.app.acwing_app.jpg](https://img1.imgtp.com/2023/03/12/4g2az1HI.jpg)
+
+### Dijkstra
+
+#### 朴素版 Dijkstra
+
+[朴素 Dijkstra 求最短路径](https://www.acwing.com/problem/content/851/)
+
+![Screenshot_20230312_112015.png](https://img1.imgtp.com/2023/03/12/4EC70TJK.png)
+
+```c++
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+const int N = 510;
+
+int g[N][N]; // 稠密图用邻接矩阵来存
+int dist[N]; // 存储从1号点到每个点的最短距离
+bool st[N];  // 储存当前点的最短距离是否确定
+int n, m;
+
+int dijkstra() {
+  memset(dist, 0x3f, sizeof dist);
+  dist[1] = 0;
+
+  for (int i = 0; i < n; i++) {
+    int t = -1;
+    for (int j = 1; j <= n; j++)
+      if (!st[j] && (t == -1 || dist[t] > dist[j])) // 寻找还未确定最短路的点中路径最短的点
+        t = j;
+    st[t] = true;
+
+    for (int j = 1; j <= n; j++) // 依次更新每个点所到相邻的点路径值
+      dist[j] = min(dist[j], dist[t] + g[t][j]);
+  }
+  if (dist[n] == 0x3f3f3f3f)
+    return -1;
+  return dist[n];
+}
+
+int main() {
+
+  scanf("%d%d", &n, &m);
+
+  memset(g, 0x3f, sizeof g); // 初始化邻接矩阵
+
+  while (m--) {
+    int a, b, c;
+    scanf("%d%d%d", &a, &b, &c);
+    g[a][b] = min(g[a][b], c); // 由于存在重边和自环，要存储最短的距离
+  }
+
+  auto ans = dijkstra();
+  printf("%d", ans);
+
+  return 0;
+}
+
+```
+
+#### 堆优化版 Dijkstra
+
+> 通过堆可以在一堆数找出最大值/最小值的特点来优化寻找点与点之间最小距离的过程
+
+[堆优化 Dijkstra](https://www.acwing.com/problem/content/852/)
+![Screenshot_20230312_130609.png](https://img1.imgtp.com/2023/03/12/SRh0YyGD.png)
+
+```c++
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+using PII = pair<int, int>;
+
+const int N = 1e6 + 10;
+int h[N], ne[N], e[N], idx, dist[N],
+    w[N]; // w[]存的是权重，也就是每个点的距离 ，
+          // dist[]存的是每个点之间的最小距离
+int n, m;
+bool st[N];
+void add(int a, int b, int c) {
+  // 如果出现重边也没有关系，假设1->2有权重为2和3的边，再遍历到点1的时候2号点
+  // 的距离会更新两次放入堆中
+  // 这样堆中就会有冗余的点，但是在弹出的时候还是会弹出最小值(2 + x)
+  // (x为之前确定的最短路径) 并在st[]中记录一下，下一次弹出时会continue不会执行
+  e[idx] = b;
+  w[idx] = c;
+  ne[idx] = h[a];
+  h[a] = idx++;
+}
+
+int Dijkstra() {
+  memset(dist, 0x3f, sizeof dist);
+  dist[1] = 0;
+  priority_queue<PII, vector<PII>, greater<PII>> heap; // 定义小根堆
+
+  // 为什么heap里面存的是pair
+  // 首先小根堆需要根据距离来排序。
+  // 其次在从堆中拿出来的时候要知道这个点是哪个点，否则无法更新邻接点，所以第二个变量要存点
+  heap.push({0, 1});
+  // 由于pair排序会先根据first，如果first相等，再根据second
+  // 所以要根据距离来排序
+  while (heap.size()) {
+    auto t = heap.top(); // 取不在集合S中距离最短的点
+    heap.pop();
+    int ver = t.second, distance = t.first;
+    if (st[ver])
+      continue;
+
+    st[ver] = true;
+
+    for (int i = h[ver]; i != -1; i = ne[i]) {
+      int j = e[i];
+      if (dist[j] > distance + w[i]) {
+        dist[j] = distance + w[i];
+        heap.push({dist[j], j}); // i 只是个下标，e中存储的是i这个下标对应的点
+      }
+    }
+  }
+  if (dist[n] == 0x3f3f3f3f)
+    return -1;
+  return dist[n];
+}
+
+int main() {
+
+  cin >> n >> m;
+  memset(h, -1, sizeof h);
+  while (m--) {
+    int a, b, c;
+    cin >> a >> b >> c;
+    add(a, b, c);
+  }
+
+  int ans = Dijkstra();
+  cout << ans << endl;
+
   return 0;
 }
 
