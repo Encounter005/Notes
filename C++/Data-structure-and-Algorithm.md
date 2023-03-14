@@ -14,7 +14,7 @@
   - [队列](#队列)
     - [数组模拟](#数组模拟)
     - [单调队列](#单调队列)
-  - [Trie 树](#trie树)
+  - [Trie 树](#trie-树)
   - [并查集](#并查集)
   - [堆](#堆)
     - [小根堆](#小根堆)
@@ -36,7 +36,7 @@
     - [高精度减法](#高精度减法)
     - [高精度乘法](#高精度乘法)
     - [高精度除法](#高精度除法)
-  - [KMP 算法](#kmp算法)
+  - [KMP 算法](#kmp-算法)
   - [位运算](#位运算)
   - [离散化](#离散化)
   - [双指针](#双指针)
@@ -61,9 +61,11 @@
     - [DFS](#dfs)
   - [树与图(有向图)](#树与图有向图)
     - [存储](#存储)
+      - [邻接表](#邻接表)
     - [深度优先遍历](#深度优先遍历)
     - [宽度优先遍历](#宽度优先遍历)
   - [拓补排序](#拓补排序)
+  - [最短路径问题](#最短路径问题) - [Dijkstra](#dijkstra) - [朴素版 Dijkstra](#朴素版-dijkstra) - [堆优化版 Dijkstra](#堆优化版-dijkstra)
   <!--toc:end-->
 
 ## 目录
@@ -1824,6 +1826,8 @@ int main() {
 
 #### 朴素版 Dijkstra
 
+> 一定不可以有负权边
+
 [朴素 Dijkstra 求最短路径](https://www.acwing.com/problem/content/851/)
 
 ![Screenshot_20230312_112015.png](https://img1.imgtp.com/2023/03/12/4EC70TJK.png)
@@ -1963,3 +1967,78 @@ int main() {
 }
 
 ```
+
+### Bellman-Ford
+
+> 出现负权边，可以判断负环，但是时间复杂度高
+
+[有边数限制的最短路](https://www.acwing.com/problem/content/855/)
+
+![652_fa97a4d6a4-1.png](https://img1.imgtp.com/2023/03/14/biIGtVXj.png)
+
+```c++
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+const int N = 510, M = 1e5 + 10;
+
+struct Edge {
+  int a, b, w;
+} e[M];
+
+int n, m, k;            // k代表最短路径最多包含k条边
+int dist[N], backup[N]; // 备份数组，防止串联
+void bellman_ford() {
+  memset(dist, 0x3f, sizeof dist);
+  dist[1] = 0;
+
+  for (int i = 0; i < k; i++) { // k次循环
+    memcpy(backup, dist, sizeof dist);
+
+    for (int j = 0; j < m; j++) {
+      int a = e[j].a, b = e[j].b, w = e[j].w;
+      dist[b] = min(dist[b], backup[a] + w);
+      // 使用backup:
+      // 避免给a更新后立马更新b，这样b一次性最短路径就多了两条边出来了
+    }
+  }
+}
+
+int main() {
+
+  scanf("%d%d%d", &n, &m, &k);
+
+  for (int i = 0; i < m; i++) {
+    int a, b, w;
+    scanf("%d%d%d", &a, &b, &w);
+    e[i] = {a, b, w};
+  }
+
+  bellman_ford();
+
+  if (dist[n] > 0x3f3f3f3f / 2)
+    puts("impossible");
+  else
+    printf("%d", dist[n]);
+  return 0;
+}
+
+```
+
+#### 一些问题
+
+1. 为什么需要 backup[]数组
+
+- 为了避免如下的串联情况，在变数限制为一条的情况下，节点`3`的距离应该是 3，但是由于串联情况，利用`本轮跟心的节点2`更新了节点`3`的距离，所以现在及诶点`3`的距离是 2
+  ![652_8fb5d1dca4-2.png](https://img1.imgtp.com/2023/03/14/Tr9K5t5P.png)
+
+- 正确的做法是`用上轮节点2更新的距离-- 无穷大`，来更新节点`3`,再取最小值，所以节点`3`离起点的距离是 3
+  ![652_8fb5d1dca4-2.png](https://img1.imgtp.com/2023/03/14/Tr9K5t5P.png)
+
+2. 为什么是`dist[n] > 0x3f3f3f3f / 2`, 而不是`dist[n] > 0x3f3f3f3f`
+
+- `5`号节点距离起点的距离是无穷大，利用`5`号节点更新 n 号节点距离起点的距离，将得到$10^9 - 2$, 虽然小于$10^9$，但是并不存在最短路(在边数限制在 k 条的条件下)
+
+![652_1aa3df28a4-4.png](https://img1.imgtp.com/2023/03/14/31dsqYAD.png)
