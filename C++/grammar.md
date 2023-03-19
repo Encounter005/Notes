@@ -13,6 +13,13 @@
       * [2. mutable 关键字](#2-mutable-关键字)
       * [3. default 关键字](#3-default-关键字)
       * [4. delete 关键字](#4-delete-关键字)
+    * [友元类和友元函数](#友元类和友元函数)
+      * [1. 友元的介绍，友元就是可以让另一个类或函数访问私有成员的简单写法](#1-友元的介绍友元就是可以让另一个类或函数访问私有成员的简单写法)
+      * [2. 注意](#2-注意)
+    * [(\*\*)重载运算符](#重载运算符)
+      * [1. 重载运算符的作用](#1-重载运算符的作用)
+      * [注意](#注意)
+      * [例子](#例子)
   * [函数重载 overload](#函数重载-overload)
   * [内联函数](#内联函数)
   * [new 关键字 (\*)](#new-关键字-)
@@ -486,7 +493,6 @@ int main() {
 1. delete 关键字的作用：C++会为程序生成默认构造函数，默认复制构造函数，默认重载赋值运算符  
    很多情况下，我们并不希望这些默认的函数被生成，在 C++11 以前，只能有将此函数声明为私有函数或是将函数只声明不定义两种方式
 
-
 ```c++
 #include <iostream>
 
@@ -513,6 +519,102 @@ int main() {
 2. 总结
 
 `delete`关键字还是推荐使用的，在现代 C++代码中，如果不希望一些函数默认生成，就用 delete 表示，这个功能还是很有用的，例如单例模式中
+
+### 友元类和友元函数
+
+#### 1. 友元的介绍，友元就是可以让另一个类或函数访问私有成员的简单写法
+
+```c++
+#include <iostream>
+class Test {
+  friend class Test2;
+  friend void outPut(const Test &test);
+
+private:
+  std::string name;
+  unsigned old;
+};
+
+class Test2 {
+public:
+  void outPut(const Test &test) {
+    std::cout << test.name << ' ' << test.old << std::endl;
+  }
+};
+
+void outPut(const Test &test) {
+  std::cout << test.name << ' ' << test.old << std::endl;
+}
+
+int main() { return 0; }
+
+```
+
+#### 2. 注意
+
+1. 友元函数会破坏封装性，一般不推荐使用，所带的方便写几个接口函数就解决了
+2. `某些运算符的重载必须用到友元的功能，这才是友元的真正用途`
+
+总结: 友元平常并不推荐使用，不要再纠结友元的语法，只要可以用友元写出必须用友元的重载运算符的就可以了
+
+### (\*\*)重载运算符
+
+#### 1. 重载运算符的作用
+
+1. 很多时候我们想让类对象也能像其他基础类型的对象一样进行基础操作，比如"+", "-", "\*" ,"/", 也可以使用某些运算符"=" , ">>" ，"<<", "()" , "{}", 但是一般类即使编译器可以识别这些运算符，类对象也无法对这些运算符做出应对，我们必须对类对象定义处理这些运算符的方式
+
+2. C++提供了定义这些行为的方式，就是`operator`运算符来定义运算符的行为，`operator`是一个关键字，告诉编译器我要重载运算符了
+
+#### 注意
+
+1. 我们只能重载 C++已有的运算符，所以无法将`**`这个运算符定义为指数的形式，因为 C++根本没有`**`这个运算符
+
+2. C++重载运算符不能改变运算符的元数，`元数`这个概念就是指一个运算符对应的对象数量，比如`+`必须为`a + b` ,也就是说`+`必须有两个对象,那么`+`就是二元运算符。比如`++`运算符，就必须写为`a++`，也就是一元运算符
+
+#### 例子
+
+1. 一元运算符重载
+
+```c++
+++ ， --；
+[]
+()
+>>， <<
+```
+
+```c++
+#include <iostream>
+#include <vector>
+
+class Test {
+public:
+  unsigned count = 0;
+  void operator++() { ++count; }
+  void operator--() { --count; }
+  void operator()() { std::cout << "hello world" << std::endl; }
+  void operator()(const std::string &str) const {
+    std::cout << str << std::endl;
+  }
+  int operator[](unsigned i) { return ivec[i]; }
+
+  std::vector<int> ivec{1, 2, 3, 4, 5, 6};
+};
+
+int main() {
+  Test test;
+  ++test;
+  std::cout << test.count << std::endl;
+  std::cout << --test.count << std::endl;
+  // std::cout << test.ivec.size() << std::endl;
+  for (auto x : test.ivec)
+    std::cout << x << ' ';
+  puts("");
+  test();
+  test("cxy");
+  return 0;
+}
+
+```
 
 ---
 
