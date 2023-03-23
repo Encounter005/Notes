@@ -34,38 +34,57 @@
 
 ## A
 
-1. attachment $n.$ 附件
-2. appropriate $adj.$ 适当的
+1. attachment $n. 附件$
+2. appropriate $adj.适当的$
+3. authentic $adj. 真正的$
+4. adversity $n. 逆境$
+5. autonomous $adj. 自治的$
 
 ## B
 
 ## C
 
-1. commodity $n.$ 商品
-2. conquer $v.$ 征服
-3. curb $n.$ 路边 $v.$ 克制 抑制
-4. crush $v.$ 压碎
-5. contrast $n.$ 差别 $v.$ 对比
-6. conserve $n.$ 果酱 $v.$ 保存
-
+1. commodity $n. 商品$
+2. conquer $v. 征服$
+3. curb $n. 路边 v. 克制 抑制$
+4. crush $v. 压碎$
+5. contrast $n.差别 v. 对比$
+6. conserve $n.果酱 v. 保存$
+7. courage $n. 勇气$
+8. creep $v. 爬行$ creeping $adj. 毛骨悚然的$
+9. compassionate $adj. 富有同情心的$
+10. chord $n. 合唱班$
+11. catastrophic $adj. 灾难的$
 
 ## D
 
-1. dedicate $v.$ 致力于
-2. dismiss $v.$ 开除 解雇
-3. dispose $v.$ 外置 部署
-4. discriminate $v.$ 区别对待 歧视
-5. disclose $v.$ 揭示
-6. discount $n.$ 折扣 $v.$ 打折
-7. dispute $n.$ 争议 $v.$ 争议
-8. deceive $v.$ 欺骗
+1. dedicate $v. 致力于$
+2. dismiss $v. 开除 解雇$
+3. dispose $v. 外置 部署$
+4. discriminate $v. 区别对待 歧视$
+5. disclose $v. 揭示$
+6. discount $n. 折扣$ $v. 打折$
+7. dispute $n. 争议$ $v. 争议$
+8. deceive $v. 欺骗$
+9. depiction $n. 描述$
+10. diminish $v. 减少$
+11. drow $v. 淹死$
+12. dysfunctional $adj. 机能失调的$
+13. detrimental $adj. 不利的 有害的$
+14. discrepancy $n. 矛盾$
 
 ## E
 
-1. expeniture $n.$ 开支
-2. equivalent $adj.$ 相等的
+1. expeniture $n. 开支$
+2. equivalent $adj. 相等的$
+3. embark $v. 从事$
+4. emulate $v. 仿真$
+5. endow $v. 捐赠$ endowed $adj. 天生具有$
 
 ## F
+
+1. fragility $n. 脆弱$
+2. fraction $n. 分数$
 
 ## G
 
@@ -73,8 +92,11 @@
 
 ## I
 
-1. inevitable $adj.$ 不可避免的
-2. illuminate $v.$ 照明 解释说明
+1. inevitable $adj. 不可避免的$
+2. illuminate $v. 照明 解释说明$
+3. infringe $v. 侵犯$
+4. integral $adj. 必不可少的$
+5. illusion $n. 幻觉$
 
 ## J
 
@@ -84,26 +106,36 @@
 
 ## M
 
+1. miraculous $adj. 奇迹般的$
+
 ## N
 
-1. negotitate $v.$ 谈判
+1. negotitate $v. 谈判$
 
 ## O
 
-1. output $v.$ 产出 输出
-2. outnumber $v.$ 数量上超过
-3. outlook $n.$ 景色 外表
-4. outcome $n.$ 结果 后果
-5. offer $n.$ 提供 $v.$ 提议
-6. oblige $v.$ 迫使
-7. odd $adj.$ 奇怪的
-8. obscure $adj.$ 难解的 $n.$ 模糊不清的 $v.$ 使模糊
+1. output $v. 产出 输出$
+2. outnumber $v.数量上超过$
+3. outlook $n.景色 外表$
+4. outcome $n. 结果 后果$
+5. offer $n. 提供$ $v. 提议$
+6. oblige $v. 迫使$
+7. odd $adj. 奇怪的$
+8. obscure $adj. 难解的$ $n. 模糊不清的$ $v. 使模糊$
+9. obscurity $n. 朦胧 模糊$
+10. outline $n. 大纲$
+11. orchestra $n. 管弦乐队$
 
 ## P
 
-1. purity $n.$ 纯净
-2. properly $adv.$ 适当地
-3. prospect $n.$ 前景 $v.$ 勘探
+1. purity $n. 纯净$
+2. properly $adv. 适当地$
+3. prospect $n. 前景$ $v. 勘探$
+4. paradox $n. 矛盾$ paradoxical $adj. 矛盾的$
+5. permeate $v. 渗透$
+6. perception $n. 看法$
+7. perceive $v. 感觉$
+
 
 ## Q
 
@@ -112,29 +144,33 @@
 1. resourceful $adj.$ 资源丰富的 足智多谋的
 2. repetitive $adj.$ 重复的
 3. revenue $n.$ 税收
-4. recruit $n.$ 新成员 $v.$ 招聘
-5. reluctant $adj.$ 不情愿的
-6. resolve $n.$ 分解 $v.$ 解决
+4. recruit $n. 新成员 v. 招聘$
+5. reluctant $adj. 不情愿的$
+6. resolve $n. 分解  v. 解决$
+7. reckless $adj. 鲁莽的$
 
 ## S
 
-1. symphony $n.$ 交响乐
-2. sympathy $n.$ 同情心
-3. sample $n.$ 样本 $v.$ 采样
-4. synonym $n.$ 近义词 代名词
-
-5. sequence $n.$ 顺序 $v.$ 按顺序排序
-6. stimulate $v.$ 刺激 鼓励
+1. symphony $n. 交响乐$
+2. sympathy $n. 同情心$
+3. sample $n. 样本$ $v. 采样$
+4. synonym $n. 近义词 代名词$
+5. sequence $n. 顺序$ $v. 按顺序排序$
+6. stimulate $v. 刺激 鼓励$
+7. stimuli $v. 刺激$
+8. shabby $adj. 破旧的$
 
 ## T
 
 ## U
 
-1. urge $v.$ 冲动 鼓励 $n.$ 催促
+1. urge $v. 冲动 鼓励$ $n. 催促$
 
 ## V
 
 ## W
+
+1. wield $v. 使用$
 
 ## X
 
@@ -142,12 +178,9 @@
 
 ## Z
 
-
-
 ## synonym
 
-
-1. zucheng
+1. 组成
 
 ```
 1. compose
@@ -156,29 +189,27 @@
 4. make up of
 ```
 
-
-
-
 ## Phase
 
-1. on-the-point-of 在....之际
-2. on-the-condition-of 在...的条件下
-3. on-the-behalf-of 代表
-4. in-terms-of 按照
-5. over-time 加班 随着时间的推移
-6. at-times 有时
-7. getting-over 克服
-8. dispute-over 争论
-9. take-over 接管
-10. take-off 起飞 脱掉
-11. take-down 笔录
-12. take-apart 拆开
-13. in-track 在轨道上
-14. on-track 正轨
-15. off-track 脱轨
-16. at-track 正轨
-17. get-over 克服
-18. get-in 进来
-19. get-long 长
-20. get-off 起飞 下车
-21. get-crushed 被压碎
+1. on-the-point-of $在....之际$
+2. on-the-condition-of $在...的条件下$
+3. on-the-behalf-of $代表$
+4. in-terms-of $按照$
+5. over-time $加班 随着时间的推移$
+6. at-times $有时$
+7. getting-over$ 克服$
+8. dispute-over $争论$
+9. take-over $接管$
+10. take-off $起飞 脱掉$
+11. take-down $笔录$
+12. take-apart $拆开$
+13. in-track $在轨道上$
+14. on-track $正轨$
+15. off-track $脱轨$
+16. at-track $正轨$
+17. get-over $克服$
+18. get-in $进来$
+19. get-long $长$
+20. get-off $起飞 下车$
+21. get-crushed $被压碎$
+22. test-orented $应试的$
