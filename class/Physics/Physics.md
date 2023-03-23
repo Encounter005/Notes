@@ -1,4 +1,4 @@
-﻿﻿# 大学物理
+﻿﻿﻿# 大学物理
 
 ---
 
@@ -339,11 +339,9 @@ $$
 ![Screenshot_20230310_085951_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/03/10/rcyqipYq.jpg)$$
 
 $$
-
 由图可得 \theta = \frac{\pi}{3} \\
 
 \omega \Delta t = \frac{\pi}{3} + \frac{\pi}{2} = \frac{5\pi}{6} \\
 
 所以\Delta t = \frac{5}{6}s
-
 $$
