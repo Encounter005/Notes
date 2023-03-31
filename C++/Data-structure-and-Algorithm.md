@@ -2041,3 +2041,154 @@ int main() {
 - `5`号节点距离起点的距离是无穷大，利用`5`号节点更新 n 号节点距离起点的距离，将得到$10^9 - 2$, 虽然小于$10^9$，但是并不存在最短路(在边数限制在 k 条的条件下)
 
 ![652_1aa3df28a4-4.png](https://img1.imgtp.com/2023/03/14/31dsqYAD.png)
+
+
+### Spfa
+
+> 对Bellman-ford算法的优化
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using pii = pair<int , int>;
+
+const int N = 1e5 + 10;
+int n , m;
+int dist[N] , h[N] , e[N] , ne[N] , w[N] , idx;
+bool st[N];
+
+void add(int a , int b , int c) {
+
+  e[idx] = b;
+  ne[idx] = h[a];
+  w[idx] = c;
+  h[a] = idx ++;
+}
+
+void spfa() {
+  memset(dist , 0x3f , sizeof dist);
+  dist[1] = 0;
+  queue<int> q;
+  q.push(1);
+  st[1] = 1;
+
+  while(q.size()) {
+    auto t = q.front();
+    q.pop();
+    st[t] = 0;
+
+    for(int i = h[t]; i != -1; i = ne[i]) {
+      int j = e[i];
+      if(dist[j] > dist[t] + w[i]) {
+        dist[j] = dist[t] + w[i];
+        if(!st[j]) {
+          q.push(j);
+          st[j] = 1;
+        }
+      }
+    }
+  
+  }
+
+}
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  memset(h , -1 , sizeof h);  
+  cin >> n >> m;
+
+  while(m --) {
+
+    int a , b, c;
+    cin >> a >> b >> c;
+    add(a , b , c);
+  }
+  spfa();
+  if(dist[n] == 0x3f3f3f3f) puts("impossible");
+  else cout << dist[n] << endl;
+
+  return 0;
+}
+
+
+```
+
+使用Spfa()判断负权
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using pii = pair<int , int>;
+const int N = 1e5 + 10;
+int dist[N] , cnt[N] , e[N] , ne[N] , w[N] , idx , h[N];
+int n , m;
+bool st[N];
+void add(int a , int b  , int c) {
+  e[idx] = b;
+  w[idx] = c;
+  ne[idx] = h[a];
+  h[a] = idx ++;
+}
+
+bool spfa() {
+  queue<int> q;
+  for(int i = 1; i <= n; i ++) {
+    q.push(i);
+    st[i] = true;
+  }
+
+  while(q.size()) {
+    auto t = q.front();
+    q.pop();
+
+    st[t] = false;
+
+    for(int i = h[t]; i != -1; i = ne[i]) {
+      int j = e[i];
+      if(dist[j] > dist[t] + w[i]) {
+        dist[j] = dist[t] + w[i];
+        cnt[j] = cnt[t] + 1;
+
+        if(cnt[j] >= n) return true;
+        if(!st[j]) {
+          st[j] = true;
+          q.push(j);
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  memset(h , -1 , sizeof h);
+  cin >> n >> m;
+
+  while(m --) {
+    int a , b , c;
+    cin >> a >> b >> c;
+    add(a , b , c);
+  }
+
+  if(spfa()) cout << "Yes" << endl;
+  else cout << "No" << endl;
+
+  return 0;
+}
+
+
+```
+
+### 总结
+
+1. `spfa`可以处理负权边，但是不能处理有负权回路的图
+2. `Dijkstra`不能处理带有负权边和负权回路的图，因为在计算最短路径时，不会因为负边的出现而更新已经计算过的顶点的路径长度
+3. `bellman-ford`可以处理任意带负权边和负权环的图，`spfa`可以处理带负权的图，`Dijkastra`只能处理带正权边的图
