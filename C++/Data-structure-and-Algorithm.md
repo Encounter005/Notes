@@ -67,8 +67,6 @@
   - [最短路径问题](#最短路径问题) - [Dijkstra](#dijkstra) - [朴素版 Dijkstra](#朴素版-dijkstra) - [堆优化版 Dijkstra](#堆优化版-dijkstra)
   <!--toc:end-->
 
-
-
 ---
 
 ## 链表
@@ -2042,10 +2040,9 @@ int main() {
 
 ![652_1aa3df28a4-4.png](https://img1.imgtp.com/2023/03/14/31dsqYAD.png)
 
-
 ### Spfa
 
-> 对Bellman-ford算法的优化
+> 对 Bellman-ford 算法的优化
 
 ```c++
 #include <bits/stdc++.h>
@@ -2088,7 +2085,7 @@ void spfa() {
         }
       }
     }
-  
+
   }
 
 }
@@ -2096,7 +2093,7 @@ void spfa() {
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-  memset(h , -1 , sizeof h);  
+  memset(h , -1 , sizeof h);
   cin >> n >> m;
 
   while(m --) {
@@ -2115,7 +2112,7 @@ int main() {
 
 ```
 
-使用Spfa()判断负权
+使用 Spfa()判断负权
 
 ```c++
 #include <bits/stdc++.h>
@@ -2168,7 +2165,7 @@ bool spfa() {
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-  
+
   memset(h , -1 , sizeof h);
   cin >> n >> m;
 
@@ -2192,3 +2189,100 @@ int main() {
 1. `spfa`可以处理负权边，但是不能处理有负权回路的图
 2. `Dijkstra`不能处理带有负权边和负权回路的图，因为在计算最短路径时，不会因为负边的出现而更新已经计算过的顶点的路径长度
 3. `bellman-ford`可以处理任意带负权边和负权环的图，`spfa`可以处理带负权的图，`Dijkastra`只能处理带正权边的图
+
+# 动态规划
+
+## 背包问题
+
+### 01 背包
+
+[01 背包](https://www.acwing.com/problem/content/2/)
+
+
+![Screenshot_20230401_111315_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/04/01/1sfFYXe1.jpg)
+
+#### 朴素版
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using pii = pair<int , int>;
+const int N = 1010;
+int v[N] , w[N] , f[N][N] , n , m , dp[N];
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cin >> n >> m;
+  for(int i = 1; i <= n; i ++) cin >> v[i] >> w[i];
+
+  for(int i = 1; i <= n; i ++)
+    for(int j = 0; j <= m; j ++) {
+      f[i][j] = f[i - 1][j];
+      if(j >= v[i]) f[i][j] = max(f[i - 1][j] , f[i - 1][j - v[i]] + w[i]);
+    }
+
+  cout << f[n][m] << endl;
+
+  return 0;
+}
+
+```
+
+#### 优化一维版
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using pii = pair<int , int>;
+const int N = 1010;
+int v[N] , w[N] , f[N][N] , n , m , dp[N];
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cin >> n >> m;
+  for(int i = 1; i <= n; i ++) cin >> v[i] >> w[i];
+
+  for(int i = 1; i <= n; i ++)
+    for(int j = m ; j >= v[i]; j --)
+      dp[j] = max(dp[j] , dp[j - v[i]] + w[i]);
+
+  cout << dp[m] << endl;
+
+  return 0;
+}
+
+```
+
+##### 关于一维优化
+
+将二维转化成了一维：  
+
+删掉了第一维：在前`i`个物品中取
+
+`dp[j]`表示：拿了总体积不超过`j`物品
+
+###### 为什么能转化成一维
+
+二维时的更新方式: `f[i][j] = max(f[i - 1][j] , f[i - 1][j - v[i]] + w[i])`
+
+1. 我们发现，对于每次循环的下一组`i`，只会用到`i - 1`来更新当前值，不会用到`i - 2`及之前的值，于是可以在这次更新的时候，将原来的更新掉，反正以后也用不到，所以对于`i`的更新，只需要用到一个数组，直接覆盖就行了
+2. 我们发现，对于每次`j`的更新，只需要用到之前`i - 1`时的`j`或者`j - v[i]`，不会用到后面的值
+
+所以为了防止串着改，我们采取从后往前更新的方式，用原来`i - 1`的数组来更新`i`
+
+如果从前往后更新的话，前面的更新过后，会接着更新后面的值，这样就不能保证是用原来`i - 1`的数组来更新`i`的了
+
+###### 如何转化成一维
+
+> 只用一个数组，每次都覆盖前面的数组
+
+1. 如果当前位置的东西不拿的话，和前一位置的信息(原来`i - 1`数组这个位置上的值)是相同的，所以不用改变
+2. 如果当前位置的东西拿了的话，需要和前一位置的信息(原来`i - 1`数组这个位置上值)取`max`
+
+所以更新的方式就是`dp[j] = max(dp[j] , dp[j - v[i]] + w[i])`
+
+整个更新的方式就相当于：每次`i++`，就从后往前覆盖一遍`dp`数组，每个位置上的值是否更新
