@@ -29,6 +29,7 @@
   - [X](#x)
   - [Y](#y)
   - [Z](#z)
+  - [Synonym](#synonym)
   - [Phase](#phase)
   <!--toc:end-->
 
@@ -183,6 +184,7 @@
 ## U
 
 1. urge $v. 冲动 鼓励$ $n. 催促$
+2. uneventful $adj. 平凡的$
 
 ## V
 
