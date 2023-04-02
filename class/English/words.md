@@ -39,8 +39,12 @@
 3. authentic $adj. 真正的$
 4. adversity $n. 逆境$
 5. autonomous $adj. 自治的$
+6. alienate $v. 疏远$
+7. absurd $adj. 荒谬的$
 
 ## B
+
+1. bleak $adj. 阴冷的$
 
 ## C
 
@@ -72,6 +76,8 @@
 12. dysfunctional $adj. 机能失调的$
 13. detrimental $adj. 不利的 有害的$
 14. discrepancy $n. 矛盾$
+15. devise $v. 设计$
+16. dense $adj. 稠密的$
 
 ## E
 
@@ -80,11 +86,13 @@
 3. embark $v. 从事$
 4. emulate $v. 仿真$
 5. endow $v. 捐赠$ endowed $adj. 天生具有$
+6. exert $v. 运行$
 
 ## F
 
 1. fragility $n. 脆弱$
 2. fraction $n. 分数$
+3. fraud $n. 欺骗$
 
 ## G
 
@@ -97,12 +105,15 @@
 3. infringe $v. 侵犯$
 4. integral $adj. 必不可少的$
 5. illusion $n. 幻觉$
+6. intimidatoy $adj. 威胁的$
 
 ## J
 
 ## K
 
 ## L
+
+1. levy $v. 征税$
 
 ## M
 
@@ -135,7 +146,8 @@
 5. permeate $v. 渗透$
 6. perception $n. 看法$
 7. perceive $v. 感觉$
-
+8. potary $v. 扮演，描绘$
+9. pilot $adj. 试点的 n. 飞行员$
 
 ## Q
 
@@ -159,8 +171,14 @@
 6. stimulate $v. 刺激 鼓励$
 7. stimuli $v. 刺激$
 8. shabby $adj. 破旧的$
+9. safeguard $n. 保卫者 v. 保卫$
 
 ## T
+
+1. threshold $n. 门槛$
+2. tentative $adj. 试验性的，不确定的，犹豫的$
+3. temperament $n. 性格$
+4. tremendous $adj. 极大的$
 
 ## U
 
@@ -178,7 +196,7 @@
 
 ## Z
 
-## synonym
+## Synonym
 
 1. 组成
 
