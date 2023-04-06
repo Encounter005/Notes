@@ -593,33 +593,59 @@ int main() { return 0; }
 
 ```c++
 #include <iostream>
+#include <string>
 #include <vector>
 
 class Test {
-public:
-  unsigned count = 0;
-  void operator++() { ++count; }
-  void operator--() { --count; }
-  void operator()() { std::cout << "hello world" << std::endl; }
-  void operator()(const std::string &str) const {
-    std::cout << str << std::endl;
-  }
-  int operator[](unsigned i) { return ivec[i]; }
 
-  std::vector<int> ivec{1, 2, 3, 4, 5, 6};
+  friend std::ostream &operator<<(std::ostream &os, const Test &test);
+  friend std::istream &operator>>(std::istream &is, Test &test);
+
+public:
+  unsigned cnt = 0;
+  std::vector<int> st{1, 2, 3, 4, 5, 6, 7, 8};
+  std::string str;
+  std::string name;
+
+  void operator++() { ++cnt; }
+  void operator--() { --cnt; }
+  void operator()() const { std::cout << "hello world" << std::endl; }
+  void operator()(const std::string &str) { std::cout << str << std::endl; }
+  int operator[](unsigned i) {
+    if (i >= 0 && i < st.size())
+      return st[i];
+    return 0;
+  }
 };
+
+std::ostream &operator<<(std::ostream &os, const Test &test) {
+  os << test.name << std::endl;
+  return os;
+}
+
+std::istream &operator>>(std::istream &is, Test test) {
+  is >> test.name;
+  return is;
+}
 
 int main() {
   Test test;
   ++test;
-  std::cout << test.count << std::endl;
-  std::cout << --test.count << std::endl;
-  // std::cout << test.ivec.size() << std::endl;
-  for (auto x : test.ivec)
-    std::cout << x << ' ';
-  puts("");
+  std::cout << test.cnt << std::endl;
+  --test;
+  std::cout << test.cnt << std::endl;
+
+  for (int i = 0; i < test.st.size(); i++)
+    std::cout << test[i] << ' ';
+
+  std::cout << std::endl;
+
   test();
   test("cxy");
+  std::cin >> test.name;
+  std::cout << test.name;
+
+
   return 0;
 }
 
