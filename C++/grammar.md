@@ -665,7 +665,42 @@ int main() {
 ```
 
 ```c++
+#include <iostream>
+#include <string>
+#include <vector>
 
+class Test {
+
+public:
+  unsigned cnt = 0;
+
+  Test operator+(const Test &test) {
+    cnt += test.cnt;
+    return *this;
+  }
+  Test &operator=(const Test &test) {
+    if (this == &test)
+      return *this;
+
+    cnt = test.cnt;
+    return *this;
+  }
+
+  bool operator<(const Test &test) { return cnt < test.cnt; }
+  bool operator>(const Test &test) { return cnt > test.cnt; }
+  bool operator==(const Test &test) { return cnt == test.cnt; }
+};
+
+int main() {
+  Test test;
+  // std::cout << test.cnt << std::endl;
+  test.cnt = 20;
+  Test test2;
+  Test test3 = test + test2;
+  std::cout << test3.cnt << std::endl;
+
+  return 0;
+}
 ```
 
 #### 总结
