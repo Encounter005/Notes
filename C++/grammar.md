@@ -29,6 +29,9 @@
     * [(\*\*)虚函数及其实现原理， overide 关键字](#虚函数及其实现原理-overide-关键字)
       * [介绍](#介绍-1)
       * [注意事项](#注意事项-1)
+      * [总结](#总结-2)
+    * [静态成员变量与静态成员函数](#静态成员变量与静态成员函数)
+      * [1. 静态成员变量](#1-静态成员变量)
   * [函数重载 overload](#函数重载-overload)
   * [内联函数](#内联函数)
   * [new 关键字 (\*)](#new-关键字-)
@@ -719,6 +722,52 @@ C++非继承的类相互是没有关系的，假设现在需要设计医生、�
 
 C++继承原理: C++的继承可以理解为在创建子类成员把变量之前先创建父类的成员变量，实际上，C 语言就是这么模仿出来的
 
+```c++
+#include <iostream>
+#include <string>
+
+class Spear {
+protected:
+  std::string name;
+  std::string icon;
+
+public:
+  Spear(const std::string &name_, const std::string &icon_)
+      : name(name_), icon(icon_) {
+    std::cout << "Spear()" << std::endl;
+  }
+  ~Spear() {
+    std::cout << "Delete Spear" << std::endl;
+  }
+};
+
+class FireSpear : public Spear {
+private:
+  int i;
+
+
+public:
+  FireSpear(const std::string &name_, const std::string &icon_, int i_)
+      : Spear(name_, icon_), i(i_) { // NOTE: 先调用父类的构造函数，初始化父类的部分,然后调用自己的构造函数，初始化自己的部分
+    std::cout << "FireSpear()" << std::endl;
+  }
+  void outPut() { std::cout << name << std::endl; }
+  ~FireSpear() {
+    std::cout << "Delete FireSpear" << std::endl;
+  }
+};
+
+int main() {
+
+  FireSpear firespear("fire", "iron", 10);
+  // Spear *pFather = new Spear("father" , "10"); // NOTE:可以创建父类对象指针指向自己
+  // Spear *pSon = new FireSpear("son" , "10" , 10); // NOTE: 也可以创建父类对象指针指向子类对象
+
+  return 0;
+}
+
+```
+
 #### 注意事项
 
 1. C++子类对象的构造过程，先调用父类的构造函数，在调用子类的构造函数，也就是说先初始化父类的成员，再初始化子类的成员
@@ -744,9 +793,65 @@ C++继承原理: C++的继承可以理解为在创建子类成员把变量之前
    1. 该函数为虚函数：父类指针调用的是子类的成员函数
    2. 该函数不是虚函数：父类指针调用的是父类的成员函数
 
+```c++
+#include <iostream>
+#include <string>
+
+class Spear {
+protected:
+  std::string name;
+  std::string icon;
+
+public:
+  Spear(const std::string &name_, const std::string &icon_)
+      : name(name_), icon(icon_) {
+    std::cout << "Spear()" << std::endl;
+  }
+
+  virtual void openFire() const { std::cout << "Spear OpenFire!" << std::endl; }
+
+  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; } // NOTE: 父类的析构函数必须为虚函数，才能调用子类的析构函数
+};
+
+class FireSpear : public Spear {
+private:
+  int i;
+
+public:
+  FireSpear(const std::string &name_, const std::string &icon_, int i_)
+      : Spear(name_, icon_), i(i_) {
+    std::cout << "FireSpear()" << std::endl;
+  }
+  void outPut() { std::cout << name << std::endl; }
+
+  virtual void openFire() const override { // NOTE: 防止开发人员将函数名写错，所以加上override关键字以防万一
+    // NOTE: 如果将子类的virtual关键字删掉，
+    // NOTE: 父类指针依旧会调用该函数，因为父类的该函数有virtual关键字，在编译时子类也会自动加上virtual关键字
+    std::cout << "FireSpear OpenFire!" << std::endl;
+  }
+
+  ~FireSpear() { std::cout << "Delete FireSpear" << std::endl; }
+};
+
+void openFire(const Spear *pFather) {
+  pFather->openFire();
+  delete pFather;
+}
+
+int main() {
+
+  openFire(new FireSpear("Fire" , "flame" , 10));
+  // NOTE: 加了virtual关键字后，多态，父类的指针可以调用子类的函数
+  // NOTE:  不加virtual关键字时，静态绑定，在编译时就能确定函数的地址
+
+
+  return 0;
+}
+```
+
 #### 注意事项
 
-1. 子父类的虚函数必须完全相同，为了防止开发人员一不小心将函数写错，于是有了 override 关键字
+1. 子父类的虚函数必须`完全相同`，为了防止开发人员一不小心将函数写错，于是有了 override 关键字
 
 2. (\*)父类的析构函数必须为虚函数，这一点很重要，当父类对象指向子类对象时，容易使独属于子类的内存泄露，会造成内存泄漏的严重问题
 
@@ -755,7 +860,26 @@ C++继承原理: C++的继承可以理解为在创建子类成员把变量之前
 4. 虚函数实现多态的原理介绍
 
    1. 静态绑定和动态绑定
-      1. 静态绑定
+
+      1. 静态绑定：程序在编译时就已经确定了函数的地址，比如非虚函数就是静态绑定
+      2. 动态绑定：程序在编译时确定的是程序寻找函数地址的方法，只有程序运行时才可以真正确定程序的地址，比如虚函数就是动态绑定
+
+   2. 虚函数是如何实现动态绑定的呢？
+
+      1. 每个有虚函数的类都会有一个虚函数表，对象其实就是指向虚函数的指针，编译时编译器只告诉了程序在运行时查找虚函数表的对应函数。每个类都会有自己的虚函数，所以当父类指针引用的是子类虚函数表时，自然调用的就是子类的函数
+
+#### 总结
+
+虚函数是C++类的重要特性之一，很简单，但使用频率非常高，至于如何实现也要掌握
+
+
+### 静态成员变量与静态成员函数
+
+#### 1. 静态成员变量
+
+1. 在编译期就已经在静态变量区明确了地址，所以生命周期为程序开始到程序结束，作用范围与普通的成员变量相同。这些对于类的静态成员变量同样适用
+
+2. 类的静态成员变量因为创建在静态变量区，所以直接属于类，也就是我们可以直接通过类名来调用，当然通过对象来调用也行
 
 ---
 
