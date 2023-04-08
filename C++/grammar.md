@@ -32,13 +32,24 @@
       * [总结](#总结-2)
     * [静态成员变量与静态成员函数](#静态成员变量与静态成员函数)
       * [1. 静态成员变量](#1-静态成员变量)
+      * [2. 静态成员变量的注意事项](#2-静态成员变量的注意事项)
+      * [3. 静态成员变量的特点](#3-静态成员变量的特点)
+    * [(\*) 纯虚函数](#-纯虚函数)
+      * [介绍](#介绍-2)
+      * [总结](#总结-3)
+    * [RTTI](#rtti)
+      * [1. 介绍](#1-介绍)
+      * [2. 使用场景](#2-使用场景)
+      * [3. 使用方式](#3-使用方式)
+      * [4. 注意事项](#4-注意事项)
+      * [5. 总结](#5-总结)
   * [函数重载 overload](#函数重载-overload)
   * [内联函数](#内联函数)
   * [new 关键字 (\*)](#new-关键字-)
     * [1. new 关键字是 C++用来动态分配内存的主要方式](#1-new-关键字是-c用来动态分配内存的主要方式)
     * [2. 内存泄露（常见 bug）](#2-内存泄露常见-bug)
   * [const 关键字](#const-关键字)
-  * [auto 关键字(\*\*)](#auto-关键字)
+  * [(\*\*)auto 关键字](#auto-关键字)
   * [静态变量，指针和引用(\*)](#静态变量指针和引用)
     * [关于 const 和 pointer](#关于-const-和-pointer)
   * [左值，右值，左值引用，右值引用(\*\*)](#左值右值左值引用右值引用)
@@ -870,8 +881,7 @@ int main() {
 
 #### 总结
 
-虚函数是C++类的重要特性之一，很简单，但使用频率非常高，至于如何实现也要掌握
-
+虚函数是 C++类的重要特性之一，很简单，但使用频率非常高，至于如何实现也要掌握
 
 ### 静态成员变量与静态成员函数
 
@@ -880,6 +890,197 @@ int main() {
 1. 在编译期就已经在静态变量区明确了地址，所以生命周期为程序开始到程序结束，作用范围与普通的成员变量相同。这些对于类的静态成员变量同样适用
 
 2. 类的静态成员变量因为创建在静态变量区，所以直接属于类，也就是我们可以直接通过类名来调用，当然通过对象来调用也行
+
+```c++
+#include <iostream>
+#include <string>
+
+class Test {
+private:
+  static unsigned i;
+public:
+  static unsigned getI() {return i; } // NOTE: 为静态成员变量服务，保护封装性
+};
+
+unsigned Test::i = 20; // NOTE: 一定要在类外初始化
+
+int main() {
+
+  Test test;
+
+  std::cout << test.getI() << std::endl; // NOTE: 通过对象来调用静态成员变量
+  // std::cout << Test::i << std::endl; // NOTE: 通过类名来调用静态成员变量
+  return 0;
+}
+
+```
+
+#### 2. 静态成员变量的注意事项
+
+静态成员变量必须在类外进行初始化，否则会报未定义的错误，不能用构造函数进行初始化，因为静态成员变量在静态变量区，只有一份，而且静态成员变量在编译期就要被创建，成员函数那都是运行期的事情了
+
+#### 3. 静态成员变量的特点
+
+静态成员函数就是为静态成员变量设计的，就是为了维持封装性
+
+
+### (\*) 纯虚函数
+
+#### 介绍
+
+1. 之前枪械射击的例子，基础的枪类没有对应的对象，它唯一的作用就是被子类继承
+2. 基类的`openfire`函数实现过程有意义吗？没有，它就是用来被重写的
+3. 所以纯虚函数的语法就诞生了，只要将一个虚函数写为纯虚函数，那么该类将被认为无实际意义的类，无法产生对象，纯虚函数也不用去写实际部分，写了编译器也会自动忽略
+
+```c++
+#include <iostream>
+#include <string>
+
+class Spear { // WARNING: 构造函数和析构函数不能省略，构造子类的时候要用的
+protected:
+  std::string name;
+  std::string icon;
+
+public:
+  Spear(const std::string &name_, const std::string &icon_)
+      : name(name_), icon(icon_) {
+    std::cout << "Spear()" << std::endl;
+  }
+
+  virtual void openFire() const = 0; // NOTE: 只需要在虚函数后面赋值=0，这个函数就是纯虚函数，不需要函数实现过程，它就是个虚基类，虚基类无法产生对象
+
+  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; } 
+};
+
+class FireSpear : public Spear {
+private:
+  int i;
+
+public:
+  FireSpear(const std::string &name_, const std::string &icon_, int i_)
+      : Spear(name_, icon_), i(i_) {
+    std::cout << "FireSpear()" << std::endl;
+  }
+  void outPut() { std::cout << name << std::endl; }
+
+  virtual void openFire() const override { 
+    std::cout << "FireSpear OpenFire!" << std::endl;
+  }
+
+  ~FireSpear() { std::cout << "Delete FireSpear" << std::endl; }
+};
+
+void openFire(const Spear *pFather) {
+  pFather->openFire();
+  delete pFather;
+}
+
+int main() {
+
+  openFire(new FireSpear("Fire" , "flame" , 10));
+  // Spear *pSear = new Spear("awdjk" , "awdk");
+  // pSear->openFire(); // NOTE: 这种对象没有任何意义
+
+  return 0;
+}
+```
+#### 总结
+
+纯虚函数的特点就是语法简单，却经常使用，必会
+
+
+
+### RTTI
+
+#### 1. 介绍
+
+1. RTTI(Run Time Type Identification) 即通过运行时类型识别，程序能够通过基类的指针或引用来检查这些指针或引用所指向的对象的实际派生类
+2. C++为了支持多态，C++的指针或引用的类型可能与它实际指向的对象类型不相同，这是就需要RTTI来判断类的实际类型，RTTI是C++判断指针或引用实际类型的唯一方式
+
+#### 2. 使用场景
+
+1. 异常处理： 这是RTTI主要使用场景，具体作用放在异常处理那一章
+2. IO操作：IO章节
+
+#### 3. 使用方式
+> 使用过程就两个函数
+
+1. `typeid函数`： `typeid函数`返回的一个叫做`type_info`的结构体，该结构体包括了所指向对象的实际信息，其中`name()函数`就可以返回函数的真实名称，`type_info`结构体其他函数没什么用
+
+2. `dynamic_cast()函数`：C++提供的将父类指针转化为子类指针的函数
+
+
+```c++
+#include <iostream>
+#include <string>
+
+class Spear {
+protected:
+  std::string name;
+  std::string icon;
+
+public:
+  Spear(const std::string &name_, const std::string &icon_)
+      : name(name_), icon(icon_) {
+    std::cout << "Spear()" << std::endl;
+  }
+
+  virtual void openFire() const { std::cout << "Spear OpenFire!" << std::endl; }
+
+  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; } 
+};
+
+class FireSpear : public Spear {
+private:
+  int i;
+
+public:
+  FireSpear(const std::string &name_, const std::string &icon_, int i_)
+      : Spear(name_, icon_), i(i_) {
+    std::cout << "FireSpear()" << std::endl;
+  }
+  void outPut() { std::cout << name << std::endl; }
+
+  virtual void openFire() const override { 
+    std::cout << "FireSpear OpenFire!" << std::endl;
+  }
+
+  ~FireSpear() { std::cout << "Delete FireSpear" << std::endl; }
+};
+
+void openFire(const Spear *pFather) {
+  pFather->openFire();
+  delete pFather;
+}
+
+int main() {
+
+  Spear *pSpear = new FireSpear("ad" , "awdw" , 30);
+  std::cout << typeid(*pSpear).name() << std::endl;
+
+  // NOTE: 由于name返回的是一个const char *指针，"9FireSpear"也是一个const char *，要保证指针的地址一样，所以得用string存起来
+  if(std::string (typeid(*pSpear).name()) == "9FireSpear") {
+    FireSpear *pFireSpear = dynamic_cast<FireSpear*>(pSpear);
+    if(pFireSpear)
+      std::cout << "cast FireSpear success" << std::endl;
+  }
+
+  delete pSpear;
+
+
+  return 0;
+}
+
+```
+
+#### 4. 注意事项
+
+ 当使用`typeid函数`时，父类和子类必须有`虚函数`
+> 父类有了虚函数，子类自然也有虚函数，否则类型会判断出错
+
+#### 5. 总结
+
+就是C++在运行阶段判断对象实际类型的唯一方式
 
 ---
 
@@ -1163,7 +1364,7 @@ int main() {
 
 2. const 修饰的变量仍然存储在堆区或栈区中，从内存分布的角度讲，和普通变量没有区别。const 修饰的变量并非不可更改，C++本身就提供了`mutable`关键字用来修改 const 修饰的变量，从汇编的角度讲，const 修饰的变量也是可以修改的
 
-## auto 关键字(\*\*)
+## (\*\*)auto 关键字
 
 关于输出 auto 推断的变量类型 -- boost 库
 
