@@ -42,10 +42,12 @@
 5. autonomous $adj. 自治的$
 6. alienate $v. 疏远$
 7. absurd $adj. 荒谬的$
+8. articulate $v. 清楚地表达$
 
 ## B
 
 1. bleak $adj. 阴冷的$
+2. bolster $v. 支持$
 
 ## C
 
@@ -60,6 +62,7 @@
 9. compassionate $adj. 富有同情心的$
 10. chord $n. 合唱班$
 11. catastrophic $adj. 灾难的$
+12. concede $v. 让步$
 
 ## D
 
@@ -88,6 +91,8 @@
 4. emulate $v. 仿真$
 5. endow $v. 捐赠$ endowed $adj. 天生具有$
 6. exert $v. 运行$
+7. eroding $v. 侵蚀$
+
 
 ## F
 
@@ -99,6 +104,8 @@
 
 ## H
 
+1. henceforth $adv. 从此以后$
+
 ## I
 
 1. inevitable $adj. 不可避免的$
@@ -107,6 +114,8 @@
 4. integral $adj. 必不可少的$
 5. illusion $n. 幻觉$
 6. intimidatoy $adj. 威胁的$
+7. intuitive $adj. 直觉的$
+8. 
 
 ## J
 
@@ -115,10 +124,16 @@
 ## L
 
 1. levy $v. 征税$
+2. lofty $adj. 巍峨的$
+3. legitimate $adj. 合法的$
 
 ## M
 
 1. miraculous $adj. 奇迹般的$
+2. merchandise $n. 商品 v. 售卖$
+3. mold $n. 模型$
+
+
 
 ## N
 
@@ -137,6 +152,7 @@
 9. obscurity $n. 朦胧 模糊$
 10. outline $n. 大纲$
 11. orchestra $n. 管弦乐队$
+12. outrage $v. 引起...义愤$
 
 ## P
 
@@ -149,6 +165,8 @@
 7. perceive $v. 感觉$
 8. potary $v. 扮演，描绘$
 9. pilot $adj. 试点的 n. 飞行员$
+10. prestigious $adj. 受尊敬的$
+11. plausibly $adv. 似真地$
 
 ## Q
 
@@ -161,6 +179,7 @@
 5. reluctant $adj. 不情愿的$
 6. resolve $n. 分解  v. 解决$
 7. reckless $adj. 鲁莽的$
+8. reconcile $v. 调和$
 
 ## S
 
@@ -173,6 +192,11 @@
 7. stimuli $v. 刺激$
 8. shabby $adj. 破旧的$
 9. safeguard $n. 保卫者 v. 保卫$
+10. simultaneously $adv. 同时地$
+11. stipulate $v. 规定$
+12. span $v. 持续时间$
+13. spiral $adj. 螺旋的$
+
 
 ## T
 
@@ -180,6 +204,7 @@
 2. tentative $adj. 试验性的，不确定的，犹豫的$
 3. temperament $n. 性格$
 4. tremendous $adj. 极大的$
+5. tread $v. 踏$
 
 ## U
 
@@ -187,6 +212,8 @@
 2. uneventful $adj. 平凡的$
 
 ## V
+
+1. verbal $adj. 口头的$
 
 ## W
 
@@ -217,7 +244,7 @@
 4. in-terms-of $按照$
 5. over-time $加班 随着时间的推移$
 6. at-times $有时$
-7. getting-over$ 克服$
+7. getting-over $克服$
 8. dispute-over $争论$
 9. take-over $接管$
 10. take-off $起飞 脱掉$
