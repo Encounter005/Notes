@@ -1,4 +1,4 @@
-﻿# Grammar of strange
+﻿﻿# Grammar of strange
 
 <!-- vim-markdown-toc GFM -->
 
@@ -161,7 +161,7 @@ int main() {
 构造函数的类型
 
     1. 普通构造函数：
-
+    
     2. 复制构造函数：
 
 > 用另一个对象来初始化对象对应内存
@@ -291,7 +291,7 @@ class Base
 
 编译器将 this 解释为指向函数所作用的对象的指针
 
-```c++
+```C++
 #include <iostream>
 
 class Test {
@@ -336,7 +336,6 @@ int main() {
 
 ```c++
   void outPut()const { std::cout << this->name << ' ' << this->old << std::endl; }
-
 ```
 
 1. 注意: 常函数无法调用普通函数，否则常函数的这个“常”字还有什么用？
