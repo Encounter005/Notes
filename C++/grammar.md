@@ -43,6 +43,18 @@
       * [3. 使用方式](#3-使用方式)
       * [4. 注意事项](#4-注意事项)
       * [5. 总结](#5-总结)
+    * [多继承](#多继承)
+      * [1. 多继承的概念](#1-多继承的概念)
+      * [2. 多继承的注意点](#2-多继承的注意点)
+      * [3. 总结](#3-总结)
+    * [虚继承及其实现原理](#虚继承及其实现原理)
+      * [概念](#概念)
+      * [实现原理介绍](#实现原理介绍)
+      * [总结](#总结-4)
+    * [(\*\*)移动构造函数与移动运算符](#移动构造函数与移动运算符)
+      * [1. 对象移动的概念](#1-对象移动的概念)
+      * [2. 移动语义为什么可以提高运行效率](#2-移动语义为什么可以提高运行效率)
+      * [3. 默认移动构造函数和默认移动赋值运算符](#3-默认移动构造函数和默认移动赋值运算符)
   * [函数重载 overload](#函数重载-overload)
   * [内联函数](#内联函数)
   * [new 关键字 (\*)](#new-关键字-)
@@ -161,7 +173,7 @@ int main() {
 构造函数的类型
 
     1. 普通构造函数：
-    
+
     2. 复制构造函数：
 
 > 用另一个对象来初始化对象对应内存
@@ -922,7 +934,6 @@ int main() {
 
 静态成员函数就是为静态成员变量设计的，就是为了维持封装性
 
-
 ### (\*) 纯虚函数
 
 #### 介绍
@@ -948,7 +959,7 @@ public:
 
   virtual void openFire() const = 0; // NOTE: 只需要在虚函数后面赋值=0，这个函数就是纯虚函数，不需要函数实现过程，它就是个虚基类，虚基类无法产生对象
 
-  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; } 
+  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; }
 };
 
 class FireSpear : public Spear {
@@ -962,7 +973,7 @@ public:
   }
   void outPut() { std::cout << name << std::endl; }
 
-  virtual void openFire() const override { 
+  virtual void openFire() const override {
     std::cout << "FireSpear OpenFire!" << std::endl;
   }
 
@@ -983,31 +994,30 @@ int main() {
   return 0;
 }
 ```
+
 #### 总结
 
 纯虚函数的特点就是语法简单，却经常使用，必会
-
-
 
 ### RTTI
 
 #### 1. 介绍
 
 1. RTTI(Run Time Type Identification) 即通过运行时类型识别，程序能够通过基类的指针或引用来检查这些指针或引用所指向的对象的实际派生类
-2. C++为了支持多态，C++的指针或引用的类型可能与它实际指向的对象类型不相同，这是就需要RTTI来判断类的实际类型，RTTI是C++判断指针或引用实际类型的唯一方式
+2. C++为了支持多态，C++的指针或引用的类型可能与它实际指向的对象类型不相同，这是就需要 RTTI 来判断类的实际类型，RTTI 是 C++判断指针或引用实际类型的唯一方式
 
 #### 2. 使用场景
 
-1. 异常处理： 这是RTTI主要使用场景，具体作用放在异常处理那一章
-2. IO操作：IO章节
+1. 异常处理： 这是 RTTI 主要使用场景，具体作用放在异常处理那一章
+2. IO 操作：IO 章节
 
 #### 3. 使用方式
+
 > 使用过程就两个函数
 
 1. `typeid函数`： `typeid函数`返回的一个叫做`type_info`的结构体，该结构体包括了所指向对象的实际信息，其中`name()函数`就可以返回函数的真实名称，`type_info`结构体其他函数没什么用
 
 2. `dynamic_cast()函数`：C++提供的将父类指针转化为子类指针的函数
-
 
 ```c++
 #include <iostream>
@@ -1026,7 +1036,7 @@ public:
 
   virtual void openFire() const { std::cout << "Spear OpenFire!" << std::endl; }
 
-  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; } 
+  virtual ~Spear() { std::cout << "Delete Spear" << std::endl; }
 };
 
 class FireSpear : public Spear {
@@ -1040,7 +1050,7 @@ public:
   }
   void outPut() { std::cout << name << std::endl; }
 
-  virtual void openFire() const override { 
+  virtual void openFire() const override {
     std::cout << "FireSpear OpenFire!" << std::endl;
   }
 
@@ -1074,12 +1084,119 @@ int main() {
 
 #### 4. 注意事项
 
- 当使用`typeid函数`时，父类和子类必须有`虚函数`
+当使用`typeid函数`时，父类和子类必须有`虚函数`
+
 > 父类有了虚函数，子类自然也有虚函数，否则类型会判断出错
 
 #### 5. 总结
 
-就是C++在运行阶段判断对象实际类型的唯一方式
+就是 C++在运行阶段判断对象实际类型的唯一方式
+
+### 多继承
+
+> 了解就行
+
+#### 1. 多继承的概念
+
+就是一个类同时继承多个类，在内存上，该类对象前面依次为第一个继承的类，第二个继承的类，依次类推
+
+```c++
+p#include <iostream>
+#include <string>
+
+
+// NOTE: 构造函数的运行过程是从第一个祖宗到儿子再到孙子，析构函数则是反过来
+class Base1 {
+public:
+  Base1(int base1I_) : base1I(base1I_) { std::cout << "base1" << std::endl; }
+  ~Base1() {
+    std::cout << "Bye Base1" << std::endl;
+  }
+protected:
+  int base1I;
+};
+
+class Base2 {
+public:
+  Base2(int base2I_) : base2I(base2I_) { std::cout << "base2" << std::endl; }
+  ~Base2() {
+    std::cout << "Bye Base2" << std::endl;
+  }
+
+protected:
+  int base2I;
+};
+
+class HENCE : public Base1, public Base2 {
+
+public:
+  HENCE(int base1I_, int base2I_, int i_)
+      : Base1(base1I_), Base2(base2I_), i(i_) {
+    std::cout << "HENCE" << std::endl;
+  }
+  ~HENCE() {
+    std::cout << "Bye HENCE" << std::endl;
+  }
+
+private:
+  int i;
+};
+
+int main() {
+
+  HENCE hence(10, 20, 30);
+  return 0;
+}
+
+```
+
+#### 2. 多继承的注意点
+
+1. 多继承最需要注意的点就是重复继承的问题
+2. 多继承会使整个程序设计更加复杂，平常不推荐使用
+
+#### 3. 总结
+
+多继承这个语法虽然在某些情况下是代码写起来更加简洁，但会使程序更加复杂难懂，一般来说除了接口模式以外不推荐使用
+
+### 虚继承及其实现原理
+
+#### 概念
+
+虚继承就是为了避免多重继承时产生的二义性问题
+
+#### 实现原理介绍
+
+1. 使用了虚继承的类会有一个虚继承表，表中存放了父类所有成员变量相对于类的偏移地址
+
+2. 当`C`类同时继承`B1`和`B2`类时，每继承一个就会用虚继承表进行比对，发现该变量在虚继承表中偏移地址相同，就只会继承一份。
+
+#### 总结
+
+这个语法就是典型的语法简单，但在游戏开发领域经常使用的语法，其他领域使用频率会低一点
+
+### (\*\*)移动构造函数与移动运算符
+
+#### 1. 对象移动的概念
+
+1. 对一个体积比较大的类进行大量的拷贝操作是非常消耗性能的，因此 C++11 中加入了`对象移动`的操作
+2. 所谓的对象移动，其实就是把该对象所占据的内存空间的访问权限转移给另一个对象，比如一块内存原本属于`A`，在进行“移动语义”后，这块内存就属于`B`了
+
+#### 2. 移动语义为什么可以提高运行效率
+
+因为我们的各种操作会经常进行大量的“复制构造”，“赋值运算”操作，这两个操作非常耗时间。移动构造是直接转移权限，效率就提高了
+
+注意：
+
+```
+在进行转移操作后，被转移的对象就不能继续使用了，所以对象移动一般都是对临时对象进行操作
+
+因为临时对象就要被销毁了
+```
+
+#### 3. 默认移动构造函数和默认移动赋值运算符
+
+会默认生成移动构造函数和移动赋值运算符的条件：
 
 ---
 
