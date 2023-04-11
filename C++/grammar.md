@@ -1101,7 +1101,7 @@ int main() {
 就是一个类同时继承多个类，在内存上，该类对象前面依次为第一个继承的类，第二个继承的类，依次类推
 
 ```c++
-p#include <iostream>
+#include <iostream>
 #include <string>
 
 
