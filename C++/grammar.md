@@ -55,7 +55,7 @@
       * [1. 对象移动的概念](#1-对象移动的概念)
       * [2. 移动语义为什么可以提高运行效率](#2-移动语义为什么可以提高运行效率)
       * [3. 默认移动构造函数和默认移动赋值运算符](#3-默认移动构造函数和默认移动赋值运算符)
-  * [函数重载 overload](#函数重载-overload)
+  * [函数重载 overlord](#函数重载-overlord)
   * [内联函数](#内联函数)
   * [new 关键字 (\*)](#new-关键字-)
     * [1. new 关键字是 C++用来动态分配内存的主要方式](#1-new-关键字是-c用来动态分配内存的主要方式)
@@ -1194,15 +1194,101 @@ int main() {
 因为临时对象就要被销毁了
 ```
 
+```c++
+#include <iostream>
+#include <string.h>
+#include <string>
+
+class Test {
+public:
+  //NOTE: 不需要重新new一遍来消耗时间
+  Test() = default;
+
+  // Test(const Test &test) {
+  //
+  //   if (test.str) {
+  //     str = new char[strlen(str) + 1](); // strlen在统计的时候，不会算结束符
+  //     // strcpy()(str , strlen(test.str) + 1 , test.str); // WARNING: it doesn't
+  //     // work
+  //     strcpy(str, test.str);
+  //   } else {
+  //     str = nullptr;
+  //   }
+  // }
+
+  Test(Test &&test) {
+    if (test.str) {
+      str = test.str;
+      test.str = nullptr;
+    } else {
+      str = nullptr;
+    }
+  }
+
+  // Test &operator=(const Test &test) {
+  //   if (this == &test)
+  //     return *this;
+  //   if (str) {
+  //     delete[] str;
+  //     str = nullptr;
+  //   }
+  //   if (test.str) {
+  //     str = new char[strlen(str) + 1]();
+  //     strcpy(str, test.str);
+  //   } else {
+  //     str = nullptr;
+  //   }
+  //   return *this;
+  // }
+  Test &operator=(Test &&test) { // NOTE:不要加const，后面要修改
+  //因为用右值引用函数参数就是为了让其绑定到一个右值上去的！就是说这个右值引用是一定要变的，
+  //但是一旦加了const就无法改变 
+    if (this == &test)
+      return *this;
+
+    if (str) {
+      delete[] str;
+      str = nullptr;
+    }
+    if (test.str) {
+      str = test.str;
+      test.str = nullptr;
+    } else {
+      str = nullptr;
+    }
+    return *this;
+  }
+
+private:
+  char *str = nullptr;
+};
+
+Test makeTest() {
+
+  Test t;
+  return t;
+}
+
+int main() {
+
+  Test t = makeTest();
+
+  return 0;
+}
+
+```
+
 #### 3. 默认移动构造函数和默认移动赋值运算符
 
-会默认生成移动构造函数和移动赋值运算符的条件：
+会默认生成移动构造函数和移动赋值运算符的条件 ：
+1. 只有一个类没有定义任何自己版本的拷贝操作（拷贝构造、拷贝赋值运算符），且类的每个非静态成员都可以移动，系统才会合成
+
+2. 可以移动的意思是可以就行移动构造、移动赋值。所有的基础类型都是可以移动的。有移动语义的类也是可以移动的
+
 
 ---
 
-## 函数重载 overload
-
-如果在一个类中的多个函数，满足如下两点，则这两个函数就构成了重载关系
+## 函数重载 overlord
 
 1. 函数名相同
 2. 参数不同
@@ -1243,6 +1329,7 @@ int main()
 
     return 0;
 }
+
 
 ```
 
