@@ -2379,6 +2379,119 @@ int main() {
 
 `weak_ptr`是用比较少，就是为了处理`shared_ptr`循环引用问题设计的
 
+### (\*)unique_ptr
+
+#### 1. 介绍
+
+独占式智能指针，在是用智能指针时，我们一般优先考虑独占式智能指针，因为消耗更小，如果发现内存需要共享，那么再去是用`shared_ptr`
+
+#### 2. unique_ptr的初始化
+> 和shared_ptr完全类似
+
+1. 使用`new`运算符初始化
+2. 使用`make_unique`初始化
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::unique_ptr<int> unique1(new int(100));
+  std::unique_ptr<int> unique2 = std::make_unique<int>(1000);
+  std::cout << *unique1 << std::endl;
+  std::cout << *unique2 << std::endl;
+
+  return 0;
+}
+```
+
+#### 3. unique_ptr的常用操作
+
+1. `unique_ptr`禁止复制构造函数，他禁止赋值运算符的重载运算。否则独占毫无意义
+2. `unique_ptr`允许移动构造，移动赋值。移动语义代表之前的对象已经失去了意义，移动操作自然不影响独占的特性
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::unique_ptr<int> unique1 = std::make_unique<int>(100);
+  std::unique_ptr<int> unique2 = std::make_unique<int>(1000);
+
+  unique2 = std::move(unique1);
+  std::cout << *unique2 << std::endl;
+
+  return 0;
+}
+```
+
+4. `reset()`函数
+    1. 不带参数的情况下，释放智能指针的对象，并将智能指针置空
+    2. 带参数的情况下，释放智能指针的对象，并将智能指针指向新的对象
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::unique_ptr<int> unique1 = std::make_unique<int>(100);
+  std::unique_ptr<int> unique2 = std::make_unique<int>(1000);
+
+  unique1.reset();
+  unique2.reset(new int(12));
+
+  std::cout << *unique2 << std::endl;
+
+  return 0;
+}
+```
+
+
+4. 将`unique_ptr`的对象转化为`shared_ptr`的对象，当`unique_ptr`的对象作为一个右值时，就可以将该对象转化为`shared_ptr`的对象
+> 这个使用的并不多，需要将独占式指针转化为共享式指针常常是因为先前设计失误
+> 注意：shared_ptr对象无法将其转化为unique_ptr对象
+
+```c++
+#include <iostream>
+#include <memory>
+
+void myfunc(std::unique_ptr<int> unique3) {
+  std::shared_ptr<int> shared1(std::move(unique3));
+} // NOTES: 一旦将一个对象转化成右值时，必须保证以后不再单独是用这个对象
+
+int main() {
+
+  std::unique_ptr<int> unique1 = std::make_unique<int>(100);
+  std::unique_ptr<int> unique2 = std::make_unique<int>(1000);
+
+  return 0;
+}
+```
+
+
+
+### (\*\*)智能指针的适用范围
+
+#### 1. 能使用智能指针就尽量是用智能指针 ， 但是有些情况下不能使用智能指针
+
+有些函数必须使用C语言的指针，这些函数又没有替代，这种情况下，才使用普通的指针，其他情况一律是用智能指针  
+
+必须使用C语言的指针包括:
+
+1. 网络传输函数：比如windows下的`send`,`recv`函数，智能使用C语言的指针，无法替代
+2. C语言文件操作部分：这方面C++已经有了替代品，C++的文件部分完全支持智能指针，所以在做大型项目时，推荐使用C++的文件操作功能
+
+
+#### 2. 我们应该是用哪个智能指针呢？
+
+1. 优先使用`unique_ptr`，内存需要共享时使用`shared_ptr`
+2. 当使用`shared_ptr`时，如果出现循环引用的情况下，再去考虑`weak_ptr`
+
+
+
 ---
 
 # 稀碎的小知识点
