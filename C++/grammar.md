@@ -82,8 +82,13 @@
       * [2. 常用操作](#2-常用操作)
         * [1. 初始化](#1-初始化)
         * [2. shared_ptr 的引用计数](#2-shared_ptr-的引用计数)
-      * [3. 把shared_ptr当成普通指针使用](#3-把shared_ptr当成普通指针使用)
+      * [3. 把 shared_ptr 当成普通指针使用](#3-把-shared_ptr-当成普通指针使用)
       * [4. 常用函数](#4-常用函数)
+      * [5. 关于智能指针创建数组的问题](#5-关于智能指针创建数组的问题)
+      * [6. 用智能指针作为参数传递时直接值传递就行](#6-用智能指针作为参数传递时直接值传递就行)
+      * [7. 总结](#7-总结)
+    * [3. weak_ptr](#3-weak_ptr)
+      * [1. 介绍](#1-介绍-1)
 * [稀碎的小知识点](#稀碎的小知识点)
   * [memset](#memset)
 
@@ -2187,7 +2192,7 @@ int main() {
 
 ```
 
-#### 3. 把shared_ptr当成普通指针使用
+#### 3. 把 shared_ptr 当成普通指针使用
 
 智能指针可以像普通指针那样使用，`shared_ptr`早已对各种操作进行了重载，就当它是普通指针就可以了
 
@@ -2209,23 +2214,118 @@ int main() {
 #### 4. 常用函数
 
 1. `unique`函数
-> 判断该`shared_ptr`对象是否独占，若独占，返回`true`，否则返回`false`
+   > 判断该`shared_ptr`对象是否独占，若独占，返回`true`，否则返回`false`
 
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  std::cout << shared1.unique() << std::endl;
+
+  std::shared_ptr<int> shared2(shared1);
+  std::cout << shared1.unique() << std::endl;
+
+
+  shared2.reset();
+  std::cout << shared1.unique() << std::endl;
+
+  return 0;
+}
+
+```
 
 2. `reset`函数
 
-    1. 当`reset`函数有参数时，改变此`shared_ptr`对象指向的内存
-    2. 当`reset`函数无参数时，将此`shared_ptr`对象置空，也就是将对象内存的指针设置为`nullptr`
+   1. 当`reset`函数有参数时，改变此`shared_ptr`对象指向的内存
+   2. 当`reset`函数无参数时，将此`shared_ptr`对象置空，也就是将对象内存的指针设置为`nullptr`
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  std::cout << shared1.unique() << std::endl;
+
+  std::shared_ptr<int> shared2 = std::make_shared<int>(100);
+
+  shared1.reset(new int(100));
+
+  shared2 = shared1;
+  shared1.reset();
+  return 0;
+}
+
+```
 
 3. `get`函数， 强烈不推荐使用
 
 如果一定要用，那么一定不能`delete`返回的指针
 
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  std::cout << shared1.unique() << std::endl;
+
+  delete shared1.get(); // NOTE: 堆内存重复释放
+
+  return 0;
+}
+
+```
+
 4. `swap`函数
-> 交换两个智能指针所指向的内存
+
+   > 交换两个智能指针所指向的内存
 
 1. `std`命名空间中全局的`swap`函数
-2. `shared_ptr`类提供的`swap`函数
+1. `shared_ptr`类提供的`swap`函数
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+  std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  std::shared_ptr<int> shared2 = std::make_shared<int>(1000);
+
+  shared1.swap(shared2);
+  std::cout << *shared1 << std::endl;
+  std::cout << *shared2 << std::endl;
+
+  std::swap(shared1, shared2);
+  std::cout << *shared1 << std::endl;
+  std::cout << *shared2 << std::endl;
+
+  return 0;
+}
+
+```
+
+
+#### 5. 关于智能指针创建数组的问题
+
+
+#### 6. 用智能指针作为参数传递时直接值传递就行
+
+`shared_ptr`的大小为固定的`8`或`16`字节
+> 也就是两倍指针的大小，32位系统指针为`4`个字节，64位系统指针为`8`个字节，`shared_ptr`中就两个指针，所以直接按值传递就行了
+
+#### 7. 总结
+
+在现代程序中，当想要共享一块堆内存时，优先使用`shared_ptr`，可以极大的减少内存泄露的问题
+
+### 3. weak_ptr
+
+#### 1. 介绍
 
 ---
 
