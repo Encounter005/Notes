@@ -2327,6 +2327,58 @@ int main() {
 
 #### 1. 介绍
 
+1. 这个智能指针是在C++11的时候引入标准库，它的出现完全是为了弥补`shared_ptr`的天生缺陷，其实`shared_ptr`可以说是几乎完美
+2. 只是通过引用计数实现的方式也引来了引用成环的问题，这种问题靠他自己是没法解决的，所以在C++11的时候将`shared_ptr`和`weak_ptr`一起引入了标准库，依次来解决循环引用的问题
+
+#### 2. shared_ptr循环引用的问题
+
+```c++
+#include <iostream>
+#include <memory>
+
+class B;
+
+class A {
+
+public:
+  std::shared_ptr<B> sharedB;
+};
+
+class B {
+
+public:
+  std::weak_ptr<A> sharedA; // NOTES: 只有把其中一个堆内存用weak_ptr来控制，这两块堆内存才会被释放
+};
+
+int main() {
+  // std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  // std::cout << shared1.use_count() << std::endl;
+  //
+  // std::weak_ptr<int> weak1(shared1);
+  // std::cout << shared1.use_count() << std::endl;
+
+
+  std::shared_ptr<A> sharedA1 = std::make_shared<A>();
+  std::shared_ptr<B> sharedB1 = std::make_shared<B>();
+
+  sharedA1->sharedB = sharedB1; // NOTES: 两个堆内存，你指我，我指你，双方都在等着对方释放
+  引用计数都为1，当引用计数为0的时候，堆内存才会被释放，所以这就造成了内存泄露
+  sharedB1->sharedA = sharedA1; 
+
+  return 0;
+}
+```
+
+#### 3. weak_ptr的作用原理
+
+`weak_ptr`的作用对象需要绑定到`shared_ptr`对象上，作用原理是`weak_ptr`不会改变`shared_ptr`的引用计数，只要`shared_ptr`对象的引用计数为0，就会释放内存，`weak_ptr`不会影响到释放内存的功能
+
+
+#### 4. 总结
+
+`weak_ptr`是用比较少，就是为了处理`shared_ptr`循环引用问题设计的
+
+
 ---
 
 # 稀碎的小知识点
