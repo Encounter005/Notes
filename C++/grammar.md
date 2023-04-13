@@ -80,6 +80,10 @@
     * [2. shared_ptr](#2-shared_ptr)
       * [1. 工作原理](#1-工作原理)
       * [2. 常用操作](#2-常用操作)
+        * [1. 初始化](#1-初始化)
+        * [2. shared_ptr 的引用计数](#2-shared_ptr-的引用计数)
+      * [3. 把shared_ptr当成普通指针使用](#3-把shared_ptr当成普通指针使用)
+      * [4. 常用函数](#4-常用函数)
 * [稀碎的小知识点](#稀碎的小知识点)
   * [memset](#memset)
 
@@ -2113,12 +2117,9 @@ int main() {
 }
 ```
 
-
-
 3. (\*)智能指针的注意事项
 
    智能指针和裸指针不要混用
-
 
 ### 2. shared_ptr
 
@@ -2126,13 +2127,105 @@ int main() {
 
 1. 我们在动态内存分配时，堆上的内存必须通过栈上的内存来寻址，也就是说栈上的指针(堆上的指针也可以指向堆内存，但终究是要通过栈来寻址)是寻找堆内存的唯一方式
 
-2. 所以我们可以给堆内存添加一个引用计数，有几个指针指向它，它的引用计数就是几。当引用计数为0时，操作系统就会释放掉这块内存
-
+2. 所以我们可以给堆内存添加一个引用计数，有几个指针指向它，它的引用计数就是几。当引用计数为 0 时，操作系统就会释放掉这块内存
 
 #### 2. 常用操作
 
-1. 初始化
+##### 1. 初始化
 
+使用`new`运算符初始化
+
+> 一般来说不推荐使用`new`进行初始化，因为 C++标准提供了专门创建`shared_ptr`的函数`make_shared()`，该函数是经过优化的，效率更高
+
+使用`make_shared()`初始化
+
+`注意` ： 千万不要用裸指针初始化`shared_ptr`，容易出现内存泄露的问题
+
+使用复制构造函数初始化也行
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::shared_ptr<int> shared1(new int (100));
+  std::shared_ptr<int> shared2 = std::make_shared<int>(100);
+  std::shared_ptr<int> shared3(shared2);// 使用复制构造函数初始化也行
+  int *pi = new int(100);
+
+  std::shared_ptr<int> shared4(pi);
+  // delete pi; // NOTE: 会造成二次释放(堆内存的重复释放)
+
+  return 0;
+}
+
+```
+
+##### 2. shared_ptr 的引用计数
+
+智能指针就是通过引用计数来判断释放内存的时机的  
+`use_count()`函数可以得到`shared_ptr`对象的引用计数
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+  std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  std::cout << shared1.use_count() << std::endl;
+
+  std::shared_ptr<int> shared2(shared1);
+  std::cout << shared1.use_count() << std::endl;
+
+  shared2.reset(); // NOTE: 释放掉该指针对对象的控制权
+  std::cout << shared1.use_count() << std::endl;
+
+  return 0;
+}
+
+```
+
+#### 3. 把shared_ptr当成普通指针使用
+
+智能指针可以像普通指针那样使用，`shared_ptr`早已对各种操作进行了重载，就当它是普通指针就可以了
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main() {
+
+
+  std::shared_ptr<int> shared1 = std::make_shared<int>(100);
+  std::cout << *shared1 << std::endl;
+
+  return 0;
+}
+
+```
+
+#### 4. 常用函数
+
+1. `unique`函数
+> 判断该`shared_ptr`对象是否独占，若独占，返回`true`，否则返回`false`
+
+
+2. `reset`函数
+
+    1. 当`reset`函数有参数时，改变此`shared_ptr`对象指向的内存
+    2. 当`reset`函数无参数时，将此`shared_ptr`对象置空，也就是将对象内存的指针设置为`nullptr`
+
+3. `get`函数， 强烈不推荐使用
+
+如果一定要用，那么一定不能`delete`返回的指针
+
+4. `swap`函数
+> 交换两个智能指针所指向的内存
+
+1. `std`命名空间中全局的`swap`函数
+2. `shared_ptr`类提供的`swap`函数
 
 ---
 
