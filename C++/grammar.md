@@ -104,6 +104,9 @@
       * [1. 模板的介绍](#1-模板的介绍)
       * [2. 类模板基础](#2-类模板基础)
       * [3. 模板的实现原理](#3-模板的实现原理)
+    * [(\*) initializer_list 和 typename](#-initializer_list-和-typename)
+      * [initializer_list](#initializer_list)
+      * [typename](#typename)
 * [稀碎的小知识点](#稀碎的小知识点)
   * [memset](#memset)
 
@@ -2361,7 +2364,7 @@ public:
 class B {
 
 public:
-  std::weak_ptr<A> sharedA; // NOTES: 只有把其中一个堆内存用weak_ptr来控制，这两块堆内存才会被释放
+  std::weak_ptr<A> sharedA; // NOTE: 只有把其中一个堆内存用weak_ptr来控制，这两块堆内存才会被释放
 };
 
 int main() {
@@ -2375,7 +2378,7 @@ int main() {
   std::shared_ptr<A> sharedA1 = std::make_shared<A>();
   std::shared_ptr<B> sharedB1 = std::make_shared<B>();
 
-  sharedA1->sharedB = sharedB1; // NOTES: 两个堆内存，你指我，我指你，双方都在等着对方释放
+  sharedA1->sharedB = sharedB1; // NOTE: 两个堆内存，你指我，我指你，双方都在等着对方释放
   引用计数都为1，当引用计数为0的时候，堆内存才会被释放，所以这就造成了内存泄露
   sharedB1->sharedA = sharedA1;
 
@@ -2501,36 +2504,245 @@ int main() {
 
 ---
 
-
-
-
 ## 模板与泛型编程
 
 ### 模板介绍，类模板与模板实现原理
 
-C++的三大模块，面向过程、面向对象、模板与泛型。面向过程就是C语言，面向对象就是类，现在轮到模板与泛型了
+C++的三大模块，面向过程、面向对象、模板与泛型。面向过程就是 C 语言，面向对象就是类，现在轮到模板与泛型了
 
 #### 1. 模板的介绍
 
 1. 模板能够实现一些其他语法难以实现的功能，但是理解起来会更加困难，容易导致新手摸不着头脑
 2. 模板分为类模板和函数模板，函数模板又分为普通函数模板和成员函数模板
 
-
 #### 2. 类模板基础
 
 > 类模板的写法十分固定
 
-
 #### 3. 模板的实现原理
 
-模板需要编译两次，在第一次编译时仅仅检查最基本的语法，比如括号是否匹配。等函数真正被调用的时候，才会真正生成需要的类或函数  
+模板需要编译两次，在第一次编译时仅仅检查最基本的语法，比如括号是否匹配。等函数真正被调用的时候，才会真正生成需要的类或函数
 
-所以这导致了一个结果，就是不论是模板类还是模板函数，声明与实现都必须放在同一个文件中，因为程序在编译期就必须知道函数具体的实现过程，如果实现和声明分文件编写，需要在链接时才可以看到函数的具体实现过程，这当然会报错  
+所以这导致了一个结果，就是不论是模板类还是模板函数，声明与实现都必须放在同一个文件中，因为程序在编译期就必须知道函数具体的实现过程，如果实现和声明分文件编写，需要在链接时才可以看到函数的具体实现过程，这当然会报错
 
 于是人们发明了`.hpp`文件来存放模本这种声明与实现在同一文件的情况
 
+```c++
+/*
+* filename: Myclass-template.hpp
+*/
+
+
+#pragma once
+
+#include <cstddef>
+template <typename T> class MyArray {
+  using iterator = T *;
+  using const_iterator = const T *;
+
+private:
+  T *data;
+
+public:
+  // NOTE: size_t在32位系统上定义为 unsigned
+  // int，也就是32位无符号整型。在64位系统上定义为 unsigned long ,
+  // 也就是64位无符号整形。
+
+  MyArray(size_t count);
+
+  iterator begin() const;
+
+  const_iterator cbegin() const;
+
+  ~MyArray();
+};
+
+template <typename T> MyArray<T>::MyArray(size_t count) {
+  if (count) {
+    data = new T[count]();
+  } else
+    data = nullptr;
+}
+
+template <typename T> MyArray<T>::~MyArray() {
+  if (data)
+    delete[] data;
+}
+
+// NOTE: 定义迭代器得使用typename
+template <typename T> typename MyArray<T>::iterator MyArray<T>::begin() const {
+  return data;
+}
+
+template <typename T>
+typename MyArray<T>::const_iterator MyArray<T>::cbegin() const {
+  return data;
+}
+
+```
+
+```c++
+/*
+* filename = main.cpp
+*/
+
+#include <iostream>
+#include <string>
+#include <memory>
+#include "Myclass-template.hpp"
+
+int main() {
+
+  MyArray<int> st(100);
+  std::cout << *st.begin() << std::endl;
+  return 0;
+}
+
+```
+
+
+
+### (\*) initializer_list 和 typename
+
+#### initializer_list
+
+1. initializer_list介绍：initializer_list其实就是初始化列表，我们可以用初始化列表初始化各种容器，比如`vector` 、`array`
+
+```c++
+/*
+ * filename: Myclass-template.hpp
+ */
+
+#pragma once
+
+#include <cstddef>
+#include <initializer_list>
+#include <type_traits>
+// NOTE:类型萃取
+#include <vector>
+
+// NOTE: 模板特化
+
+template <typename T> struct get_type {
+  using type = T;
+};
+
+template <typename T> struct get_type<T *> {
+  using type = T;
+};
+
+template <typename T> class MyArray {
+private:
+  std::vector<T> data;
+  // NOTE: 在创建的时候实际上是创建了两层指针，第一层是data，第二层是data里面的元素
+  //析构函数只删除了第一层指针，导致第二层还留着，造成内存泄露
+  //得使用智能指针来避免的这个问题
+  //如果是容器的话，直接用vector就好了
+  //
+  using iterator = T *;
+  using const_iterator = const T *;
+  unsigned int cnt;
+
+public:
+  MyArray(std::size_t count);
+  MyArray(const std::initializer_list<T> &list);
+  MyArray(std::initializer_list<T> &&list);
+  iterator begin() const;
+  const_iterator cbegin() const;
+
+  T &operator[](unsigned int query) const { return data[query]; }
+
+  ~MyArray();
+};
+
+template <typename T> MyArray<T>::MyArray(std::size_t count) : cnt(count) {
+  if (data) {
+    data = new T[count]();
+  } else
+    data = nullptr;
+}
+
+template <typename T> typename MyArray<T>::iterator MyArray<T>::begin() const {
+  return data;
+}
+
+template <typename T>
+typename MyArray<T>::const_iterator MyArray<T>::cbegin() const {
+  return data;
+}
+
+template <typename T>
+MyArray<T>::MyArray(const std::initializer_list<T> &list) {
+  if (list.size()) {
+    unsigned int count = 0;
+    data = new T[list.size()]();
+    if (std::is_pointer<T>::value) {
+
+      for (auto elem : list)
+        data[count++] = new typename get_type<T>::type(*elem);
+
+    } else {
+      for (const auto &elem : list)
+        data[count++] = elem;
+    }
+  } else
+    data = nullptr;
+}
+
+template <typename T> MyArray<T>::MyArray(std::initializer_list<T> &&list) {
+  if (list.size()) {
+    unsigned int count = 0;
+    data = new T[list.size()]();
+
+    for (auto &elem : list)
+      data[count++] = elem;
+  } else
+    data = nullptr;
+}
+
+template <typename T> MyArray<T>::~MyArray() { 
+  delete[] data; 
+}
+```
+
+```c++
+/*
+ * filename = main.cpp
+ */
+
+#include "Myclass-template.hpp"
+#include <initializer_list>
+#include <iostream>
+#include <vector>
+
+int main() {
+
+  std::initializer_list<int> iList{1, 2, 3, 4, 5, 6};
+  std::vector<int> ivec{0, 1, 2, 3, 4, 5, 6};
+
+  int i1 = 10, i2 = 20, i3 = 30, i4 = 40;
+
+  std::initializer_list<int *> iList1{&i1, &i2, &i3, &i4};
+  MyArray<int *> arrayP(iList1);
+  for (int i = 0; i < iList1.size(); i++)
+    std::cout << *arrayP[i] << std::endl;
+
+  return 0;
+}
+```
+
+#### typename
+
+1. 在定义模板时表示这个一个待定的类型
+
+2. 在类外表明自定义类型时使用
+
+
+在C++的早起版本，为了减少关键字的数量，用`class`来表示模板的参数，但是后来因为第二个原因，不得不引入`typename`关键字
+
 
 ---
+
 # 稀碎的小知识点
 
 ## memset
