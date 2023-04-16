@@ -109,6 +109,16 @@
       * [typename](#typename)
     * [(\*)函数模板，成员函数模板](#函数模板成员函数模板)
       * [2. 成员函数模板](#2-成员函数模板)
+    * [(\*) 默认模板参数](#-默认模板参数)
+    * [(\*) 模板的重载、全特化和偏特化](#-模板的重载全特化和偏特化)
+      * [1. 模板的重载](#1-模板的重载)
+      * [2. 模板的特化](#2-模板的特化)
+        * [总结](#总结-5)
+  * [STL](#stl)
+  * [IO 库](#io-库)
+    * [IO 库介绍](#io-库介绍)
+      * [IO](#io)
+      * [IO 库组成部分](#io-库组成部分)
 * [稀碎的小知识点](#稀碎的小知识点)
   * [memset](#memset)
 
@@ -2602,13 +2612,11 @@ int main() {
 
 ```
 
-
-
 ### (\*) initializer_list 和 typename
 
 #### initializer_list
 
-1. initializer_list介绍：initializer_list其实就是初始化列表，我们可以用初始化列表初始化各种容器，比如`vector` 、`array`
+1. initializer_list 介绍：initializer_list 其实就是初始化列表，我们可以用初始化列表初始化各种容器，比如`vector` 、`array`
 
 ```c++
 /*
@@ -2702,8 +2710,8 @@ template <typename T> MyArray<T>::MyArray(std::initializer_list<T> &&list) {
     data = nullptr;
 }
 
-template <typename T> MyArray<T>::~MyArray() { 
-  delete[] data; 
+template <typename T> MyArray<T>::~MyArray() {
+  delete[] data;
 }
 ```
 
@@ -2739,13 +2747,330 @@ int main() {
 
 2. 在类外表明自定义类型时使用
 
-
-在C++的早起版本，为了减少关键字的数量，用`class`来表示模板的参数，但是后来因为第二个原因，不得不引入`typename`关键字
-
+在 C++的早起版本，为了减少关键字的数量，用`class`来表示模板的参数，但是后来因为第二个原因，不得不引入`typename`关键字
 
 ### (\*)函数模板，成员函数模板
 
+```c++
+#include "Myclass-template.hpp"
+#include <iostream>
+#include <memory>
+#include <vector>
+
+namespace mystd {
+// NOTE: 函数模板
+template <typename iter_type, typename func_type>
+void for_each(iter_type first, iter_type last, func_type func) {
+  for (auto iter = first; iter != last; iter++) {
+    func(*iter);
+  }
+}
+
+} // namespace mystd
+
+int main() {
+  std::vector<int> ivec{1, 2, 3, 4, 5};
+  mystd::for_each(ivec.begin(), ivec.end(), [](int &elem) { ++elem; });
+
+  for (auto &elem : ivec) {
+    std::cout << elem << std::endl;
+  }
+
+  return 0;
+}
+
+```
+
 #### 2. 成员函数模板
+
+```c++
+#include <iostream>
+#include <memory>
+#include <vector>
+
+namespace mystd {
+// NOTE: 函数模板
+template <typename iter_type, typename func_type>
+void for_each(iter_type first, iter_type last, func_type func) {
+  for (auto iter = first; iter != last; iter++) {
+    func(*iter);
+  }
+}
+
+template <typename T> class Myvector {
+public:
+  template <typename T2> void OutPut(const T2 &elem);
+};
+// NOTE:类外定义函数
+
+template <typename T>
+template <typename T2>
+
+void Myvector<T>::OutPut(const T2 &elem) {
+  std::cout << elem << std::endl;
+}
+
+} // namespace mystd
+
+int main() {
+  std::vector<int> ivec{1, 2, 3, 4, 5};
+  mystd::for_each(ivec.begin(), ivec.end(), [](int &elem) { ++elem; });
+
+  for (auto &elem : ivec) {
+    std::cout << elem << std::endl;
+  }
+  mystd::Myvector<int> myvec;
+
+  for (const auto &elem : ivec) {
+    myvec.OutPut(elem);
+  }
+
+  return 0;
+}
+
+```
+
+### (\*) 默认模板参数
+
+1. 默认模板参数是一个经常使用的特性，比如在定义`vector`对象时，我们就可以使用默认分配器
+
+2. 模板默认参数和普通函数的默认参数一样，一旦一个参数有了默认参数，它之后的参数都必须有默认参数
+
+3. 函数模板使用默认模板参数
+
+```c++
+#include "Myclass-template.hpp"
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <algorithm>
+
+namespace mystd {
+// NOTE: 函数模板
+
+using void_int_func_type = std::function<void(int&)>;
+
+template <typename iter_type, typename func_type = void_int_func_type>
+void for_each(iter_type first , iter_type last , func_type func = [](int &elem) {++elem;}) {
+  for(auto iter = first; iter != last; iter ++)
+    func(*iter);
+}
+
+
+
+} // namespace mystd
+
+int main() {
+  std::vector<int> ivec{1, 2, 3, 4, 5};
+  mystd::for_each(ivec.begin(), ivec.end());
+
+  for (auto &elem : ivec) {
+    std::cout << elem << std::endl;
+  }
+
+  return 0;
+}
+
+```
+
+4. 类模板使用默认模板参数
+
+```c++
+#include "Myclass-template.hpp"
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
+
+namespace mystd {
+
+template <typename T, typename allocator_type = std::allocator<T>> class Myvector {
+public:
+  template <typename T2> void OutPut(const T2 &elem);
+};
+
+template <typename T, typename allocator_type>
+template <typename T2>
+void Myvector<T, allocator_type>::OutPut(const T2 &elem) {
+  std::cout << elem << std::endl;
+}
+
+} // namespace mystd
+
+int main() {
+  mystd::Myvector<int> ivec;
+  ivec.OutPut(29);
+
+  return 0;
+}
+
+```
+
+### (\*) 模板的重载、全特化和偏特化
+
+#### 1. 模板的重载
+
+函数模板是可以重载的（类模板不能重载），通过重载可以应对更加复杂的情况。比如在处理`char*`和`string`对象时，虽然都可以代表字符串，但`char*`在复制时直接拷贝内存效率明显更高，string 就不得不调用构造函数了，所以在一些比较追求效率的程序中对不同类型进行不同的处理还是非常有意义的
+
+```c++
+#include <iostream>
+#include <string>
+#include <vector>
+
+template <typename T> void test(const T &param) {
+  std::cout << "void test(const T &param)" << std::endl;
+}
+
+template <typename T> void test(T *param) {
+  std::cout << "void test(T *param)" << std::endl;
+}
+
+void test(double param) {
+  std::cout << "void test(double param)" << std::endl;
+}
+
+int main() {
+  test(100);
+  int i = 100;
+  test(&i);
+  test(2.2);
+  int a = 20 , b = 30;
+  return 0;
+}
+```
+
+其实函数模板的重载和普通函数的重载没有什么区别
+
+在讲完类模板特化就能知道重载和特化的区别了，这一点暂时不用在意了
+
+#### 2. 模板的特化
+
+1. 模板特化的意义
+
+函数模板可以重载以应对更加精细的情况，类模板不能重载，但可以特化来实现类似的功能
+
+2. 模板的特化可以分为两种：全特化和偏特化
+
+   1. 模板的全特化：
+      就是指模板的实参列表与相应的模板参数列表一一对应
+
+   2. 模板的偏特化：
+      偏特化就是介于普通模板和全特化之间，只存在部分类型明确化，而非将模板唯一化
+
+3. 其实对于函数模板来说，特化与重载可以理解为一个东西
+
+```c++
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+template<typename T1 , typename T2>
+class Test {
+public:
+  Test() {
+    std::cout << "common template" << std::endl;
+  }
+};
+
+template<typename T1 , typename T2>
+class Test<T1* , T2*> {
+public:
+  Test() {
+    std::cout << "point template" << std::endl;
+  }
+};
+
+// NOTE:部分特化
+template<typename T2>
+class Test<int, T2> {
+public:
+  Test() {
+    std::cout << "int -semi-special" << std::endl;
+  }
+};
+
+// NOTE: 全特化
+template<>
+class Test<int , int> {
+public:
+  Test() {
+    std::cout << "int ,int complete special" << std::endl;
+  }
+};
+
+int main() {
+
+  Test<int * , int *> test1;
+  Test<int , double> test2;
+  Test<int , int> test3;
+  Test<int* , int> test4;
+  return 0;
+}
+
+```
+
+##### 总结
+
+函数模板的重载，类模板的特化还是比较重要的知识点，应当掌握，在一些比较复杂的程序中，模板的重载与特化还是经常使用的
+
+---
+
+## STL
+
+---
+
+## IO 库
+
+### IO 库介绍
+
+#### IO
+
+`io`就是`input` 、`output`的简写，也就是输入输出的功能，数据在内存、磁盘、输入输出设备之间移动就是`io`功能
+![](https://s3.bmp.ovh/imgs/2023/04/16/c4f1ab410958bb36.png)
+
+#### IO 库组成部分
+
+1. C++定义了`ios`这个基类来定义输入输出的最基本操作，这个类的具体功能我们无需了解，只需了解 C++io 库所有的类都继承自这个类即可
+2. `istream` 、`ostream`这两个类直接继承自`ios`类
+    1. `ostream`类定义了从内存到输出设备（比如显示器）的功能，我们最常使用的`cout`就是`ostream`类对象
+    2. `istream`类定义了从输入设备（比如键盘）到内存的功能，我们最常使用的`cin`就是`istream`类对象
+    3. `iostream`文件定义了`ostream`、`istream`类的对象，就是`cout`和`cin`，所以我们只要简单的引入`iostream`这个文件，就可以方便的使用这两个对象
+
+注意：这个输入，输入相对于内存来说，输入到内存，就是`istream`
+
+3. `ifstream` 、`ofstream`类分别继承自`istream`类和`ostream`类
+    1. `ifstream`定义了磁盘到内存的功能。因为`istream`重载了`<<`运算符，所以`ifstream`对象也可以用`<<`运算符来将文件数据写入内存，除了`=`的所用重载运算符都是可以被继承的
+    2. `ofstream`定义了从内存到磁盘的功能，与`ifstream`同理，也可以用`>>`操作数据流
+    3. `fstream`文件引入了`ifstream`与`ofstream`，所以我们只要引入`ifstream`这个头文件，就可以操作文件流功能了
+
+注意：这个输入输出同样是相对内存来说的
+
+内存与输入输出设备的数据流动，磁盘与内存的数据流动已经介绍完了。磁盘输入输出设备无法直接交互，必须通过内存  
+`io`库还为我们额外定义了字符串的输入输出类，因为对字符串的操作极为频繁，所以这个库还是很有意义的
+
+4. `istringstream` 、`ostringstream`分别继承自`istream`类和`ostream`类
+
+    1. `istringstream`定义了从指定字符串到特定内存的功能，与`ifstream`同理，也可以用`<<`运算符操作数据
+    2. `ostringstream`定义了从特定内存到指定字符串的功能，可以用`>>`运算符操作数据
+    3. `sstream`头文件就引入了`istringstream`和`ostringstream`，所以我们只要引入`sstream`这个头文件，就可以使用字符串与内存直接交互数据的功能
+
+所以我们使用`io`库主要就三个头文件`istream`、`ostream`、`sstream`
+
+
+```c++
+#include <iostream>
+// NOTE: 想要输入输出设备与内存交互，就使用iostream
+#include <fstream>
+// NOTE: 想要与磁盘交互，就使用fstream
+int main() {
+
+  return 0;
+}
+
+```
 
 ---
 
