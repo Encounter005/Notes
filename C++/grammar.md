@@ -107,6 +107,8 @@
     * [(\*) initializer_list 和 typename](#-initializer_list-和-typename)
       * [initializer_list](#initializer_list)
       * [typename](#typename)
+    * [(\*)函数模板，成员函数模板](#函数模板成员函数模板)
+      * [2. 成员函数模板](#2-成员函数模板)
 * [稀碎的小知识点](#稀碎的小知识点)
   * [memset](#memset)
 
@@ -2633,7 +2635,7 @@ template <typename T> struct get_type<T *> {
 
 template <typename T> class MyArray {
 private:
-  std::vector<T> data;
+  T* data;
   // NOTE: 在创建的时候实际上是创建了两层指针，第一层是data，第二层是data里面的元素
   //析构函数只删除了第一层指针，导致第二层还留着，造成内存泄露
   //得使用智能指针来避免的这个问题
@@ -2740,6 +2742,10 @@ int main() {
 
 在C++的早起版本，为了减少关键字的数量，用`class`来表示模板的参数，但是后来因为第二个原因，不得不引入`typename`关键字
 
+
+### (\*)函数模板，成员函数模板
+
+#### 2. 成员函数模板
 
 ---
 
