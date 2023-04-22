@@ -82,6 +82,7 @@
 14. discrepancy $n. 矛盾$
 15. devise $v. 设计$
 16. dense $adj. 稠密的$
+17. deviate $v. 脱离$
 
 ## E
 
@@ -115,7 +116,7 @@
 5. illusion $n. 幻觉$
 6. intimidatoy $adj. 威胁的$
 7. intuitive $adj. 直觉的$
-8. 
+8. inflate $v. 使膨胀$
 
 ## J
 
@@ -196,6 +197,7 @@
 11. stipulate $v. 规定$
 12. span $v. 持续时间$
 13. spiral $adj. 螺旋的$
+14. superficial $adj. 肤浅的$
 
 
 ## T
@@ -262,3 +264,4 @@
 20. get-off $起飞 下车$
 21. get-crushed $被压碎$
 22. test-orented $应试的$
+23. slack off $偷懒$
