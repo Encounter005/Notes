@@ -133,12 +133,14 @@
 1. miraculous $adj. 奇迹般的$
 2. merchandise $n. 商品 v. 售卖$
 3. mold $n. 模型$
+4. mischaracterize $v. 曲解$
 
 
 
 ## N
 
 1. negotitate $v. 谈判$
+2. neuroscientist $n. 神经科学家$
 
 ## O
 
@@ -168,6 +170,7 @@
 9. pilot $adj. 试点的 n. 飞行员$
 10. prestigious $adj. 受尊敬的$
 11. plausibly $adv. 似真地$
+12. plasticity $n. 可塑性$
 
 ## Q
 
