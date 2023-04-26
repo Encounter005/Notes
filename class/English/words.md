@@ -94,7 +94,6 @@
 6. exert $v. 运行$
 7. eroding $v. 侵蚀$
 
-
 ## F
 
 1. fragility $n. 脆弱$
@@ -122,11 +121,14 @@
 
 ## K
 
+1. kidnap $n. 绑架$
+
 ## L
 
 1. levy $v. 征税$
 2. lofty $adj. 巍峨的$
 3. legitimate $adj. 合法的$
+4. linguistic $adj. 语言学的$
 
 ## M
 
@@ -134,8 +136,6 @@
 2. merchandise $n. 商品 v. 售卖$
 3. mold $n. 模型$
 4. mischaracterize $v. 曲解$
-
-
 
 ## N
 
@@ -171,6 +171,8 @@
 10. prestigious $adj. 受尊敬的$
 11. plausibly $adv. 似真地$
 12. plasticity $n. 可塑性$
+13. pension $n. 养老金$
+14. perseverance $n. 坚持不懈、毅力$
 
 ## Q
 
@@ -201,7 +203,7 @@
 12. span $v. 持续时间$
 13. spiral $adj. 螺旋的$
 14. superficial $adj. 肤浅的$
-
+15. strp $vt. 剥夺；剥去；脱去衣服 n. 带、条状$
 
 ## T
 
