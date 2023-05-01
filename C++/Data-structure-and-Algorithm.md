@@ -81,6 +81,7 @@
         * [完全背包](#完全背包)
             * [优化问题](#优化问题)
         * [多重背包问题](#多重背包问题)
+        * [分组背包问题](#分组背包问题)
 
 <!-- vim-markdown-toc -->
 
@@ -2392,7 +2393,52 @@ int main() {
 }
 ```
 2. 优化版
+> 二进制法
 
 ```c++
+
+```
+### 分组背包问题
+
+[分组背包](https://www.acwing.com/problem/content/9/)
+
+1. 朴素版
+
+
+```c++
+
+```
+
+
+2. 优化版
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using pii = pair<int , int>;
+const int N = 110;
+int w[N][N] , s[N] , v[N][N];
+int n , m;
+int f[N];
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  
+  cin >> n >> m;
+  for(int i = 1; i <= n; i ++) {
+    cin >> s[i];
+    for(int j = 0; j < s[i]; j ++) cin >> v[i][j] >> w[i][j];
+  }
+
+  for(int i = 1; i <= n; i ++) 
+    for(int j = m; j >= 0; j --)
+      for(int k = 0; k <= s[i]; k ++)
+        if(j >= v[i][k]) f[j] = max(f[j] , f[j - v[i][k] ] + w[i][k]);
+
+  cout << f[m];
+
+  return 0;
+}
 
 ```
