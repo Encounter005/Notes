@@ -111,6 +111,7 @@
 ## H
 
 1. henceforth $adv. 从此以后$
+2. havoc $n. 大破坏$
 
 ## I
 
