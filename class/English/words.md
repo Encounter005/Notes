@@ -43,6 +43,7 @@
 6. alienate $v. 疏远$
 7. absurd $adj. 荒谬的$
 8. articulate $v. 清楚地表达$
+9. aesthetically $adv. 审美的$
 
 ## B
 
@@ -63,6 +64,8 @@
 10. chord $n. 合唱班$
 11. catastrophic $adj. 灾难的$
 12. concede $v. 让步$
+13. compatibility $n. 兼容性$
+14. conducive $v. 有助于$
 
 ## D
 
@@ -83,6 +86,8 @@
 15. devise $v. 设计$
 16. dense $adj. 稠密的$
 17. deviate $v. 脱离$
+18. deduct $v. 扣除$
+19. dispense $v. 免除$
 
 ## E
 
@@ -99,6 +104,7 @@
 1. fragility $n. 脆弱$
 2. fraction $n. 分数$
 3. fraud $n. 欺骗$
+4. flock $v. 涌入$
 
 ## G
 
@@ -116,6 +122,7 @@
 6. intimidatoy $adj. 威胁的$
 7. intuitive $adj. 直觉的$
 8. inflate $v. 使膨胀$
+9. incorporate $v. 合并$
 
 ## J
 
@@ -173,6 +180,8 @@
 12. plasticity $n. 可塑性$
 13. pension $n. 养老金$
 14. perseverance $n. 坚持不懈、毅力$
+15. provision $n. 弃权$
+16. principally $adv. 主要地$
 
 ## Q
 
@@ -186,6 +195,9 @@
 6. resolve $n. 分解  v. 解决$
 7. reckless $adj. 鲁莽的$
 8. reconcile $v. 调和$
+9. rigorous $adj. 严格的$
+10. remedy $v. 补救$
+11. rhetorically $adv. 修辞的$
 
 ## S
 
@@ -204,6 +216,8 @@
 13. spiral $adj. 螺旋的$
 14. superficial $adj. 肤浅的$
 15. strp $vt. 剥夺；剥去；脱去衣服 n. 带、条状$
+16. susceptible $adj. 易受影响的$
+17. substantially $adv. 实质上的$
 
 ## T
 
@@ -212,11 +226,13 @@
 3. temperament $n. 性格$
 4. tremendous $adj. 极大的$
 5. tread $v. 踏$
+6. thrify $n. 节俭$
 
 ## U
 
 1. urge $v. 冲动 鼓励$ $n. 催促$
 2. uneventful $adj. 平凡的$
+3. utilize $v. 利用$
 
 ## V
 
