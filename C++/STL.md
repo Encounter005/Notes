@@ -15,7 +15,7 @@
     - [map / multimap](#map-multimap)
     - [unordered_set / unordered_map / unordered_multiset / unordered_multimap](#unorderedset-unorderedmap-unorderedmultiset-unorderedmultimap)
     - [bitset](#bitset)
-  - [库函数](#库函数) - [lower_bound & upper_bound](#lowerbound-upperbound) - [sort](#sort) - [reverse](#reverse) - [nth_element](#nthelement)
+  - [算法](#算法) - [sort](#sort) - [lower_bound & upper_bound](#lowerbound-upperbound) - [reverse](#reverse) - [nth_element](#nthelement)
   <!--toc:end-->
 
 ## 容器
@@ -183,7 +183,9 @@ upper_bound(x)// 返回大于x的迭代器
 
 > 压位
 
-## 库函数
+## 算法
+
+> 常用算法
 
 ### sort
 
@@ -305,6 +307,68 @@ int main()
     cout << a[k] << endl;
 
     return 0;
+}
+
+```
+
+### adjacent_find
+
+> 查找相邻元素
+
+```c++
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+int main() {
+
+  std::vector<int> a{1, 2, 3, 3, 4, 5, 6};
+  auto iter = std::adjacent_find(a.cbegin() , a.cend());
+
+  if(iter == a.end()) {
+    std::cout << "container doestn't have adjacent element" << std::endl;
+  } else
+      std::cout << std::distance(a.cbegin() , iter) << std::endl;
+
+  auto iter1 = std::adjacent_find(a.cbegin() , a.cend() , [](int e1 , int e2) {
+      return e1 >= 4 && e2 >= 4;
+      }); //NOTE: 重载版本
+
+  if(iter1 == a.end()) {
+    std::cout << "container doestn't have adjacent element" << std::endl;
+  } else
+      std::cout << std::distance(a.cbegin() , iter1) << std::endl;
+
+
+  return 0;
+}
+
+```
+### binary_search
+
+```c++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+int main() {
+  std::vector<int> a{123 , 14 , 24534 , 15 , 1};
+  std::sort(a.begin() , a.end() , [](int e1 , int e2) {
+      return e1 > e2;
+      });
+
+  if(std::binary_search(a.cbegin() , a.cend() , 3)) {
+    std::cout << "is existed" << std::endl;
+  } else {
+    std::cout << "No" << std::endl;
+  }
+  std::cout << std::binary_search(a.cbegin() ,a.cend() , 15 , [](int e1 , int e2) {
+        return e1 > e2; // NOTE: 自定义规则时，sort函数一定要有相同的规则
+      }) << std::endl;
+
+
+  return 0;
 }
 
 ```
