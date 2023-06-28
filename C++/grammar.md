@@ -6,7 +6,7 @@
   - [类](#类)
     - [1. 类的介绍、构造函数、析构函数](#1-类的介绍构造函数析构函数)
     - [2. 类的权限修饰](#2-类的权限修饰)
-    - [3. This , 常成员函数与常对象](#3-this-常成员函数与常对象)
+    - [3. "This" , 常成员函数与常对象](#3-this-常成员函数与常对象)
       - [this 关键字](#this-关键字)
       - [常成员函数、常对象](#常成员函数常对象)
     - [inline, mutable, default, delete](#inline-mutable-default-delete)
@@ -105,7 +105,7 @@
       - [1. 模板的介绍](#1-模板的介绍)
       - [2. 类模板基础](#2-类模板基础)
       - [3. 模板的实现原理](#3-模板的实现原理)
-    - [(\*) initializer_list 和 typename](#initializer-list-和-typename)
+    - [(\*) "initializer_list" 和 "typename"](#initializer-list-和-typename)
       - [initializer_list](#initializerlist)
       - [typename](#typename)
     - [(\*)函数模板，成员函数模板](#函数模板成员函数模板)
@@ -127,6 +127,21 @@
     - [进程的概念](#进程的概念)
     - [线程的概念](#线程的概念)
     - [总结](#总结)
+  - [(\*)线程的创建](#线程的创建)
+    - [(\*)传递线程参数](#传递线程参数)
+      - [传递参数注意事项](#传递参数注意事项)
+      - [总结](#总结)
+      - [std::ref 的用法](#stdref-的用法)
+    - [(\*)线程 id 的概念](#线程-id-的概念)
+      - [线程 id 的定义](#线程-id-的定义)
+      - [注意](#注意)
+  - [(\*)数据共享与保护](#数据共享与保护)
+    - [扩展一下关于汇编的知识](#扩展一下关于汇编的知识)
+    - [数据保护问题](#数据保护问题)
+    - [互斥锁](#互斥锁)
+    - [原子操作](#原子操作)
+      - [总结](#总结)
+    - [(\*)死锁](#死锁)
 - [稀碎的小知识点](#稀碎的小知识点)
   - [memset](#memset)
   <!--toc:end-->
@@ -2619,7 +2634,7 @@ int main() {
 
 ```
 
-### (\*) initializer_list 和 typename
+### (\*) "initializer_list" 和 "typename"
 
 #### initializer_list
 
@@ -3130,35 +3145,310 @@ int main() {
 
 3. 自线程的创建方式：很简单，直接使用`thread`就可以了。
 
-
 ```c++
+#include <iostream>
+#include <string>
+#include <thread>
 
+int main() {
+
+  std::thread my_thread([]() {
+      std::cout << "This is a thread" << std::endl;
+
+      });
+
+  return 0;
+}
 ```
 
 4. 子线程创建后如果就不管了，那么会出现非常严重的问题
 
-    1. 有些子线程负责对部分对部分数据的处理，主线程必须要等到子线程处理完毕才能继续执行，所以`join`函数诞生了
+   1. 有些子线程负责对部分对部分数据的处理，主线程必须要等到子线程处理完毕才能继续执行，所以`join`函数诞生了
 
-    ```c++
-    
-    ```
-    使用`join`函数后，主线程就会处于挂起状态，直到子线程执行完毕才可以继续执行。
+   ```c++
+    #include <iostream>
+    #include <string>
+    #include <thread>
 
-    2. 有些子线程和主线程完全分离，各自执行各自的。但主线程执行完毕，子线程就会立马被强制结束，容易导致各种bug，查都不知道从那里开始查。于是`detach`函数就诞生了。
+    int main() {
 
-    ```c++
+      std::thread my_thread([]() {
+          std::cout << "This is a thread" << std::endl;
 
-    ```
-    `detach()`函数可以让子线程被C++运行库接管，就算主线程执行完毕，子线程也会由C++运行库及时清理相关资源。保证不会出现各种意想不到的bug
+          });
 
-### (*)传递线程参数
+      my_thread.join();
+      return 0;
+    }
+
+   ```
+
+   使用`join`函数后，主线程就会处于挂起状态，直到子线程执行完毕才可以继续执行。
+
+   2. 有些子线程和主线程完全分离，各自执行各自的。但主线程执行完毕，子线程就会立马被强制结束，容易导致各种 bug，查都不知道从那里开始查。于是`detach`函数就诞生了。
+
+   ```c++
+    #include <iostream>
+    #include <string>
+    #include <thread>
+
+    int main() {
+
+      std::thread my_thread([]() {
+        for(int i = 0; i < 100000; ++i) {}
+          });
+
+      my_thread.detach();
+      return 0;
+    }
+
+   ```
+
+   `detach()`函数可以让子线程被 C++运行库接管，就算主线程执行完毕，子线程也会由 C++运行库及时清理相关资源。保证不会出现各种意想不到的 bug
+
+### (\*)传递线程参数
 
 1. 传递子线程函数的参数：直接传递即可。
-> 传递参数分为三种方式：值传递，引用传递，指针传递。
+   > 传递参数分为三种方式：值传递，引用传递，指针传递。
+
+```c++
+#include <iostream>
+#include <string>
+#include <thread>
+
+void test(int t , const int &refi , const int *pi) {
+
+}
+
+int main() {
+  int i = 100;
+  std::thread my_thread(test , i , i , &i);
+
+  return 0;
+}
+```
+
+#### 传递参数注意事项
+
+1. 在使用`detach`时不要传递指针，或者说在设置子线程函数时，不要设置指针参数。因为值传递和引用传递并未直接传递地址，而指针却直接传递地址。所以当使用`detach`时，传指针就会导致错误，指针在已经被系统回收，所以千万不要传指针。
+
+```c++
+ #include <iostream>
+ #include <string>
+ #include <thread>
+
+ void test(int i , const int &refi , const int *pi) {
+   for(unsigned i = 0; i < 100000; ++i) {
+     int i2 = *pi;
+   }
+ }
+
+ int main() {
+   int i = 100;
+   std::thread my_thread(test , i , i , &i);
+   my_thread.detach();
+
+   return 0;
+ }
+
+```
+
+2. 在使用`detach`时不要使用隐式类型转换，`因为很有可能子线程参数还没来得及将参数转换为自己的类型，主线程就执行完毕了。`
+
+```c++
+ #include <iostream>
+ #include <string>
+ #include <thread>
+
+ class Test {
+   public:
+     Test(int i) {
+       std::cout << std::this_thread::get_id() << std::endl;
+     }
+ };
+
+
+ void test(const Test &t) {
+   std::cout << "child thread id is " << std::this_thread::get_id() << std::endl;
+ }
+
+ int main() {
+
+   std::cout << "main thread id is " << std::this_thread::get_id() << std::endl;
+   int i = 100;
+   std::thread my_thread(test , i);
+   my_thread.detach();
+   return 0;
+ }
+
+```
+
+#### 总结
+
+1. 普通类型在传递子线程函数参数时，直接值传递即可。
+2. 类类型传递引用就可以了，类类型传递引用首先会先调用一次复制构造函数生成一个临时变量，故而导致`地址不同`。如果采用值传递，需要两次复制构造函数，开销更大。
+
+```c++
+ #include <iostream>
+ #include <string>
+ #include <thread>
+
+ class Test {
+   public:
+     Test(int i) {
+       std::cout << std::this_thread::get_id() << std::endl;
+     }
+     Test(const Test &test) {
+       std::cout << "Test(const Test &test)" << std::endl;
+     }
+ };
+
+ void test(const Test &t) {
+   std::cout << "child thread id is " << std::this_thread::get_id() << std::endl;
+ }
+
+ int main() {
+   std::cout << "main thread id is " << std::this_thread::get_id() << std::endl;
+   Test t(100);
+   std::thread my_thread(test , t);
+   my_thread.join();
+   return 0;
+ }
+
+```
+
+#### std::ref 的用法
+
+根据刚才的演示，使用普通的引用传递会调用依次复制构造函数，导致函数无法对引用对象进行修改，于是 std::ref 诞生了，它可以使子线程在传递参数时不再调用复制构造函数。
+
+```c++
+#include <iostream>
+#include <string>
+#include <thread>
+
+class Test {
+  public:
+    int i;
+    Test(int i) {
+      std::cout << std::this_thread::get_id() << std::endl;
+    }
+    Test(const Test &test) {
+      std::cout << "Test(const Test &test)" << std::endl;
+    }
+};
+
+void test(Test &t) {
+  std::cout << "child thread id is " << std::this_thread::get_id() << std::endl;
+  t.i = 200;
+}
+
+int main() {
+  std::cout << "main thread id is " << std::this_thread::get_id() << std::endl;
+  Test t(100);
+  std::thread my_thread(test , std::ref(t)); // NOTES: 这是真正的传引用，直接传地址
+  my_thread.join();
+
+  std::cout << t.i << std::endl;
+
+  return 0;
+}
+```
+
+### (\*)线程 id 的概念
+
+#### 线程 id 的定义
+
+每个线程都有自己的 id，不管是主线程还是子线程都有自己的 id。直接使用`std::this_thread::get_id()`就可以获得当前线程的 id。
+
+#### 注意
+
+线程是依附于进程存在的，所以不用的进程可以有相同的线程 id。
+
+## (\*)数据共享与保护
+
+多个线程的执行顺序是乱的，具体执行方法和处理器的调度机制有关系。从开发者的角度讲，就是没有规律的
+
+```c++
+
+#include <iostream>
+#include <thread>
+
+unsigned g_num = 0;
+
+void test() {
+  ++g_num;
+}
+
+int main() {
+
+  std::thread my_thread(test);
+  my_thread.detach();
+
+  ++g_num;
+  return 0;
+}
+
+```
+
+### 扩展一下关于汇编的知识
+
+一个进程运行时，数据储存在内存中。如果一个数据要进行运算，必须先将数据拷贝到寄存器中。比如要对栈上的一个`int i`进行`++`操作，需要将`i`拷贝到寄存器当中，将改值自加后再拷贝到原来的内存中。
+
+如果此时有两个线程均进行的是这样的操作，可能出现两个进程都拷贝了`i`原来的值到寄存器，然后各种加一，在拷贝到`i`对应内存的情况，最终导致`i`这个变量只加了一次。
+
+这是同时写数据的情况，那么一读一写呢？这也是有问题的，谁知道读数据时写数据步骤已经到了哪里，谁知道读出来的是个什么东西。
+
+### 数据保护问题
+
+数据保护问题总共有三种情况
+
+1. 至少两个线程对共享数据均进行读操作，完全不会出现数据安全问题。
+2. 至少两个线程对共享数据均进行写操作，会出现数据安全问题，需要数据保护。
+3. 至少两个线程对共享数据有的进行读操作，有的进行写操作，也会出现数据安全问题，需要进行数据保护。
 
 ```c++
 
 ```
+
+数据保护的方法一共就两种：互斥锁、原子操作
+
+### 互斥锁
+
+1. 互斥锁的作用原理很简单，对共享数据加锁，当一个线程对这块数据进行操作时，别的线程就无法对该区域数据进行操作
+
+```c++
+
+```
+
+2. 这种方式的互斥锁有个弊端，就是`lock()`之后容易忘记`unlock()`，就和指针类似。于是和智能指针类似，也有了`lock_guard`，用来防止开发人员忘了解锁。
+
+```c++
+
+
+```
+
+### 原子操作
+
+> 使用频率远远不及互斥锁
+
+1. 原子操作的原理：
+
+   将一个数据设置为原子状态，使得该数据处于无法被分割的状态，意思就是处理器在处理被设置为原子状态的数据时，其它处理器无法处理该段数据，该处理器也会保证在处理完数据之前不会处理其他数据。
+
+```c++
+
+
+```
+
+#### 总结
+
+在编写多线程代码时，数据保护是一个必须考虑、非常常用的功能。互斥锁的使用频率远远高于原子操作，原子操作看似简单，但当需要保护的数据很多时，就会极其复杂。
+
+所以对于单个数据，可以使用原子操作，其它的使用互斥锁就可以了。
+
+### (\*)死锁
+
+死锁就像两个人在互相等对方。A 说，等 B 来了就去 B 现在所在的地方；B 说，等 A 来了我就去 A 所在的地方，结果就是 A 和 B 都在等对面过来才能去对面。这就导致了一个死循环，放在多线程中，就是死锁。
 
 ---
 
