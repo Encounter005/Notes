@@ -3417,14 +3417,70 @@ int main() {
 1. 互斥锁的作用原理很简单，对共享数据加锁，当一个线程对这块数据进行操作时，别的线程就无法对该区域数据进行操作
 
 ```c++
+#include <iostream>
+#include <thread>
+#include <mutex>
+
+unsigned g_num = 0;
+std::mutex my_mutex;
+
+void test() {
+  for(unsigned i = 0; i < 100000; ++i) {
+    my_mutex.lock(); // NOTE: 锁的区域要尽可能小
+    ++g_num;
+    my_mutex.unlock();
+  }
+}
+
+int main() {
+  std::thread my_thread(test);
+
+  my_mutex.lock();
+  for(unsigned i = 0; i < 100000; ++i) {
+    ++g_num;
+  }
+  my_mutex.unlock();
+  my_thread.join();
+  std::cout << g_num << std::endl;
+
+  return 0;
+}
 
 ```
 
-2. 这种方式的互斥锁有个弊端，就是`lock()`之后容易忘记`unlock()`，就和指针类似。于是和智能指针类似，也有了`lock_guard`，用来防止开发人员忘了解锁。
+2. 这种方式的互斥锁有个弊端，就是`lock()`之后容易忘记`unlock()`，就和指针类似。于是和智能指针类似，也有了`lock_guard()`，用来防止开发人员忘了解锁。
 
 ```c++
+#include <iostream>
+#include <mutex>
+#include <thread>
 
+unsigned g_num = 0;
+std::mutex my_mutex;
 
+void test() {
+
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock_guard<std::mutex> lg(my_mutex);
+    ++g_num;
+  }
+
+  // if(.....) // NOTE: 假设进入判断语句，不一定会解锁
+  //
+  //  thow....
+  //
+}
+
+int main() {
+  std::thread my_thread1(test);
+  std::thread my_thread2(test);
+
+  my_thread1.join();
+  my_thread2.join();
+  std::cout << g_num << std::endl;
+
+  return 0;
+}
 ```
 
 ### 原子操作
@@ -3436,8 +3492,37 @@ int main() {
    将一个数据设置为原子状态，使得该数据处于无法被分割的状态，意思就是处理器在处理被设置为原子状态的数据时，其它处理器无法处理该段数据，该处理器也会保证在处理完数据之前不会处理其他数据。
 
 ```c++
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <atomic>
 
+std::atomic<unsigned> g_num = 0; // 原子对象
+// std::mutex my_mutex;
 
+void test() {
+
+  // std::lock_guard<std::mutex> lg(my_mutex);
+  for (unsigned i = 0; i < 100000; ++i) {
+    ++g_num;
+  }
+
+  // if(.....) // NOTE: 假设进入判断语句，不一定会解锁
+  //
+  //  thow....
+  //
+}
+
+int main() {
+  std::thread my_thread1(test);
+  std::thread my_thread2(test);
+
+  my_thread1.join();
+  my_thread2.join();
+  std::cout << g_num << std::endl;
+
+  return 0;
+}
 ```
 
 #### 总结
@@ -3449,6 +3534,142 @@ int main() {
 ### (\*)死锁
 
 死锁就像两个人在互相等对方。A 说，等 B 来了就去 B 现在所在的地方；B 说，等 A 来了我就去 A 所在的地方，结果就是 A 和 B 都在等对面过来才能去对面。这就导致了一个死循环，放在多线程中，就是死锁。
+
+```c++
+#include <atomic>
+#include <iostream>
+#include <mutex>
+#include <thread>
+
+unsigned g_num = 0;
+std::mutex my_mutex1;
+std::mutex my_mutex2;
+
+void test() {
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock_guard<std::mutex> lg(my_mutex1);
+    /*
+     *
+     *
+     *
+     */
+    std::lock_guard<std::mutex> lg2(my_mutex2);
+    ++g_num;
+  }
+}
+
+int main() {
+  std::thread my_thread1(test);
+
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock_guard<std::mutex> lg2(my_mutex2);
+    /*
+     *
+     *
+     *
+     */
+    std::lock_guard<std::mutex> lg(my_mutex1);
+    ++g_num;
+  }
+  my_thread1.join();
+  std::cout << g_num << std::endl;
+
+  return 0;
+}
+```
+
+解决方法也很简单，只要让两个锁的顺序一致就行。
+
+```c++
+#include <atomic>
+#include <iostream>
+#include <mutex>
+#include <thread>
+
+unsigned g_num = 0;
+std::mutex my_mutex1;
+std::mutex my_mutex2;
+
+void test() {
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock_guard<std::mutex> lg(my_mutex1);
+    /*
+     *
+     *
+     *
+     */
+    std::lock_guard<std::mutex> lg2(my_mutex2);
+    ++g_num;
+  }
+}
+
+int main() {
+  std::thread my_thread1(test);
+
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock_guard<std::mutex> lg(my_mutex1);
+    /*
+     *
+     *
+     *
+     */
+    std::lock_guard<std::mutex> lg2(my_mutex2);
+    ++g_num;
+  }
+  my_thread1.join();
+  std::cout << g_num << std::endl;
+
+  return 0;
+}
+
+```
+
+但是让两个锁的顺序一致常常是说起来容易做起来难，于是 C++11 提供了`std::lock`。这个模板可以保证多个互斥锁绝对不会出现死锁问题。同时提供了`std::adopt_lock()`的功能来避免忘记释放锁的问题
+
+```c++
+#include <atomic>
+#include <iostream>
+#include <mutex>
+#include <thread>
+
+unsigned g_num = 0;
+std::mutex my_mutex1;
+std::mutex my_mutex2;
+
+void test() {
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock(my_mutex1 , my_mutex2);
+    std::lock_guard<std::mutex> lg(my_mutex1 , std::adopt_lock); // NOTE: 放弃加锁功能
+    /*
+     *
+     *
+     *
+     */
+    std::lock_guard<std::mutex> lg2(my_mutex2 , std::adopt_lock);
+    ++g_num;
+  }
+}
+
+int main() {
+  std::thread my_thread1(test);
+
+  for (unsigned i = 0; i < 100000; ++i) {
+    std::lock_guard<std::mutex> lg2(my_mutex2 );
+    /*
+     *
+     *
+     *
+     */
+    std::lock_guard<std::mutex> lg(my_mutex1);
+    ++g_num;
+  }
+  my_thread1.join();
+  std::cout << g_num << std::endl;
+
+  return 0;
+}
+
+```
 
 ---
 
