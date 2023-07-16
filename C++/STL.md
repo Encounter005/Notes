@@ -183,6 +183,68 @@ upper_bound(x)// 返回大于x的迭代器
 
 > 压位
 
+用于表示二进制序列，方便用于处理二进制数据，尤其适用于位运算操作。  
+`std::bitset`类型表示一个固定长度的位序列，每个位都只能是0或1。这个固定长度在创建对象时指定，并且不能在运行时更改。类似于整数类型，`std::bitset`支持多种操作，包括位运算、位查询、位设置
+
+#### 创建方式
+
+```c++
+ #include <bitset>
+ ​
+ std::bitset<N> bitset1; // 创建一个长度为 N 的 bitset，所有位都被初始化为 0
+ std::bitset<N> bitset2(value); // 使用二进制整数 value 初始化一个长度为 N 的 bitset
+ std::bitset<N> bitset3(string); // 使用二进制字符串 string 初始化一个长度为 N 的 bitset
+ std::bitset<N> bitset4(bitset); // 使用另一个 bitset 初始化一个长度为 N 的 bitset
+
+```
+其中，`value`是一个无符号类型的整数，`string`是一个包括`'0'`和`'1'`的字符串，`bitset`是另一个`std::bitset`对象
+
+#### 常用操作
+
+```c++
+size() // 返回std::bitset的长度
+count() // 返回std::bitset中值为1的位数量
+any() // 返回std::bitset中是否存在值为1的位
+none() // 返回std::bitset中是否所有位的值为0
+all() // 返回std::bitset中是否所有位的值为0
+test(pos) // 返回std::bitset中位于pos位置的值
+set(pos) // 返回std::bitset位于pos位置的值设为1
+reset(pos) // 返回std::bitset位于pos位置的值设为0
+flip(pos) //  将 std::bitset 中位于pos位置的值取反
+to_ulong() // 返回 std::bitset 转换成的无符号整数值
+to_ullong() // 返回 std::bitset 转换成的无符号长整数值
+
+```
+
+`std::bitset`重载很多二进制的运算符，例如`| & ~ ^ >> <<`
+
+```c++
+ std::bitset<4> bitset1("1010");
+ std::bitset<4> bitset2("0110");
+ ​
+ std::bitset<4> bitset3 = bitset1 & bitset2; // 按位与运算
+ std::bitset<4> bitset4 = bitset1 | bitset2; // 按位或运算
+ std::bitset<4> bitset5 = bitset1 ^ bitset2; // 按位异或运算
+ std::bitset<4> bitset6 = ~bitset
+
+ std::bitset<4> bitset1("0101");
+ 
+ std::bitset<4> bitset2 = bitset1 << 2; // 左移 2 位，结果为 "010100"
+ std::bitset<4> bitset3 = bitset1 >> 1; // 右移 1 位，结果为 "0010"
+```
+还支持`to_string()`方法，将其转换成二进制字符串表示
+
+```c++
+ std::bitset<4> bitset1("1010");
+ std::string str = bitset1.to_string(); // "1010"
+```
+
+
+#### 总结
+
+`std::bitset`可以作为容器类型使用，可以是使用下标访问、迭代器等方式访问其元素。此外，他还可以通过位集合进行集合运算，如交集、补集、并集等，可以使用`std::bitset`的成员函数`set()、 reset() 、flipo()`进行相应的操作。
+
+
 ## 算法
 
 > 常用算法
@@ -192,7 +254,7 @@ upper_bound(x)// 返回大于x的迭代器
 > 处理排序问题
 > 底层逻辑：快排
 
-[结构体排序](https://www.acwing.com/problem/content/864/ '三元组排序')
+[结构体排序](https://www.acwing.com/problem/content/864/ "三元组排序")
 
 ```c++
 //用法
@@ -345,9 +407,10 @@ int main() {
 }
 
 ```
+
 ### binary_search
 
-```c++
+````c++
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -368,6 +431,33 @@ int main() {
       }) << std::endl;
 
 
+  return 0;
+}
+
+
+### unique
+
+该函数的作用是“去除”容器或者数组种相邻元素的重复出现的元素
+
+1. 这里的去重并非真正意义的`erase`，而是将重复的元素放到容器的末尾，返回值的去重之后的伪地址。
+2. unique针对的是相邻元素，所以对于顺序错乱的数组成员，或者容器成员，需要先进行排序
+
+```c++
+    #include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main() {
+  int n;
+  std::cin >> n;
+  std::vector<int> a(n);
+  for(auto &x : a) std::cin >> x;
+
+  std::sort(a.begin() , a.end());
+
+  a.erase(std::unique(a.begin() , a.end()) , a.end());
+
+  for(auto &x : a) std::cout << x << ' ';
   return 0;
 }
 
