@@ -1,7 +1,6 @@
 # STL
 
 <!--toc:start-->
-
 - [STL](#stl)
   - [容器](#容器)
     - [vector](#vector)
@@ -15,8 +14,18 @@
     - [map / multimap](#map-multimap)
     - [unordered_set / unordered_map / unordered_multiset / unordered_multimap](#unorderedset-unorderedmap-unorderedmultiset-unorderedmultimap)
     - [bitset](#bitset)
-  - [算法](#算法) - [sort](#sort) - [lower_bound & upper_bound](#lowerbound-upperbound) - [reverse](#reverse) - [nth_element](#nthelement)
-  <!--toc:end-->
+      - [创建方式](#创建方式)
+      - [常用操作](#常用操作)
+      - [总结](#总结)
+  - [算法](#算法)
+    - [sort](#sort)
+    - [lower_bound & upper_bound](#lowerbound-upperbound)
+    - [reverse](#reverse)
+    - [nth_element](#nthelement)
+    - [adjacent_find](#adjacentfind)
+    - [binary_search](#binarysearch)
+    - [unique](#unique)
+<!--toc:end-->
 
 ## 容器
 
@@ -282,7 +291,7 @@ int main()
 
     //特定函数排序(用于结构体排序、堆排序等等)
     sort(a , a + n , cmp(x))
-    //如果返回1为较大，返回0为较小
+    //如果返回1为靠前，返回0为靠后
     return 0;
 
 
@@ -410,7 +419,7 @@ int main() {
 
 ### binary_search
 
-````c++
+```c++
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -433,7 +442,7 @@ int main() {
 
   return 0;
 }
-
+```
 
 ### unique
 
