@@ -27,6 +27,33 @@
     - [unique](#unique)
 <!--toc:end-->
 
+## GCC内建函数
+
+### __builtin_ctz() / __builtin_ctzll()
+
+返回括号内数的二进制表示形式中末尾0的个数
+
+```c++
+#include <iostream>
+
+int main() {
+
+  std::cout << __builtin_ctz(64) << std::endl;
+  return 0;
+}
+
+```
+输出：6  
+
+$64 = 2^6 = (1000000)_2$
+
+### __builtin_clz() / __builtin_clzll()
+
+返回括号内数的二进制表示形式中前导0的个数
+
+
+
+
 ## 容器
 
 ### vector
