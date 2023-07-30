@@ -1,21 +1,37 @@
 # 比赛题目
 
 <!--toc:start-->
-
 - [比赛题目](#比赛题目)
   - [Atcoder](#atcoder)
     - [ABC 310](#abc-310)
       - [A - Order Something Else](#a-order-something-else)
-        - [题意](#题意)
       - [B - Strictly Superior](#b-strictly-superior)
-        - [题意](#题意)
       - [C - Reversible](#c-reversible)
-        - [题意](#题意)
+    - [ABC 311](#abc-311)
+      - [C - Find it](#c-find-it)
+      - [D - Grid Ice Floor](#d-grid-ice-floor)
+    - [ABC 312](#abc-312)
+      - [C - Invisible Hand](#c-invisible-hand)
   - [vjudge](#vjudge)
     - [枚举算法](#枚举算法)
       - [D - Division](#d-division)
-  - [nowcoder](#nowcoder) - [“范式杯” 第一次](#范式杯-第一次)
-  <!--toc:end-->
+    - [STL练习-vector、stack、queue](#stl练习-vectorstackqueue)
+      - [圆桌问题](#圆桌问题)
+      - [简单计算器](#简单计算器)
+  - [nowcoder](#nowcoder)
+    - [“多校联赛” 第一次](#多校联赛-第一次)
+  - [CodeForces](#codeforces)
+    - [Round 886(Div 4)](#round-886div-4)
+      - [D. Balanced Round](#d-balanced-round)
+    - [Round 888(Div 3)](#round-888div-3)
+      - [A. Escalator Conversations](#a-escalator-conversations)
+      - [B. Parity Sort](#b-parity-sort)
+      - [C. Tiles Comeback](#c-tiles-comeback)
+    - [Educational Codeforces Round 152 (Rated for Div. 2)](#educational-codeforces-round-152-rated-for-div-2)
+      - [C. Binary String Copying](#c-binary-string-copying)
+    - [Codeforces Round 889 (Div. 2)](#codeforces-round-889-div-2)
+      - [B. Longest Divisors Interval](#b-longest-divisors-interval)
+<!--toc:end-->
 
 ## Atcoder
 
@@ -28,12 +44,6 @@
 AC code
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
 void solve() {
   int n , p , q;
   cin >> n >> p >> q;
@@ -47,15 +57,6 @@ void solve() {
   cout << ans << '\n';
 }
 
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  solve();
-
-  return 0;
-}
 
 ```
 
@@ -72,11 +73,6 @@ int main() {
 AC code
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
 
 void solve() {
   int n , m;
@@ -107,15 +103,6 @@ void solve() {
   cout << "No\n";
 }
 
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  solve();
-
-  return 0;
-}
 ```
 
 #### C - Reversible
@@ -123,11 +110,6 @@ int main() {
 题意：给$N$个字符串，将这个序列进行去重，当第j个字符串等于第i个字符串的反转，这种情况被认为是相同的。
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
 
 void solve() {
   int n;
@@ -145,15 +127,6 @@ void solve() {
   cout << unique(S.begin() , S.end()) - S.begin() << endl;
 }
 
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  solve();
-
-  return 0;
-}
 
 ```
 
@@ -166,20 +139,6 @@ int main() {
 题解：用链表的遍历方式，之后从尾节点开始往前遍历，直到再一次碰到尾节点结束。
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
 
 void solve() {
   int n;
@@ -208,18 +167,6 @@ void solve() {
   for(auto x : ans) cout << x + 1 << ' ';
 }
 
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int T = 1;
-  //cin >> T;
-  while(T--)
-    solve();
-
-  return 0;
-}
 
 ```
 
@@ -230,19 +177,6 @@ int main() {
 题解：看数据范围，可以用`dfs`来解决，但是看大佬是`bfs` ;-;
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
 
 constexpr int dx[] = {-1 , 0 , 1 , 0};
 constexpr int dy[] = {0 , 1 , 0 , -1};
@@ -292,19 +226,73 @@ void solve() {
   cout << ans << '\n';
 }
 
+```
 
-int main() {
+### ABC 312
 
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+#### C - Invisible Hand
 
-  int T = 1;
-  //cin >> T;
-  while(T--)
-    solve();
+题意：给定义一个卖家序列和一个买家序列，求一个$x$使得能够卖出去的人数大于等于能买的人数。
 
-  return 0;
+题解：
+
+1. 假设价钱是 0 ，那么一开始就有M个买家会买，0个卖家会卖。然后价钱每次变成下一个后，要么买家不买了，要么卖家开始卖，所以他们两个的差值就会减少1，所以第M位就是差值相等的地方
+
+```c++
+void solve() {
+  int n , m;
+  cin >> n >> m;
+  vector<int> a(n + m);
+  for(int i = 0 ; i < n; i++) cin >> a[i];
+  for(int i = n; i < n + m; i++) {
+    cin >> a[i];
+    a[i]++;
+  }
+
+  nth_element(a.begin() , a.begin() + m - 1 ,a.end());
+
+  cout << a[m - 1] << '\n';
 }
+
+
+```
+
+2. 通过二分答案来找到这个最小的x
+
+```c++
+bool check(int& mid , vector<int>& a , vector<int>& b) {
+  int c1 = 0 , c2 = 0;
+  for(auto x : a)
+    if(mid >= x) c1++;
+
+  for(auto x : b)
+    if(mid <= x) c2++;
+
+  return c1 >= c2;
+}
+
+
+void solve() {
+  int n , m;
+  cin >> n >> m;
+  vector<int> a(n) , b(m);
+  for(auto& x : a) cin >> x;
+  for(auto& x : b) cin >> x;
+
+  int l = 1 , r = *max_element(b.begin() , b.end());
+
+  while(l <= r) {
+    int mid = (l + r) >> 1;
+    if(check(mid , a , b)) {
+      r = mid - 1;
+    } else l = mid + 1;
+  }
+
+  cout << l << '\n';
+}
+
+
+
 ```
 
 ## vjudge
@@ -328,12 +316,6 @@ $$
 AC code
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int, int>;
-
 void solve() {
   int n, k = 0;
   char buf[99];
@@ -363,17 +345,6 @@ void solve() {
     }
   }
 }
-
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  solve();
-
-  return 0;
-}
-
 ```
 
 ### STL练习-vector、stack、queue
@@ -385,21 +356,6 @@ int main() {
 题解：模拟杀死坏人的过程，每次删掉位置`pos`的人， $pos = (pos + m - 1) % n$
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
-
 void solve() {
   int n , m;
   while(cin >> n >> m) {
@@ -425,20 +381,6 @@ void solve() {
     cout << "\n\n";
   }
 }
-
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int T = 1;
-  //cin >> T;
-  while(T--)
-    solve();
-
-  return 0;
-}
-
 ```
 
 #### 简单计算器
@@ -448,21 +390,6 @@ int main() {
 题解：用scanf来处理操作符和数字，用`stack`来存储当前的计算结果，最后求`stack`里面所有元素的总和
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
-
 void solve() {
   char c;
   db a;
@@ -497,20 +424,6 @@ void solve() {
     printf("%.2lf\n" , ans);
   }
 }
-
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int T = 1;
-  //cin >> T;
-  while(T--)
-    solve();
-
-  return 0;
-}
-
 ```
 
 ## nowcoder
@@ -609,21 +522,6 @@ int main() {
 > 最开始想的是差分，其实这题纯模拟就对了:D
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
-
 void solve() {
   int n , k;
   cin >> n >> k;
@@ -638,21 +536,8 @@ void solve() {
     }
   }
   cout << n - ans << '\n';
-
 }
 
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int T = 1;
-  cin >> T;
-  while(T--)
-    solve();
-
-  return 0;
-}
 
 ```
 
@@ -663,21 +548,6 @@ int main() {
 题解： 只要$1 \le {abs(H - h_i)\over k} \ge m - 1$即可，并且$abs(H - h_i)$必须是K的倍数
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
-
 void solve() {
   int n , m , k , H;
   cin >> n >> m >> k >> H;
@@ -693,21 +563,6 @@ void solve() {
   }
 
   cout << cnt << '\n';
-
-
-}
-
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int T = 1;
-  cin >> T;
-  while(T--)
-    solve();
-
-  return 0;
 }
 ```
 
@@ -716,23 +571,6 @@ int main() {
 题解：由于奇数和偶数的位置在排序后依旧和原来一样，所以只需要奇数排序，偶数排序，然后奇数按顺序放入所有奇数本来所占的位置，偶数也一样，然后判断一下是不是非递减即可
 
 ```c++
-
-#include <bits/stdc++.h>
-#include <queue>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
-
 void solve() {
   int n;
   cin >> n;
@@ -762,19 +600,6 @@ void solve() {
   cout << "YES\n";
 
 }
-
-int main() {
-
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int T = 1;
-  cin >> T;
-  while(T--)
-    solve();
-
-  return 0;
-}
 ```
 
 #### C. Tiles Comeback
@@ -782,21 +607,6 @@ int main() {
 题解：只要有k个和第1个颜色相同的点（包括第1个），然后在这k个再往后有k个和最后一个颜色相同的点（包括最后一个）即可。如果第一个和最后一个颜色相同，只要有k个颜色相同颜色的点即可
 
 ```c++
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using db = double;
-using pii = pair<int , int>;
-
-#define debug(x) cerr << #x << " = " << x << endl;
-template<typename T>
-void print(T &a) {
-  cerr<< "container a is ";
-  for(auto i : a) cerr << i << ' ';
-  cerr << '\n';
-}
-
-
 void solve() {
   int n , k;
   cin >> n >> k;
@@ -824,17 +634,82 @@ void solve() {
 
   cout << "NO\n";
 }
+```
 
-int main() {
+### Educational Codeforces Round 152 (Rated for Div. 2)
 
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+#### C. Binary String Copying
 
-  int T = 1;
-  cin >> T;
-  while(T--)
-    solve();
+题解：
 
-  return 0;
+1. 对区间$[l , r]$，如果区间已经有序等于没有操作。
+2. 对于一个区间，显然前缀的0和后缀的1是没用的，所以我们只需找到第一个1的位置`L`，最后一个0的位置`R`，其实等价于给$[L , R]$排序，用`set`维护以下这种等价类有多少种即可。
+
+```c++
+void solve() {
+  string op;
+  int n , m ;
+  cin >> n >> m;
+  cin >> op;
+  set<pii> S;
+  vector<int> lst(n + 1 , -1) , nxt(n + 1 , n);
+
+  for(int i = n - 1; i >= 0; i--) {
+    nxt[i] = op[i] == '1' ? i : nxt[i + 1];
+  }
+
+  for(int i = 0; i < n; i++) {
+    lst[i + 1] = op[i] == '0' ? i : lst[i];
+  }
+
+
+  while(m--) {
+    int l , r;
+    cin >> l >> r;
+    l--;
+    l = nxt[l];
+    r = lst[r];
+
+    if(l > r) {
+      l = r = -1;
+    }
+    S.emplace(l , r);
+  }
+
+  cout << S.size() << '\n';
+}
+
+```
+
+### Codeforces Round 889 (Div. 2)
+
+#### B. Longest Divisors Interval
+
+题解：
+
+先举个例子：  
+6 ： 1 2 3  
+12： 1 2 3 4  
+20： 1 2 （4 5）  
+30： 1 2 3  
+40: 1 2 (4 5)  
+100: 1 2 (4 5)
+
+`括号中为另一组满足题意的解`
+
+我们猜想，假设一个数字能找到一个连续被整除的区间$[l , r]$，那一定对应存在等长的区间$[1 , r - l + 1]$同样满足题意
+
+所以从1开始遍历到第一个不能被整除的数字即可。
+
+```c++
+void solve() {
+  ll n;
+  cin >> n;
+  int cnt = 0;
+  for(int i = 1; i <= n; i++) {
+    if(n % i) break;
+    cnt++;
+  }
+  cout << cnt << '\n';
 }
 ```
