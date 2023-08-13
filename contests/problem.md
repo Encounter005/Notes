@@ -1,6 +1,7 @@
 # 比赛题目
 
 <!--toc:start-->
+
 - [比赛题目](#比赛题目)
   - [Atcoder](#atcoder)
     - [ABC 310](#abc-310)
@@ -20,18 +21,8 @@
       - [简单计算器](#简单计算器)
   - [nowcoder](#nowcoder)
     - [“多校联赛” 第一次](#多校联赛-第一次)
-  - [CodeForces](#codeforces)
-    - [Round 886(Div 4)](#round-886div-4)
-      - [D. Balanced Round](#d-balanced-round)
-    - [Round 888(Div 3)](#round-888div-3)
-      - [A. Escalator Conversations](#a-escalator-conversations)
-      - [B. Parity Sort](#b-parity-sort)
-      - [C. Tiles Comeback](#c-tiles-comeback)
-    - [Educational Codeforces Round 152 (Rated for Div. 2)](#educational-codeforces-round-152-rated-for-div-2)
-      - [C. Binary String Copying](#c-binary-string-copying)
-    - [Codeforces Round 889 (Div. 2)](#codeforces-round-889-div-2)
-      - [B. Longest Divisors Interval](#b-longest-divisors-interval)
-<!--toc:end-->
+  - [CodeForces](#codeforces) - [Round 886(Div 4)](#round-886div-4) - [D. Balanced Round](#d-balanced-round) - [Round 888(Div 3)](#round-888div-3) - [A. Escalator Conversations](#a-escalator-conversations) - [B. Parity Sort](#b-parity-sort) - [C. Tiles Comeback](#c-tiles-comeback) - [Educational Codeforces Round 152 (Rated for Div. 2)](#educational-codeforces-round-152-rated-for-div-2) - [C. Binary String Copying](#c-binary-string-copying) - [Codeforces Round 889 (Div. 2)](#codeforces-round-889-div-2) - [B. Longest Divisors Interval](#b-longest-divisors-interval)
+  <!--toc:end-->
 
 ## Atcoder
 
@@ -425,6 +416,232 @@ void solve() {
   }
 }
 ```
+
+### 搜索综合练习
+
+#### A - 最短路计数
+
+思路：由于题目不存在负边权，所以可以用`Dijkstra`来求最短路径，在更新最短路径的时候，如果发现当前遍历到的点的下一个点的距离是和当前这个点的距离是一样的，可以将当前这个点有有多少种方案并起来即可。
+
+```c++
+#define mod 100003
+
+
+void solve() {
+    int n , m;
+    cin >> n >> m;
+    vector<vector<int>> a(n);
+    for(int i = 0; i < m; i++) {
+        int u , v;
+        cin >> u >> v;
+        u--, v--;
+        a[u].emplace_back(v);
+        a[v].emplace_back(u);
+    }
+    vector<bool> vis(n);
+    vector<int> dist(n , 0x3f3f3f3f);
+    vector<int> ans(n);
+    dist[0] = 0;
+    ans[0] = 1;
+    queue<pii> q;
+    q.emplace(0 , 0);
+    while(q.size()) {
+        auto[distance , node] = q.front();
+        q.pop();
+        if(vis[node]) continue;
+        vis[node] = true;
+
+        for(auto j : a[node]) {
+            if(dist[j] > dist[node] + 1) {
+                dist[j] = dist[node] + 1;
+                q.emplace(dist[j] , j);
+                ans[j] = ans[node];
+            }
+            else if(dist[j] == dist[node] + 1) {
+                ans[j] += ans[node];
+                ans[j] %= mod;
+            }
+        }
+    }
+
+    for(auto x : ans) {
+        cout << x << '\n';
+    }
+}
+
+```
+
+### B - 八数码难题
+
+思路：开一个字符串来存最终的状态，在进行状态转移的过程中，我们需要把一维数组的坐标转换成二维数组的坐标，这样在将`0`字符换到其他位置会方便点。同时开一个哈希表来存储每种状态的步骤数。
+
+```c++
+void solve() {
+    string end = "123804765";
+
+    unordered_map<string , int> dist;
+    string st;
+    cin >> st;
+
+    queue<string> q;
+    q.emplace(st);
+    dist[st] = 0;
+
+    while(q.size()) {
+        auto t = q.front();
+        q.pop();
+
+        int ans = dist[t];
+        if(t == end) {
+            cout << ans << '\n';
+            break;
+        }
+
+        int k = t.find('0');
+        int x = k / 3 , y = k % 3;
+        for(int i = 0; i < 4; i++) {
+            int x1 = x + dx[i] , y1 = y + dy[i];
+            if(x1 >= 0 && x1 < 3 && y1 >= 0 && y1 < 3) {
+                swap(t[k] , t[x1 * 3 + y1]);
+                if(!dist.count(t)) {
+                    dist[t] = ans + 1;
+                    q.emplace(t);
+                }
+                swap(t[k] , t[x1 * 3 + y1]);
+            }
+        }
+
+
+    }
+}
+```
+
+
+### F - 费解的开关 
+
+思路：
+
+1. 先枚举第一行的点击方法，总共有32种，完成第一行的点击之后，锁定第一行的状态
+2. 接着由第一行的状态去递推出第二行的状态，依次类推。
+3. 如果最后一行不全为0，说明这种点击状态不合法。
+4. 在所有合法的状态中选择点击次数最少的那一种。
+
+
+```c++
+
+0
+
+
+constexpr int dx[] = {0 , -1 , 0 , 1 , 0};
+constexpr int dy[] = {0 , 0 , 1 , 0 , -1};
+
+void solve() {
+    vector<string> a(5);
+    vector<string> backup(5);
+    int res = 10;
+    for(auto& x : backup) cin >> x;
+
+    function<void(int , int)> turn = [&](int x , int y)->void{
+        for(int i = 0; i < 5; i++) {
+            int x1 = x + dx[i] , y1 = y + dy[i];
+            if(x1 < 0 || x1 >= 5 || y1 < 0 || y1 >= 5) continue;
+            a[x1][y1] ^= 1;
+        }
+    }; 
+
+    for(int op = 0; op < 32; op++) {
+        int cnt = 0;
+        a = backup;
+        //NOTE: 操纵第一行的开关
+        for(int j = 0; j < 5; j++) {
+            if(op >> j & 1) {
+                turn(0 , j);
+                cnt++;
+            }
+        }
+        //NOTE: 递推出第1～4行开关的状态
+        for(int i = 0; i < 4; i++) 
+            for(int j = 0; j < 5; j++) 
+                if(a[i][j] == '0') {
+                    turn(i + 1 , j);
+                    cnt++;
+                }
+
+        bool ok = true;
+        for(int i = 0; i < 5; i++)
+            if(a[4][i] == '0') ok = false;
+        if(ok && res > cnt) res = cnt;
+    }
+
+    if(res > 6) res = -1;
+    cout << res << '\n';
+}
+```
+
+
+##  树和二叉树练习 
+
+### C - FBI 树
+
+思路：从题目可以知道，这棵二叉树其实是已经建好的。我们只需要按后续遍历的方式将二叉树遍历一边就行了。
+
+```c++
+void solve() {
+  int n;
+  cin >> n;
+  n = 1 << n;
+  string s;
+  cin >> s;
+  vector<node> a;
+  function<char(string)> judge = [&](string pre){
+    if(pre.find('0') != string::npos && pre.find('1') != string::npos) return 'F';
+    else if(pre.find('0') != string::npos) return 'B';
+    else return 'I';
+  };
+  
+  function<void(string)> build = [&](string s){
+    if(s.size() > 1) {
+      build(s.substr(0 , s.size() / 2));
+      build(s.substr(s.size() / 2));
+    }
+
+    char ans = judge(s);
+    cout << ans;
+
+  };
+  build(s);
+}
+```
+
+
+### G - 合并果子
+
+思路：这题其实是个huffman树，只需要用小根堆来存储所需要的最小体力值即可。
+
+```c++
+void solve() {
+  priority_queue<int , vector<int> , greater<int>> Heap;
+  int n;
+  for(int i = 0; i < n; i++) {
+    int x;
+    cin >> x;
+    Heap.emplace(x);
+  }
+  int res = 0;
+
+  while(Heap.size() > 1) {
+    int a = Heap.top();
+    Heap.pop();
+    int b = Heap.top();
+    Heap.pop();
+    res += (a + b);
+    Heap.emplace(a + b);
+  }
+
+  cout << res << '\n';
+}
+```
+
 
 ## nowcoder
 

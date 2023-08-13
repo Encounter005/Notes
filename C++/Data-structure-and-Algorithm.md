@@ -30,6 +30,11 @@
         * [ST表简介](#st表简介)
         * [实现](#实现)
         * [代码](#代码)
+    * [线段树](#线段树)
+        * [关于线段树的五种操作函数](#关于线段树的五种操作函数)
+            * [关于懒标记](#关于懒标记)
+        * [具体代码](#具体代码)
+    * [树状数组](#树状数组)
 * [算法](#算法)
     * [排序](#排序)
         * [快速排序](#快速排序)
@@ -93,6 +98,13 @@
         * [整除/同余常见符号](#整除同余常见符号)
     * [最大公约数](#最大公约数)
     * [最小公倍数](#最小公倍数)
+* [贪心](#贪心)
+    * [区间问题](#区间问题)
+        * [区间选点](#区间选点)
+        * [最大不相交区间数量](#最大不相交区间数量)
+        * [区间分组](#区间分组)
+    * [huffman树](#huffman树)
+    * [排序不等式](#排序不等式)
 
 <!-- vim-markdown-toc -->
 
@@ -570,10 +582,13 @@ int query(char str[])
 
 [连通块中点的数量](https://www.acwing.com/problem/content/839/)
 
+
 > 将两个集合合并
+>
 > 询问两个元素是否在一个集合当中
 
-```markdown
+
+```
 每一个集合用一棵树来表示
 树根的编号就是整个集合的编号
 每个节点存储它的父节点
@@ -581,9 +596,12 @@ p[x]表示 x 的父节点
 ```
 
 > Q1： 如何判断树根： if(p[x] == x)
+>
 > Q2：如何求 x 的集合编号：while(p[x] != x) x = p[x]
+>
 > Q3：如何合并两个集合： p[x]是 x 的集合编号，p[y]是 y 的集合编号 p[x] = y;
-> 优化：路径压缩
+>
+> 优化：路径压缩，通过递归，将每一个子节点指向祖宗节点
 
 ```C++
 #include<iostream>
@@ -856,7 +874,7 @@ int main()
 
 ### 可重复贡献问题
 
-可重复贡献问题是对于运算`opt`，运算的性质满足$x \ opt \ x = x$，则对应的区间询问就是一个可重复的贡献问题，例如：最大值满足`max(x , x) = x`，最大公因数满足`gdc(x , x) = x`因此`RMQ`问题和`GCD`问题就是一个可重复贡献问题，但是例如区间和就不满足这个性质，因为在求解区间和的过程中采用的预处理区间会发生重叠，导致重叠部分被重复计算，因此对于opt操作还需要满足集合率才能够使用ST表进行求解
+可重复贡献问题是对于运算`opt`，运算的性质满足$x \ opt \ x = x$，则对应的区间询问就是一个可重复的贡献问题，例如：最大值满足`max(x , x) = x`，最大公因数满足`gcd(x , x) = x`因此`RMQ`问题和`GCD`问题就是一个可重复贡献问题，但是例如区间和就不满足这个性质，因为在求解区间和的过程中采用的预处理区间会发生重叠，导致重叠部分被重复计算，因此对于opt操作还需要满足集合率才能够使用ST表进行求解
 
 
 ### ST表简介
@@ -922,6 +940,152 @@ int main() {
 }
 
 ```
+
+
+## 线段树
+
+> 通常用于区间查询和区间修改，相对于ST表来说，线段树支持动态修改。
+
+区间修改的时间复杂度$O(\log n)$
+极端情况下的时间复杂度$4\log n$
+
+
+![Screenshot_20230813_130812_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/08/13/ciFeOZaf.jpg)
+
+
+### 关于线段树的五种操作函数
+
+1. build
+> 通过分治建树
+
+2. modify
+> 修改给定区间的信息
+
+3. query
+> 查询题目给定区间的信息
+
+
+4. pushup
+> 通过子节点的信息来更新父节点的信息
+
+5. pushdown
+> 通过父节点的信息来更新子节点的信息
+
+#### 关于懒标记
+
+![Screenshot_20230813_131824_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/08/13/gnm4ad4E.jpg)
+假设当前区间已经将目标区间完全包含，那么就可以将整个区间进行一个标记，并且更新当前区间的值
+
+```c++
+tr[u].v += d;
+tr[u].lazy += (tr[u].r - tr[u.l + 1]) * d; // NOTE: 求当前的区间长度
+                                           // 同时给每个数打上标记，表示这个区间每个数都要加上d
+```
+
+![Screenshot_20230813_132558_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/08/13/pY2Sq6L9.jpg)
+如果当前区间没有将目标区间完全包含，那么就需要进行递归处理，并且下沉懒标记
+
+```c++
+pushdown(u);
+int mid = (tr[u].l + tr[u].r) >> 1;
+if(l <= mid) modify(u << 1 , l , r , d);
+if(r > mid) modify(u << 1 | 1 , l , r , d);
+pushup(u) // NOTE: 更新父节点的信息
+```
+
+注意：  
+
+懒标记下沉的过程并不是递归的，只是往下面传了一层
+
+
+
+### 具体代码
+
+[单点修改](https://www.acwing.com/problem/content/1277/)
+
+[区间修改](https://www.acwing.com/problem/content/1277/)
+
+```c++
+const int N = 1e5 + 10;
+
+struct Node {
+    int l , r , v , lazy;
+}tr[N << 2]; // NOTE: 线段树一般要开给定数组四倍的空间
+
+void pushup(int u) {
+    tr[u].v = tr[u << 1].v + tr[u << 1 | 1].v;
+}
+
+void pushdown(int u) {
+    auto& root = tr[u] , &left = tr[u << 1] , &right = tr[u << 1 | 1];
+    if(root.lazy) {
+        left.lazy += root.lazy;
+        left.v += (left.r - left.l + 1) * root.lazy;
+        right.lazy += root.lazy;
+        right.v += (right.r - right.l + 1) * root.lazy;
+        root.lazy = 0;
+    }
+}
+
+void modify(int u , int l , int r , int d) {
+    if(tr[u].l >= l && tr[u].r <= r) {
+        tr[u].lazy += d;
+        tr[u].v += (tr[u].r - tr[u].l + 1) * d;
+    } else {
+        pushdown(u);
+        int mid = (tr[u].l + tr[u].r) >> 1;
+        if(l <= mid) modify(u << 1 , l , r , d);
+        if(r > mid) modify(u << 1 | 1 , l , r , d);
+        pushup(u);
+    }
+}
+
+int query(int u , int l , int r) {
+    if(tr[u].l >= l && tr[u].r <= r) {
+        return tr[u].v;
+    } else {
+        pushdown(u);
+        int mid = (tr[u].l + tr[u].r) >> 1;
+        int res = 0;
+        if(l <= mid) res += query(u << 1 , l , r);
+        if(r > mid) res += query(u << 1 | 1 , l , r);
+        return res;
+    }
+}
+
+void build(int u , int l , int r) {
+    if(l == r) {
+        tr[u] = {l , r , w[l]};
+    } else {
+        int mid = (l + r) >> 1;
+        build(u << 1 , l , mid) , build(u << 1 | 1 , mid + 1, r);
+        pushup(u);
+    }
+}
+
+```
+
+## 树状数组
+
+最简单的树状数组支持两种操作，时间复杂度均为$O(\log n)$
+
+1. 快速求前缀和
+2. 修改某一个数
+![Screenshot_20230813_140544_com.newskyer.draw.jpg](https://img1.imgtp.com/2023/08/13/AgaSXii0.jpg)
+
+
+[楼兰图腾](https://www.acwing.com/problem/content/243/)
+
+```c++
+inline int lowbit(int x) {
+    return x & -x;
+}
+// NOTE: 修改某一个区间
+for(int i = x; i <= n; i += lowbit(x)) tr[i] += c;
+// NOTE: 查询某一个数
+for(int i = x; i ; i -= lowbit(x)) sum += tr[i];
+```
+
 
 # 算法
 
@@ -2596,3 +2760,134 @@ int lcm(int a , int b) {
     return a * b / gcd(a , b);
   }
 ```
+
+
+# 贪心
+
+## 区间问题
+
+### 区间选点
+
+[区间选点](https://www.acwing.com/problem/content/907/)
+
+```c++
+/*
+思路：
+先将给定的区间按右端点进行排序
+从前往后枚举每个区间的左端点
+如果当前左端点是大于选定的端点，则方案数加一，选定的端点更新为当前区间的右端点
+否则就pass
+
+*/
+
+void solve() {
+  int n;
+  cin >> n;
+  vector<pii> a(n);
+  for(auto& x : a) {
+    int l , r;
+    cin >> l >> r;
+    x = make_pair(l , r);
+  }
+
+  sort(a.begin() , a.end() , [](pii a , pii b){
+    return a.second < b.second;
+  });
+
+  int cnt = 0 , ed = -2e9;
+  for(auto x : a) {
+    if(x.first > ed) {
+      cnt++;
+      ed = x.second;
+    }
+  }
+
+  cout << cnt << '\n';
+}
+```
+
+### 最大不相交区间数量
+
+[最大不相交区间数量](https://www.acwing.com/problem/content/910/)
+
+```c++
+void solve() {
+  int n;
+  cin >> n;
+  vector<pii> a(n);
+  for(auto& x : a) {
+    int l , r;
+    cin >> l >> r;
+    x = make_pair(l , r);
+  }
+
+  sort(a.begin() , a.end() , [](pii a , pii b){
+    return a.second < b.second;
+  });
+
+  int cnt = 0 , ed = -2e9;
+  for(auto x : a) {
+    if(x.first > ed) {
+      cnt++;
+      ed = x.second;
+    }
+  }
+
+  cout << cnt << '\n';
+}
+```
+
+### 区间分组
+
+[区间分组问题区间分组](https://www.acwing.com/problem/content/908/)
+
+
+```c++
+/*
+思路：
+先将所有区间按照左端点从小到大排序
+枚举每个区间
+
+如果当前区间的左端点小于等于当前组的MAX_R,那就将这个区间加入到这个组当中
+否则建立一个新的组，新组的MAX_R为这个区间的右端点。
+
+组可以用小根堆来维护，如果发现MAX_R小于区间左端点，就将堆顶弹出。
+
+*/
+
+void solve() {
+  int n;
+  cin >> n;
+  vector<pii> a(n);
+  for(auto& x : a) {
+    int l , r;
+    cin >> l >> r;
+    x = make_pair(l , r);
+  }
+
+  sort(a.begin() , a.end() , [](pii a , pii b){
+    return a.first < b.first;
+  });
+
+  print(a);
+  priority_queue<int , vector<int> , greater<int>> Heap;
+
+  for(auto x : a) {
+    if(Heap.empty() || Heap.top() >= x.first) Heap.emplace(x.second);
+    else {
+      Heap.pop();
+      Heap.emplace(x.second);
+    }
+  }
+
+  cout << Heap.size() << '\n';
+
+}
+```
+
+
+## huffman树
+
+
+## 排序不等式
+
