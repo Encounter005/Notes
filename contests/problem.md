@@ -281,10 +281,98 @@ void solve() {
 
   cout << l << '\n';
 }
+```
+
+### ABC314
+
+#### C - Rotate Colored Subsequence
+
+题解：
+
+1. 首先需要二维数组把每个数对应的下标存好。
+2. 建立一个新字符串遍历即可。
 
 
+```c++
+const int N = 200001;
+int c[N];
+
+void solve() {
+  string s;
+  int n , m;
+  cin >> n >> m;
+  cin >> s;
+  vector<vector<int>> p(N);
+
+  for(int i = 0; i < n; i++) cin >> c[i];
+  for(int i = 0; i < n; i++) p[c[i]].emplace_back(i);
+
+  string ans(n , '$');
+  for(int i = 1; i <= m; i++) {
+    int k = p[i].size();
+    for(int j = 0; j < k; j++) ans[p[i][(j + 1) % k]] = s[p[i][j]];
+  }
+  cout << ans << '\n';
+
+}
+```
+
+#### D - LOWER
+
+题解：
+
+这题如果直接模拟肯定会超时，所以关键在于我们在记录操作的时候，开一个`pair<int, char>`数组，来记录当前字符被修改的时间点
+
+1. 如果当`t==1`，我们需要把当前的时间点记录下来。
+2. 如果是剩下两种全局操作，只需要记录最后一次的操作以及时间点。
+
+最后在输出答案的时候，只需要判断当前的字符的时间点是否大于全局操作的时间点，如果大于直接输出，否则按要求变成大小写就行。
+
+时间复杂度$O(N + Q)$
+
+```c++
+const int N = 5e5 + 10;
+using pic = pair<int , char>;
+void solve() {
+  int n , q;
+  string S;
+  cin >> n >> S >> q;
+  vector<pic> vis(n);
+  for(int i = 0; i < n; i++) {
+    vis[i] = {0 , S[i]};
+  }
+
+  optional<pic> fill = nullopt;
+// NOTE:
+//类模板 std::optional 管理一个可选的容纳值，即可以存在也可以不存在的值。
+//一种常见的 optional 使用情况是一个可能失败的函数的返回值。与其他手段，如 std::pair<T,bool> 相比， optional 良好地处理构造开销高昂的对象，并更加可读，因为它显式表达意图。
+  for(int i = 0; i < q; i++) {
+    int t , x;
+    string c;
+    cin >> t >> x >> c;
+    if(t == 1) {
+      vis[--x] = make_pair(i , c[0]);
+    } else {
+      fill = make_pair(i , t);
+    }
+  }
+
+  for(auto& [time , c] : vis) {
+    if(!fill.has_value() || time >= fill->first) { // NOTE: 如果没有全局操作或者当前时间点>=全局操作的时间点
+      cout << c;
+    } else if(fill->second == 2) {
+      cout << static_cast<char>(tolower(c));
+    } else {
+      cout << static_cast<char>(toupper(c));
+    }
+  }
+
+  cout << '\n';
+}
 
 ```
+
+
 
 ## vjudge
 
@@ -336,7 +424,7 @@ void solve() {
     }
   }
 }
-```
+````
 
 ### STL练习-vector、stack、queue
 
@@ -516,8 +604,7 @@ void solve() {
 }
 ```
 
-
-### F - 费解的开关 
+### F - 费解的开关
 
 思路：
 
@@ -525,7 +612,6 @@ void solve() {
 2. 接着由第一行的状态去递推出第二行的状态，依次类推。
 3. 如果最后一行不全为0，说明这种点击状态不合法。
 4. 在所有合法的状态中选择点击次数最少的那一种。
-
 
 ```c++
 
@@ -547,7 +633,7 @@ void solve() {
             if(x1 < 0 || x1 >= 5 || y1 < 0 || y1 >= 5) continue;
             a[x1][y1] ^= 1;
         }
-    }; 
+    };
 
     for(int op = 0; op < 32; op++) {
         int cnt = 0;
@@ -560,8 +646,8 @@ void solve() {
             }
         }
         //NOTE: 递推出第1～4行开关的状态
-        for(int i = 0; i < 4; i++) 
-            for(int j = 0; j < 5; j++) 
+        for(int i = 0; i < 4; i++)
+            for(int j = 0; j < 5; j++)
                 if(a[i][j] == '0') {
                     turn(i + 1 , j);
                     cnt++;
@@ -578,8 +664,7 @@ void solve() {
 }
 ```
 
-
-##  树和二叉树练习 
+## 树和二叉树练习
 
 ### C - FBI 树
 
@@ -598,7 +683,7 @@ void solve() {
     else if(pre.find('0') != string::npos) return 'B';
     else return 'I';
   };
-  
+
   function<void(string)> build = [&](string s){
     if(s.size() > 1) {
       build(s.substr(0 , s.size() / 2));
@@ -612,7 +697,6 @@ void solve() {
   build(s);
 }
 ```
-
 
 ### G - 合并果子
 
@@ -641,7 +725,6 @@ void solve() {
   cout << res << '\n';
 }
 ```
-
 
 ## nowcoder
 
