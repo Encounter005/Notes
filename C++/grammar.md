@@ -1753,6 +1753,104 @@ int main() {
 
 ```
 
+## decltye关键字
+
+- auto，用于通过一个表达式在编译时确定待定义的变量类型，auto所修饰的变量必须被初始化，编译器需要通过初始化来确定auto所代表的类型，即必须要定义变量。
+- 若仅希望得到类型，而不需要（或不能）定于变量的时候那应该怎么办？C++11新增了`decltype`关键字，用来在编译时推导出一个表达式的类型。
+
+```c++
+decltype(exp)
+//NOTE: exp表示一个表达式 expression
+```
+
+### 简单使用
+
+```c++
+#include <iostream>
+#include <boost/type_index.hpp>
+
+int main() {
+
+    int c = 1;
+    decltype(c) a = 10;
+
+    std::cout << boost::typeindex::type_id<decltype(a)>().pretty_name() << std::endl;
+
+    return 0;
+}
+```
+
+在写一些函数引用绑定时进行辅助
+
+```c++
+#include <iostream>
+#include <vector>
+#include <boost/type_index.hpp>
+
+template<typename Container , typename Index>
+decltype(auto) Func(Container& c , Index i) {
+    if(i < c.size()) {
+        return c[i];
+    }
+}
+
+int main() {
+
+    std::vector<int> a{1 , 4 , 5 , 3289};
+    //NOTE: a[0] = 100 -> int&
+    //但是bool类型不返回引用
+    std::cout << boost::typeindex::type_id_with_cvr<decltype(Func(a , 2))>().pretty_name() << std::endl;
+    return 0;
+}
+
+```
+
+辅助万能引用
+
+```c++
+#include <iostream>
+#include <vector>
+#include <boost/type_index.hpp>
+#include <utility>
+
+template<typename Container , typename Index>
+decltype(auto) Func(Container&& c , Index i) {
+    //NOTE: 这样可以使得函数既可以处理左值，又可以处理右值
+    return std::forward<Container>(c)[i];
+}
+
+
+int main() {
+
+    std::vector<int> a{1 , 4 , 5 , 3289};
+    //NOTE: a[0] = 100 -> int&
+    //但是bool类型不返回引用
+    std::cout << boost::typeindex::type_id_with_cvr<decltype(Func(std::vector<int>{1 , 398 , 58} , 2))>().pretty_name() << std::endl;
+    return 0;
+}
+
+```
+
+### decltype(auto)的一些区别
+
+```c++
+decltype(auto) f1() {
+    int x = 0;
+    ......
+
+    return x //NOTE: decltype(x) is int, so f1 returns int
+}
+
+decltype(auto) f2() {
+    int x = 0;
+    .....
+    return (x); //NOTE: decltype((x)) is int&, so f2 return int&
+}
+
+
+
+```
+
 ---
 
 ## 静态变量，指针和引用(\*)
@@ -1854,7 +1952,27 @@ p = &i2; //错误 不能改变p的值，即地址
 //虽然不能给p赋值，也就是不能改变p的值，但是我们可以改变p所指的对象的内容。比如：
 
 *p = 46; //正确 此时i为46
-复制代码
+```
+
+```c++
+#include <iostream>
+template<typename T>
+void func(const T ptr) {
+    //NOTE: int * const
+    int a = 10;
+
+    *ptr = a;
+}
+
+int main() {
+
+    int a = 120;
+    int *ptr = &a;
+    func(ptr);
+    std::cout << *ptr << '\n';
+    return 0;
+}
+
 ```
 
 4. 指针本身是一个常量(即 const 指针)并不意味着不能通过指针修改其所指对象的值，能否这样做完全依赖于所指对象的类型
@@ -1921,7 +2039,7 @@ int main() {
 ```
 
 2. const 左值引用：可以对常量起别名，可以绑定左值和右值
-> C++规定const T&这种方式的左值引用可以接受右值(即亡值、纯右值)
+   > C++规定const T&这种方式的左值引用可以接受右值(即亡值、纯右值)
 
 ```c++
 #include <iostream>
@@ -2000,6 +2118,75 @@ int main()
 
 ---
 
+## 万能引用和引用折叠
+
+### 万能引用
+
+- 只用两种引用的形式，左值引用和右值引用，万能引用不是一种引用类型，它存在于模板的引用折叠情况，但能够接受左值和右值
+- 一个右值一旦有名字那么就变成了左值
+- 区分左值和右值的一个简单方式就是能不能取到地址
+
+```c++
+#include <iostream>
+
+void f(int& t) {
+    std::cout << "lvalue" << '\n';
+}
+
+void f(int&& t) {
+    std::cout << "rvalue\n";
+}
+template<typename T>
+void test(T&& v) {
+    f(std::forward<T>(v));
+}
+
+int main() {
+    int i = 0;
+    test(i);
+    test(1);
+    test(std::move(i));
+
+    return 0;
+}
+```
+
+### 引用折叠
+
+声明引用的引用是非法的，但编译器却可以在模板实例化过程产生引用的引用
+
+`int&&&& j = 1`
+
+模板实例化过程中出现这种情况就会发生引用折叠，如果任一引用为左值引用，则结果为左值引用，若两个皆为右值引用结果为右值引用。
+
+```c++
+#include <ios>
+#include <iostream>
+#include <type_traits>
+
+void f(int& t) {
+    std::cout << "lvalue" << '\n';
+}
+
+void f(int&& t) {
+    std::cout << "rvalue\n";
+}
+template<typename T>
+void test(T&& v) {
+    std::cout << "is int& -> " << std::is_same_v<T , int&> << std::endl;
+    std::cout << "is int  -> " << std::is_same_v<T , int> << std::endl;
+}
+
+int main() {
+    std::cout << std::boolalpha;
+    int i = 0;
+    test(i);
+    test(1);
+
+    return 0;
+}
+```
+
 ## 可调用对象(\*\*)
 
 如果一个对象可以使用调用运算符"()",()里面可以放参数，这个对象就是可调用对象。
@@ -2031,6 +2218,29 @@ int main()
   test(200);
   myFunc(test, 500);
   return 0;
+}
+
+```
+
+关于默认实参
+
+- 在函数声明中，所有在拥有默认实参的形参之后的形参必须拥有在这个或同一个作用于中先前的声明中所提供的默认实参
+- 简单来说，默认实参只能从右往左声明
+
+```c++
+#include <iostream>
+
+void f(int , int , int = 10);
+void f(int , int = 6 , int);
+void f(int = 4 , int  , int);
+void f(int a , int b , int c) {
+    std::cout << a << " " << b << ' ' << c << '\n';
+}
+
+
+int main() {
+    f();
+    return 0;
 }
 
 ```
