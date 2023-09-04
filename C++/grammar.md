@@ -1,7 +1,6 @@
 ﻿# Grammar of strange
 
 <!--toc:start-->
-
 - [Grammar of strange](#grammar-of-strange)
   - [类](#类)
     - [1. 类的介绍、构造函数、析构函数](#1-类的介绍构造函数析构函数)
@@ -63,6 +62,9 @@
     - [2. 内存泄露（常见 bug）](#2-内存泄露常见-bug)
   - [const 关键字](#const-关键字)
   - [(\*\*)auto 关键字](#auto-关键字)
+  - [decltye关键字](#decltye关键字)
+    - [简单使用](#简单使用)
+    - [decltype(auto)的一些区别](#decltypeauto的一些区别)
   - [静态变量，指针和引用(\*)](#静态变量指针和引用)
     - [关于 const 和 pointer](#关于-const-和-pointer)
   - [左值，右值，左值引用，右值引用(\*\*)](#左值右值左值引用右值引用)
@@ -71,6 +73,9 @@
   - [move 函数，临时对象(\*\*)](#move-函数临时对象)
     - [1. move 函数](#1-move-函数)
     - [2. 临时对象](#2-临时对象)
+  - [万能引用和引用折叠](#万能引用和引用折叠)
+    - [万能引用](#万能引用)
+    - [引用折叠](#引用折叠)
   - [可调用对象(\*\*)](#可调用对象)
     - [1. 函数](#1-函数)
     - [2. 仿函数](#2-仿函数)
@@ -120,6 +125,9 @@
     - [IO 库介绍](#io-库介绍)
       - [IO](#io)
       - [IO 库组成部分](#io-库组成部分)
+    - [(\*)IO库的注意事项](#io库的注意事项)
+    - [内存与输入输出设备的交互](#内存与输入输出设备的交互)
+    - [内存与磁盘的交互](#内存与磁盘的交互)
 - [多线程](#多线程)
   - [多线程的概念](#多线程的概念)
     - [多线程的重要性](#多线程的重要性)
@@ -144,7 +152,7 @@
     - [(\*)死锁](#死锁)
 - [稀碎的小知识点](#稀碎的小知识点)
   - [memset](#memset)
-  <!--toc:end-->
+<!--toc:end-->
 
 ## 类
 
@@ -3303,6 +3311,250 @@ int main() {
 }
 
 ```
+
+### (\*)IO库的注意事项
+
+1. io对象无法使用拷贝构造函数和赋值运算符
+
+```c++
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+int main() {
+    std::istream myCin(std::cin); //BUG: 无法使用拷贝构造
+
+    return 0;
+}
+```
+
+所以我们使用流对象无法使用值传递，一般使用引用进行传递。
+
+2. io对象的状态
+
+   1. io操作是非常容易出现错误的操作，一些错误是可以修复的，另一部分则发生在系统更深处，已经超出了应用程序可以修正的范围
+
+      - 比如我们使用`cin`向一个`int`类型的数中输入一个字符串，会使`cin`这个对象出现错误
+
+      ```c++
+
+      ```
+
+      - 所以我们在使用io对象是都应该判断io对象状态。
+
+      例如：`while(cin >> val)`或`if(cin >> val)`
+
+      > 不要只用这两个进行控制，最好搭配`iostate`来使用
+
+      ```c++
+
+      #include <ios>
+      #include <iostream>
+      #include <limits>
+      #include <stdexcept>
+
+      int main() {
+          int i = 10;
+          while(std::cin >> i , !std::cin.eof()) {
+              if(std::cin.bad()) { //NOTE: 系统级错误
+                  throw std::runtime_error("cin is corrupted\n");
+              }
+
+              if(std::cin.fail()) { //NOTE: 格式不对
+                  std::cin.clear();//NOTE: 先清空状态栏
+                  std::cin.ignore(std::numeric_limits<std::streamsize>::max() , '\n');//NOTE:再忽略缓存区
+                  std::cout << "data format error, please try again" << std::endl;
+                  continue;
+              }
+
+              std::cout << i << std::endl;
+          }
+
+          std::cout << "process completed" << std::endl;
+          return 0;
+      }
+      ```
+
+   2. 我们需要知道流对象错误的原因，因为不同的错误需要不同的处理方法。
+
+      - io库定义了`iostate`类型，可以完整的表示io对象当前的状态。在不同的平台中，`iostate`实现方法略有区别，在vs中直接用int来代表`iostate`类型，将不同的位置1以表示不同的状态。可以与位操作符一起使用来一次检测或设置多个标志位。
+      - 可以用`rdstate`函数来获得io对象当前用iostate类型表示的状态：
+
+      ```c++
+
+      ```
+
+   3. iostate类型有以下状态
+
+      1. badbit状态，系统级错误，一旦表示badbit的位置被置为1，流对象就再也无法使用了。
+      2. failbit状态，代表可恢复错误，比如想读取一个数字却读取了一个字符，这种错误就是可以恢复的。当badbit位被置为1时，failbit也会被置1.
+      3. eofbit状态，当到达文件结束位置时，eofbit和failbit位都会被置为1
+      4. goodbit状态，表示流对象没有任何错误。
+
+   - 只要badbit、falbit、eofbit有一位置被置为1，则检测流状态的条件就会失败。
+
+   4. 标准库还定义了一组成员函数来查询这些标志位的状态。
+
+      1. good()函数在所有错误均为置1的情况下返回`true`
+      2. bad() , fail() , eof()函数在对应位置被置1的情况下返回`true`。因为badbit位被置1或eofbit位被置1时，failbit位也会被置1。所以用fail()函数可以准确判断出流对象是否出现错误。
+      3. 实际上，我们将流对象当作条件使用的代码就等价于`!fail()`
+
+   5. 流对象的管理
+
+      1. `rdstate`函数，返回一个`iostate`值，对应当前流状态
+      2. `setstate(flag)`函数，将流对象设置为想要的状态
+      3. `clear`函数，是一个重载函数。
+         - clear()，将所有位置0，也就是`goodbit`状态
+         - clear(flag)，将对应的条件状态标志位复位
+      4. `ignore`函数：
+         - 作用：提取输入字符并丢弃他们
+         - 函数原型：`istream& ignore(streamsize n = 1 , int delim = EOF)`
+           > 读取前n个字符或在读这n个字符进程中遇到delim字符就停止，把读取的这些东西丢掉
+
+### 内存与输入输出设备的交互
+
+1. getline
+
+`getline`其实并不复杂，不过是按行接受数据罢了，因为存储在`string`对象中，所以不容易出现格式错误，但仍然可能出现系统错误，所以在企业级程序中，还是应当对`bad`的情况进行处理
+
+### 内存与磁盘的交互
+
+1. `fstream`相对于`iostream`，对了很多独有的操作
+
+   1. io库默认没有给ifstream和ofstream类提供对象，需要我们自己去定义
+   2. fstream对象创建方式有三种
+
+      - 可以使用默认构造函数进行定义，例如：ifstream fstrm
+
+      ```c++
+
+      #include <iostream>
+      #include <string>
+      #include <fstream>
+
+      int main() {
+          std::fstream fs;
+          std::ifstream ifs;
+          std::ofstream ofs;
+          return 0;
+      }
+      ```
+
+      - 也可以在创建流对象时打开想要的文件，例如`ifstream fstrm(s)`，s可以是字符串，也可以是c风格的字符串指针。文件的mode依赖于流对象的类型
+
+      ```c++
+      std::fstream fs("data.txt", std::ios::in | std::ios::out);
+      std::ifstream ifs("data.txt");
+      std::ofstream ofs("data.txt");
+      ```
+
+      - 也可以在打开文件时就制定文件的mode，例如`ifstream fstrm(s , mode)`
+
+   3. fstrm.open(s)函数，打开名为s的文件，并将文件与`fstrm`绑定，s可以是一个是string,也可以是一个c风格的字符串指针
+
+   ```c++
+
+   std::fstream fs;
+   fs.open("data.txt");
+   ```
+
+   4. fstrm.close()函数，关闭文件。
+
+      > 注意一定不要忘了
+
+   5. fstrm.is_open()函数，返回一个`bool`值，指出与`fstrm`关联的文件是否成功打开且尚未关闭
+
+   模板
+
+   > 让客户输入文件名称，如果文件不存在，就让客户重新输入文件名称，如果文件存在，就将文件全部输出
+
+   ```c++
+   #include <iostream>
+   #include <limits>
+   #include <stdexcept>
+   #include <string>
+   #include <fstream>
+
+   int main() {
+       std::string fileName;
+       std::string fileContent;
+
+       while ( std::cin >> fileName, !std::cin.eof() ) {
+           if ( std::cin.bad() ) {
+               throw std::runtime_error( "cin is corrupeted\n" );
+           }
+
+           std::ifstream ifs( fileName );
+           if ( ifs.is_open() ) {
+               while ( std::getline( ifs, fileContent ) ) {
+                   std::cout << fileContent << std::endl;
+               }
+
+               if ( ifs.bad() ) {
+                   throw std::runtime_error( "ifs is corrupted\n" );
+               }
+
+               ifs.close();
+           } else {
+               ifs.clear();
+               ifs.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+               std::cout << "file not exist , please try again\n";
+               continue;
+           }
+       }
+
+       std::cout << "process complete\n";
+       return 0;
+   }
+
+   ```
+
+2. 文件模式
+
+- 从头写入
+
+```c++
+#include <iostream>
+#include <fstream>
+
+int main() {
+    std::ofstream ofs("data.txt" );
+
+    if(ofs.is_open()) {
+        
+        ofs << "hello world\n";
+
+        ofs.close();
+    }
+    return 0;
+}
+```
+
+- 从尾写入
+
+```c++
+#include <iostream>
+#include <fstream>
+
+int main() {
+    std::ofstream ofs("data.txt" , std::ios::app);
+
+    if(ofs.is_open()) {
+        
+        ofs << "hello world\n";
+
+        ofs.close();
+    }
+    return 0;
+}
+
+```
+### 字符串流
+
+
+
+---
+
 
 # 多线程
 
