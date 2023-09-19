@@ -3258,6 +3258,44 @@ int main() {
 
 函数模板的重载，类模板的特化还是比较重要的知识点，应当掌握，在一些比较复杂的程序中，模板的重载与特化还是经常使用的
 
+
+### 模板的递归
+
+> 如何提高程序运行效率？在编译时就把需要计算的结果算出来，避免运行时占用CPU时间去做耗时计算，这就是模板递归的原理
+
+
+
+```c++
+#include <iostream>
+
+using i64 = long long;
+
+template<int m , int n>
+class C {
+public:
+    static const i64 result = C<m , n - 1>::result * m;
+};
+
+template<int m>
+class C<m , 0>{ // NOTE: 递归终止条件
+public:
+   static const i64 result = 1; 
+};
+int main() {
+    std::cout << C<2,4>::result << std::endl;
+    return 0;
+}
+
+```
+> 缺点
+
+- 不能计算变量的值，也就是对于运行时缺点能够的数据不能通过模板递归出来，因为编译时需要确定运行结果
+- 不能进行异常处理，也就是模板传入一个错误的数字后可能导致崩溃
+
+> 优点
+
+编译时就把数据计算出来了，对于运行时的大数据递归计算效率大大提高了
+
 ---
 
 ## STL
