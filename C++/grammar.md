@@ -1,6 +1,7 @@
 ﻿# Grammar of strange
 
 <!--toc:start-->
+
 - [Grammar of strange](#grammar-of-strange)
   - [类](#类)
     - [1. 类的介绍、构造函数、析构函数](#1-类的介绍构造函数析构函数)
@@ -152,7 +153,7 @@
     - [(\*)死锁](#死锁)
 - [稀碎的小知识点](#稀碎的小知识点)
   - [memset](#memset)
-<!--toc:end-->
+  <!--toc:end-->
 
 ## 类
 
@@ -247,7 +248,7 @@ int main() {
 构造函数的类型
 
     1. 普通构造函数：
-
+    
     2. 复制构造函数：
 
 > 用另一个对象来初始化对象对应内存
@@ -1587,7 +1588,7 @@ int main()
         std::cout << pi[i] << std::endl;
 
     delete[] pi;
-    delete pi;// ERROR : 不加括号会导致内存泄漏
+    //delete pi;// ERROR : 不加括号会导致内存泄漏
 
 
     std::string* pString = new std::string[100]();
@@ -3521,7 +3522,7 @@ int main() {
     std::ofstream ofs("data.txt" );
 
     if(ofs.is_open()) {
-        
+
         ofs << "hello world\n";
 
         ofs.close();
@@ -3540,7 +3541,7 @@ int main() {
     std::ofstream ofs("data.txt" , std::ios::app);
 
     if(ofs.is_open()) {
-        
+
         ofs << "hello world\n";
 
         ofs.close();
@@ -3549,12 +3550,112 @@ int main() {
 }
 
 ```
-### 字符串流
 
+### 字符串流(sstream)
 
+1. 介绍
+
+`string`流可以向`string`对象写入数据，也可以从`string`对象读取数据，与文件操作类似，只不过数据交互变成了从内存到内存。
+
+2. string流有哪些
+
+   - `istringstream`从string对象读取数据
+   - `ostringstream`向string对象写入数据
+   - `stringstream`既可以从string对象读取数据，也可以向string对象写数据
+
+3. `string`流对象继承自`iostream`对象，除了继承得来的操作，`string`流对象还有自己的成员来管理流相关的`string`
+
+   1. 对于`string`流，io库是没有向`cout、cin`这样的自定流对象的。流对象需要我们自己去定义。
+      - sstream stm: sstream代表一个string流对象的类型，以下同理。stm是一个未绑定的`stringstream`对象。
+      - sstream strm(s)：是绑定了一个s的拷贝的`string`流对象，s是一个string对象。
+   2. stm.str()：返回`stm`所保存的string的拷贝
+   3. stm.str(s)：将s拷贝的stm中，返回void
+
+4. string流对象的作用
+
+   1. 对数据类型进行转化，也就是string和其他类型的转化，这是string流对象最重要的功能。
+
+   - string转int等类型
+
+   ```c++
+   #include <iostream>
+   #include <limits>
+   #include <sstream>
+   #include <stdexcept>
+   #include <string>
+   
+   int main() {
+   
+       std::string str( "nb" );
+       std::stringstream ssin( str );
+   
+       int i = 0;
+   
+       ssin >> i;
+       if ( ssin.bad() ) {
+           throw std::runtime_error( "cin is corrupted\n" );
+       } else if ( ssin.fail() ) {
+           ssin.clear();
+           ssin.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+           std::cout << "bad string format\n";
+       } else {
+           std::cout << i << '\n';
+       }
+       return 0;
+   }
+   
+   ```
+
+   - int等类型转string
+
+   ```c++
+   #include <iostream>
+   #include <limits>
+   #include <sstream>
+   #include <stdexcept>
+   #include <string>
+   
+   int main() {
+       int strcI = 100;
+       std::stringstream ssin;
+       std::string str;
+       ssin << strcI << std::endl;
+       if ( ssin.bad() ) {
+           throw std::runtime_error( "ssin is corrupted\n" );
+       } else {
+           std::cout << ssin.str();
+       }
+   
+       return 0;
+   }
+   ```
+
+   2. 用于对空格分隔的字符串切分
+
+   ```c++
+   #include <iostream>
+   #include <limits>
+   #include <sstream>
+   #include <stdexcept>
+   #include <string>
+   
+   int main() {
+       std::string src( "hello world ni hao" );
+       std::string dest;
+       std::stringstream ssin( src );
+   
+       while ( ssin >> dest ) {
+           std::cout << dest << '\n';
+       }
+       if ( ssin.bad() ) {
+           throw std::runtime_error( "cin is corrupted\n" );
+       }
+   
+       return 0;
+   }
+   ```
 
 ---
-
 
 # 多线程
 
@@ -3632,18 +3733,18 @@ int main() {
     #include <iostream>
     #include <string>
     #include <thread>
-
+   
     int main() {
-
+   
       std::thread my_thread([]() {
           std::cout << "This is a thread" << std::endl;
-
+   
           });
-
+   
       my_thread.join();
       return 0;
     }
-
+   
    ```
 
    使用`join`函数后，主线程就会处于挂起状态，直到子线程执行完毕才可以继续执行。
@@ -3654,17 +3755,17 @@ int main() {
     #include <iostream>
     #include <string>
     #include <thread>
-
+   
     int main() {
-
+   
       std::thread my_thread([]() {
         for(int i = 0; i < 100000; ++i) {}
           });
-
+   
       my_thread.detach();
       return 0;
     }
-
+   
    ```
 
    `detach()`函数可以让子线程被 C++运行库接管，就算主线程执行完毕，子线程也会由 C++运行库及时清理相关资源。保证不会出现各种意想不到的 bug
@@ -4133,6 +4234,10 @@ int main() {
 }
 
 ```
+---
+
+# 异常处理
+
 
 ---
 
