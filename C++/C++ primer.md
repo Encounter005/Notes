@@ -9,6 +9,7 @@
     - [flow of control](#flow-of-control)
   - [2 Variables and Basic Types（变量和基本类型）](#2-variables-and-basic-types变量和基本类型)
   - [3 Separate Compliation（复合类型）](#3-separate-compliation复合类型)
+  - [Chapter 12 Dynamic Memory](#chapter-12-dynamic-memory)
 <!--toc:end-->
 
 [C++ primer](https://www.bilibili.com/video/BV1B8411K71w/?spm_id_from=333.999.0.0)
@@ -195,3 +196,71 @@ int main(int argc , char** argv)
 
 ref VS pointer
 * ref -> initialize
+
+
+## Chapter 12 Dynamic Memory
+
+> 没有什么特别需求，尽量用`unique_ptr`
+
+```c++
+#include <iostream>
+#include <memory>
+
+void func() {
+    std::shared_ptr<int> p = std::make_shared<int>(42);
+    std::shared_ptr<int> p2(p);
+
+    std::cout << p.use_count() << std::endl;
+    std::cout << p2.use_count() << std::endl;
+
+    {
+        std::shared_ptr<int> p3(p);
+        std::cout << p.use_count() << std::endl;
+        std::cout << p3.use_count() << std::endl;
+    } // NOTE: p3 is destoryed
+    
+    std::cout << p.use_count() << std::endl;
+}
+
+int main() {
+    func();
+
+    return 0;
+}
+
+```
+
+```c++
+#include <iostream>
+#include <memory>
+
+
+class A {
+public:
+    A(int a_ , const std::string& b_) : a(a_) , b(b_) {
+        std::cout << "In Constructor" << std::endl;
+    }
+
+    ~A() {
+        std::cout << "In destructor" << std::endl;
+    }
+private:
+    int a;
+    std::string b;
+};
+
+void func() {
+    std::cout << "in functions begin" << std::endl;
+    std::shared_ptr<A> p = std::make_shared<A>(1 , "awdjawkd");
+    std::cout << "in functions end" << std::endl;
+}
+
+int main() {
+    func();
+
+    return 0;
+}
+```
+
+
+

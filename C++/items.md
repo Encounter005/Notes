@@ -1,13 +1,19 @@
 # Effective Modern C++
 
 <!--toc:start-->
-
 - [Effective Modern C++](#effective-modern-c)
   - [Item1 模板类型推断](#item1-模板类型推断)
   - [Item2 Understand auto type deduction](#item2-understand-auto-type-deduction)
   - [Item3 decltype](#item3-decltype)
-  - [Item23 move和完美转发](#item23-move和完美转发)
-  <!--toc:end-->
+  - [Item5 Prefer auto to explicit type declartion](#item5-prefer-auto-to-explicit-type-declartion)
+  - [Item6](#item6)
+  - [Item7](#item7)
+  - [Item14 noexcept的好处](#item14-noexcept的好处)
+  - [Item15 constexpr的灵活性](#item15-constexpr的灵活性)
+  - [Item23 move或不做move](#item23-move或不做move)
+  - [Item24 Universal reference 和右值引用](#item24-universal-reference-和右值引用)
+  - [Item25 使用move对右值，使用forward对万能引用](#item25-使用move对右值使用forward对万能引用)
+<!--toc:end-->
 
 ## Item1 模板类型推断
 
@@ -40,8 +46,8 @@ void func(ParamType& t) {
     const int& rx = x;
 
     func(x); // NOTE: T-> int  ParamType int&
-    func(cx); // NOTE: T-> const int   ParamType const int&
-    func(rx); // NOTE: T-> const int  ParamType const int&
+    func(cx); // T-> const int   ParamType const int&
+    func(rx); // T-> const int  ParamType const int&
 
 ```
 
@@ -203,7 +209,7 @@ int main() {
 
 ```
 
-> decltype 确认返回值的类型能够
+> decltype 能够确认返回值的类型
 
 ```c++
 #include <iostream>
@@ -246,7 +252,6 @@ decltype(auto) f2() {
 }
 ```
 
-
 ## Item5 Prefer auto to explicit type declartion
 
 ```c++
@@ -276,7 +281,7 @@ struct hash<A> {
 };
 };
 namespace {
-template<typename T> 
+template<typename T>
 class TypeDisplayer;
 
 
@@ -300,8 +305,8 @@ void Func() {
 int main() {
     std::vector<int> a;
     std::vector<int>::iterator it = a.begin();
-    auto it2 = a.begin(); 
-    
+    auto it2 = a.begin();
+
     std::function<void(const std::string&)> func = [](const std::string& t)->void{
         std::cout << t << std::endl;
     };
@@ -317,13 +322,11 @@ int main() {
 
 ```
 
-
-1) 可以有效减少我们打字的量
-2) 可以确保变量初始化(不初始化过不了编译)
-3) 可以避免额外的拷贝
+1. 可以有效减少我们打字的量
+2. 可以确保变量初始化(不初始化过不了编译)
+3. 可以避免额外的拷贝
 
 ## Item6
-
 
 ## Item7
 
@@ -372,11 +375,9 @@ C++中异常处理是在运行时而不是在编译时检测的。为了实现�
 - 移动分配函数
 - 析构函数
 
-
 ## Item15 constexpr的灵活性
 
-
-## Item23 move和完美转发
+## Item23 move或不做move
 
 > std::move()是将当前值转化为右值，如果是左值，将变成右值，如果是右值，依旧是右值
 
@@ -445,7 +446,8 @@ class Annotation {
 
 public:
     explicit Annotation(A& text) : value_(std::move(text)) {}
-    // NOTE:只需要把const去掉就可以了，因为const左值引用让text依旧是左值，会调用复制构造函数
+    // NOTE:
+    //只需要把const去掉就可以了，因为const左值引用让text依旧是左值，会调用复制构造函数
 
 private:
     A value_;
@@ -461,3 +463,150 @@ int main() {
 }
 
 ```
+
+## Item24 Universal reference 和右值引用
+
+```c++
+
+void f(Widget&& param) // rvalue reference
+
+Widget&& var1 = Widget() // rvalue reference
+
+auto&& var2 = var1 // universal reference
+
+template<typename T>
+void f(std::vector<T>&& param) // rvalue reference
+
+template<typename T>
+void f(T&& param) // universal reference
+
+```
+
+> 如何区别右值引用和万能引用
+
+只需要判断是否有整体类型推断即可
+
+```c++
+#include <iostream>
+
+namespace {
+
+template<typename T>
+class TypeDisplayer;
+
+class A{
+public:
+    int a_ = 10;
+};
+A MakeAObject() {
+    return A(10);
+}
+
+template<typename T>
+// NOTE:
+// universal reference
+// reference collapse
+// A&&& -> A&
+void f(T&& param) {
+    TypeDisplayer<decltype(param)> test;
+}
+
+};
+
+int main() {
+
+    // NOTE:
+    // 1. 表明转换为右值的可行性
+    // 2. 绑定一个临时对象
+    A&& a = MakeAObject();
+    a.a_ = 100;
+    auto&& r = a; // universal reference -> lvalue reference
+    r.a_ = 200;
+    std::cout << a.a_ << std::endl;
+    return 0;
+}
+```
+
+> 总结
+
+- 在一个函数模板中，如果参数的类型是`T&&`去推断一个类型`T`或者如果一个对象是使用了`auto&&`来表示，那么这个参数或对象就是一个万能引用
+- 对于万能引用来说，如果是一个右值来初始化，那么万能引用就是右值，如果是一个左值来初始化，那么万能引用就是左值
+
+## Item25 使用move对右值，使用forward对万能引用
+
+- std::move -> unconditional cast(不管传入的参数是左值还是右值，都会转化为右值)
+- std::forward -> conditional cast when the param is rvalue(保留传入参数的属性，左值->左值 右值->右值)
+
+```c++
+#include <iostream>
+
+// NOTE:
+// std::move -> unconditional cast
+// std::forward -> conditional cast when the param is rvalue
+
+namespace {
+class A{
+public:
+    A(){}
+    A(const A& rhs) {
+        std::cout << "In Copy Constructor" << std::endl;
+    }
+
+    A(A&& rhs) {
+        std::cout << "In Move COnstructor" << std::endl;
+    }
+
+};
+
+
+class Widget{
+public:
+    // NOTE:
+    // universal reference
+    // T-> A&
+    template<typename T>
+    void SetNewName(T&& new_name) {
+        // NOTE:
+        // 不需要单独给左值引用或者右值引用单独写一个函数
+        auto res = std::forward<T>(new_name);
+    }
+};
+
+};
+
+int main() {
+
+    Widget w;
+    A a;
+    w.SetNewName(std::move(a));
+
+    return 0;
+}
+
+```
+
+```c++
+Matrix
+operator+(Matrix&& lhs , const Matrix& rhs) {
+    lhs += rhs;
+    return std::move(lhs) // NOTE: move lhs into
+}                         // return value
+```
+
+上面这个重载运算符后，返回一个右值，免去了拷贝和析构的时间
+
+> 注意
+
+```c++
+Widget makeWidget() {
+    Widget w // local variable
+
+    /*
+        doing something
+    */
+
+    return w;
+}
+```
+
+当有了一个`local variable`的时候，不要做`return std::move()`的操作，编译器会进行优化
