@@ -610,3 +610,49 @@ Widget makeWidget() {
 ```
 
 当有了一个`local variable`的时候，不要做`return std::move()`的操作，编译器会进行优化
+
+
+
+## Item26 不要重载万能引用的函数
+
+```c++
+#include <iostream>
+#include <set>
+
+namespace {
+std::multiset<std::string> names;
+
+// NOTE:
+// exact match
+// T -> short&
+template<typename T>
+void Func(T&& str) {
+    std::cout << "in template" << std::endl;
+    names.emplace(std::forward<T>(str));
+}
+
+
+// NOTE:
+// conversion from short to index
+void Func(int Index) {
+    // str->map.get(Index)
+    // names.emplace(str)
+}
+
+};
+
+int main() {
+
+    std::string s1 = "hello";
+    Func(s1);
+    Func("hello");
+    Func(std::string("hello"));
+
+    short a = 1;
+    Func(a);
+
+    return 0;
+}
+```
+
+上面代码中的Func有两个重载，一个是万能引用，另一个是有实例化的重载，在传入参数`short a`的时候，由于实例化好的函数需要一个转换，而万能引用可以直接匹配上，所以会调用万能引用的函数。
