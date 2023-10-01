@@ -10,9 +10,13 @@
   - [Item7](#item7)
   - [Item14 noexcept的好处](#item14-noexcept的好处)
   - [Item15 constexpr的灵活性](#item15-constexpr的灵活性)
+  - [Item17 Rule of five](#item17-rule-of-five)
+  - [Item18 unique_ptr](#item18-uniqueptr)
   - [Item23 move或不做move](#item23-move或不做move)
   - [Item24 Universal reference 和右值引用](#item24-universal-reference-和右值引用)
   - [Item25 使用move对右值，使用forward对万能引用](#item25-使用move对右值使用forward对万能引用)
+  - [Item26 避免重载万能引用](#item26-避免重载万能引用)
+  - [Item28 Understand reference collapsing](#item28-understand-reference-collapsing)
 <!--toc:end-->
 
 ## Item1 模板类型推断
@@ -377,6 +381,146 @@ C++中异常处理是在运行时而不是在编译时检测的。为了实现�
 
 ## Item15 constexpr的灵活性
 
+## Item17 Rule of five
+
+- Rule of three
+
+当定义了复制构造函数、析构函数、赋值操作符中的其中一个，剩下两个都要自己去定义。
+
+- Rule of five
+
+当定义了复制构造函数、析构函数、赋值拷贝操作符、移动构造、赋值移动构造运算符中的其中一个，剩下四个个都要自己去定义。
+
+
+```c++
+#include <iostream>
+
+namespace {
+class Widget {
+public:
+    Widget() {
+        std::cout << "in Widget()" << std::endl;
+    }
+
+    Widget(const Widget& w) {
+        std::cout << "in Widget(const Widget& w)" << std::endl;
+    }
+
+    Widget& operator=(const Widget& w) {
+        std::cout << "in operator=" << std::endl;
+        return *this;
+    }
+
+    Widget& operator=(Widget&& w) {
+        std::cout << "in operator= &&" << std::endl;
+        return *this;
+    }
+    
+    Widget (Widget&& w) noexcept {
+        std::cout << "in Widget(&&)" << std::endl;
+    }
+
+    ~Widget() {
+        std::cout << "in ~Widget()" << std::endl;
+    }
+};
+};
+
+
+int main() {
+
+    Widget w1{};
+    Widget w2(w1);
+    w2 = w1;
+    auto w3 = std::move(w2);
+    w3 = std::move(w1);
+    
+    return 0;
+}
+
+```
+
+
+## Item18 unique_ptr
+
+> 要点
+
+- `std::unique_ptr`是轻量级、快速的、只可移动的(move-only)的管理所有权语义资源的智能指针
+- 默认情况，资源销毁通过`delete`实现，但是支持自定义删除器。有状态的删除器和函数指针会增加`std::unique_ptr`对象的大小
+- 将`std::unique_ptr`转换成`std::shared_ptr`非常简单
+
+
+```c++
+#include <iostream>
+#include <memory>
+namespace {
+class investment{
+public:
+    investment() {
+        std::cout << "hello in investment()" << std::endl;
+    }
+
+    virtual ~investment() {
+        std::cout << "in ~investment()" << std::endl;
+    }
+};
+
+class stock : public investment {
+public:
+    stock(const std::string& symbol_ , double amount_) : symbol(symbol_), amount(amount_) {
+        std::cout << "in stock()" << std::endl;
+    }
+    virtual ~stock() {
+        std::cout << "in ~stock()" << std::endl;
+    }
+
+private:
+    std::string symbol;
+    double amount;
+};
+
+class RealEstate : public investment {
+public:
+    RealEstate(const std::string& location_ , double amount_ ) : location(location_) , amount(amount_) {
+        std::cout << "in RealEstate()" << std::endl;
+    }
+    virtual ~RealEstate() {
+        std::cout << "in ~Realestate()" << std::endl;
+    }
+private:
+    std::string location;
+    double amount;
+    int time;
+};
+
+template<typename... RestParams>
+auto MakeInvestment(const std::string& type, RestParams&&... rest_param) {
+
+    auto del_investment = [](investment* ub){
+        std::cout << "in custom deleter" << std::endl;
+        delete ub;
+    };
+
+    std::unique_ptr<investment, decltype(del_investment)> ptr(nullptr);
+
+    if(type == "Stock") {
+        ptr.reset(new stock(std::forward<RestParams>(rest_param)...));
+    } else {
+        ptr.reset(new RealEstate(std::forward<RestParams>(rest_param)...));
+    }
+    return ptr;
+}
+
+};
+
+int main() {
+    std::unique_ptr<int> ptr(new int(100));
+    ptr.reset(new int(200));
+    auto res = MakeInvestment("Stock" , "Goog" , 123);
+    return 0;
+}
+```
+
 ## Item23 move或不做move
 
 > std::move()是将当前值转化为右值，如果是左值，将变成右值，如果是右值，依旧是右值
@@ -611,9 +755,7 @@ Widget makeWidget() {
 
 当有了一个`local variable`的时候，不要做`return std::move()`的操作，编译器会进行优化
 
-
-
-## Item26 不要重载万能引用的函数
+## Item26 避免重载万能引用
 
 ```c++
 #include <iostream>
@@ -656,3 +798,38 @@ int main() {
 ```
 
 上面代码中的Func有两个重载，一个是万能引用，另一个是有实例化的重载，在传入参数`short a`的时候，由于实例化好的函数需要一个转换，而万能引用可以直接匹配上，所以会调用万能引用的函数。
+
+## Item28 Understand reference collapsing
+
+> 但凡有任何一种引用是左值引用，那么就是左值引用，否则就是右值引用。
+
+```c++
+#include <iostream>
+
+namespace {
+
+template <typename T> class TD;
+
+template <typename T> void Func( T &&param ) { TD<decltype( param )> test; }
+}; // namespace
+
+int main() {
+    int a1 = 1;
+    int a  = a1;
+    // Func(12);
+    // Func(a);
+
+    return 0;
+}
+
+```
+
+> 关于std::forward的实现
+
+```c++
+template<typename T>
+T&& forward(typename remove_reference<T>::type& param) {
+    return static_cast<T&&>(param);
+}
+
+```
