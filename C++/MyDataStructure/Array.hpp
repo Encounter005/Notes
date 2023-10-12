@@ -159,7 +159,11 @@ template <typename T> Array<T>::Array( const std::initializer_list<T> &param ) {
 }
 
 template <typename T> T &Array<T>::operator[]( size_t pos ) const {
-    return data[pos];
+    if(pos >= size) {
+        assert(pos >= size);
+    } else {
+        return data[pos];
+    }
 }
 
 template<typename T>
