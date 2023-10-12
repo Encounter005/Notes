@@ -373,6 +373,96 @@ void solve() {
 ```
 
 
+### ABC323
+
+### C World Tour Finals
+
+> 题解
+
+这题在求需要多少题才满足条件的时候忽略了找的题必须是没有做过的题才可行（写的时候完全忽略了这点）
+
+```c++
+void solve() {
+    int N , M;
+    std::cin >> N >> M;
+    std::vector<int> A(M);
+    for(auto& x : A) {
+        std::cin >> x;
+    }
+
+    std::vector<std::string> s(N);
+    std::vector<int> score(N);
+    for(int i = 0; i < N; i++) {
+        std::cin >> s[i];
+        for(int j = 0; j < M; j++) {
+            if(s[i][j] == 'o') {
+                score[i] += A[j];
+            }
+        }
+    }
+
+    std::vector<int> p(N); // NOTE:根据A数组从大到小排序求下标。 
+    std::iota(p.begin() , p.end() , 0);
+    std::sort(p.begin() , p.end() , 
+              [&](int i , int j) {
+                return A[i] > A[j];
+              });
+
+    for(int i = 0; i < N; i++) {
+        int mx = 0;
+        for(int j = 0; j < N; j++) {
+            if(i != j) { // NOTE:求除了当前选手之外分数的最大值
+                mx = std::max(score[j] + j + 1 , mx);
+            }
+        }
+
+        int cur = score[i] + i + 1 , ans = 0;
+        for(auto j : p) { 
+            // NOTE:如果当前这题是没解决的并且当前分数是小于最大值的，ans++，更新当前值。
+            if(s[i][j] == 'x' && cur <= mx) {
+                cur += A[j];
+                ans++;
+            }
+        }
+
+        std::cout << ans << "\n";
+    }
+
+```
+
+#### D Merge Slimes
+
+> 题解
+
+这题直接贪就ok了，开一个map存每个尺寸的史莱姆来有多少个，算答案的时候把个数大于2的史莱姆用map继续存，直到map为空的时候就行了
+
+```c++
+void solve() {
+    int N;
+    std::cin >> N;
+    std::map<ll , ll> mp;
+    while(N--) {
+        ll S , C;
+        std::cin >> S >> C;
+        mp[S] = C;
+    }
+    
+    ll ans = 0;
+    while(!mp.empty()) {
+        auto[s , c] = *mp.begin();
+        mp.erase(mp.begin());
+        ans += c % 2;
+        if(c >= 2) {
+            mp[s * 2] += c / 2;
+        }
+    }
+
+    std::cout << ans << "\n";
+}
+
+```
+
+
 
 ## vjudge
 
