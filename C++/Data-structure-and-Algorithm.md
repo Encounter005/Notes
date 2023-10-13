@@ -64,6 +64,7 @@
     * [找质数](#找质数)
     * [找最大公约数](#找最大公约数)
     * [找最小公倍数](#找最小公倍数)
+    * [质数](#质数)
 * [搜索与图论](#搜索与图论)
     * [DFS(深度优先搜索) && BFS(宽度优先搜索)](#dfs深度优先搜索--bfs宽度优先搜索)
         * [BFS](#bfs)
@@ -1785,6 +1786,33 @@ int gcd(int a , int b)
     return 0;
 }
 
+```
+
+
+## 质数
+
+> 线性筛法
+
+```c++
+void solve() {
+    int n;
+    std::cin >> n;
+    std::vector<int> primes;
+    std::vector<bool> st(n + 1 , false);
+    
+    auto get_primes = [&](int n){
+        for(int i = 2; i <= n; i++) {
+            if(!st[i]) primes.emplace_back(i);
+            for(int j = 0; primes[j] <= n / i; j++) {
+                st[primes[j] * i] = true;
+                if(i % primes[j] == 0) break;
+            }
+        }
+    };
+    
+    get_primes(n);
+    std::cout << primes.size() << std::endl;
+}
 ```
 
 # 搜索与图论
