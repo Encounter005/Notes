@@ -1103,3 +1103,149 @@ void solve() {
   cout << cnt << '\n';
 }
 ```
+### Codeforces Round 903(div3)
+
+#### A
+
+> 题解
+
+暴力枚举字符串`x`的长度直到`x`的长度大于等于`2 * m`，此时`x`不会因为长度问题而找不到`s`，如果在枚举之后仍找不到`s`则输出`-1`
+
+```c++
+void solve() {
+    int n , m;
+    std::cin >> n >> m;
+    std::string x , s;
+    std::cin >> x >> s;
+    int ans = 0;
+    while(x.find(s) == std::string::npos && (x.size() < 2 * m || ans == 0)) {
+        ans++;
+        x += x;
+    }
+
+    if(x.find(s) != std::string::npos) {
+        std::cout << ans << "\n";
+    } else {
+        std::cout << "-1\n";
+    }
+}
+```
+
+#### B
+
+> 题解 解法一：  
+
+要是每个元素都相等，先进行排序，要使得$a == b == c$，`b`和`c`必须是`a`的倍数。因为操作最多有三次，意味着最多分出3个`a`，最后$a == b == c$，所以`a`总的有6个，`b + c`最多有5个a
+
+```c++
+void solve() {
+    std::vector<int> a(3);
+    for(auto& x : a) {
+        std::cin >> x;
+    }
+    std::sort(a.begin() , a.end());
+    
+    if(a[1] % a[0] == 0 && a[2] % a[0] == 0 && (a[2] + a[1]) / a[0] <= 5) {
+        std::cout << "YES\n";
+    } else {
+        std::cout << "NO\n";
+    }
+}
+```
+
+> 解法二
+
+枚举每一种切法，如果发现可以整除，并且操作数小于等于3，就直接输出YES
+
+```c++
+void solve() {
+    int a, b , c;
+    std::cin >> a >> b >> c;
+
+    int cnt = 0;
+
+    for(auto x : {a , a / 2 , a / 3 , a / 4}) {
+        if(x == 0) {
+            continue;
+        }
+
+        bool ok = true;
+        for(auto y : {a , b , c}) {
+            if(y % x != 0) {
+                ok = false;
+                break;
+            }
+            cnt += y / x - 1;
+        }
+
+        if(ok && cnt <= 3) {
+            std::cout << "YES\n";
+            return;
+        } 
+    }
+    std::cout << "NO\n";
+}
+```
+
+
+#### C
+
+> 题解
+
+给定长度为n的二维正方形字符。  
+对于任一个位置，可以将其修改为**相邻、更大**的元素，代价为1，如`a`修改为`b`。如果字符为`z`，则无法修改  
+
+如果二维矩阵顺时针翻转90度之后，和原来的相同，那么称其为完美矩阵  
+
+问，需要最少多少修改代价，使其成为完美矩阵。  
+
+枚举左上的$\frac{1}{4}$块，找出旋转位置对应的四个位置，记录字母出现的次数。  
+
+题目的操作是一次操作把字母+1，最多到z  
+
+所以最少的操作是把四个字母都变成最大的字母。
+
+```c++
+void solve() {
+    int n;
+    std::cin >> n;
+    std::vector<std::string> a(n);
+    for(auto& x : a) {
+        std::cin >> x;
+    }
+    
+    int res = 0;
+    for(int i = 0; i < n / 2; i++) {
+        for(int j = 0; j < n / 2; j++) {
+            int sum = a[i][j] + a[j][ n - 1 - i] + a[n - 1 - j][i] + a[n - 1 - i][n - 1 - j];
+            int mx = std::max({a[i][j] , a[j][n - 1 - i] , a[n - 1 - j][i] , a[n - 1 - i][n - 1 - j]});
+            res += 4 * mx - sum;
+        }
+    }
+
+    std::cout << res << "\n";
+}
+
+```
+
+#### D
+
+> 题解
+
+给定一个数组
+- 每次可以选择2个不同元素$a_i , a_j$
+- 找$a_i$的因数$x$，令$a_i = \frac{a_i}{x} , a_j = a_j * x$
+
+执行上述操作任一次，问能否让所有元素相等。
+
+求所有质因子，看它们的幂次是否能整除n
+
+```c++
+
+```
+
+
+#### E
+
+
+
