@@ -292,7 +292,6 @@ void solve() {
 1. 首先需要二维数组把每个数对应的下标存好。
 2. 建立一个新字符串遍历即可。
 
-
 ```c++
 const int N = 200001;
 int c[N];
@@ -372,7 +371,6 @@ void solve() {
 
 ```
 
-
 ### ABC323
 
 ### C World Tour Finals
@@ -401,9 +399,9 @@ void solve() {
         }
     }
 
-    std::vector<int> p(N); // NOTE:根据A数组从大到小排序求下标。 
+    std::vector<int> p(N); // NOTE:根据A数组从大到小排序求下标。
     std::iota(p.begin() , p.end() , 0);
-    std::sort(p.begin() , p.end() , 
+    std::sort(p.begin() , p.end() ,
               [&](int i , int j) {
                 return A[i] > A[j];
               });
@@ -417,7 +415,7 @@ void solve() {
         }
 
         int cur = score[i] + i + 1 , ans = 0;
-        for(auto j : p) { 
+        for(auto j : p) {
             // NOTE:如果当前这题是没解决的并且当前分数是小于最大值的，ans++，更新当前值。
             if(s[i][j] == 'x' && cur <= mx) {
                 cur += A[j];
@@ -446,7 +444,7 @@ void solve() {
         std::cin >> S >> C;
         mp[S] = C;
     }
-    
+
     ll ans = 0;
     while(!mp.empty()) {
         auto[s , c] = *mp.begin();
@@ -462,7 +460,87 @@ void solve() {
 
 ```
 
+### ABC324
 
+#### C
+
+> 题解
+
+这题主要是在看$T{'}$是否是添加还是删除了元素，原本想的是用`unordered_map`来对比s串，后面发现只要`s`串从前往后比遍历，在第一个两个串元素不一样的地方停止，$T{'}$串从后往前遍历，算两个位置加起来的总长度是否大于长度最长的串就行
+
+```c++
+void solve() {
+    int n;
+    std::string t;
+    std::cin >> n >> t;
+    std::vector<std::string> a( n );
+    for ( auto &x : a ) {
+        std::cin >> x;
+    }
+
+    auto similar = [&](const std::string&a , const std::string& b){
+        if(abs((int)a.size() - (int)b.size()) > 1) {
+            return false;
+        }
+
+        if(a == b) return true;
+        size_t l = 0 , r = 0;
+        while(l < a.size() && l < b.size() && a[l] == b[l]) {
+            l++;
+        }
+        while(r < a.size() && r < b.size() && a.end()[-1 - r] == b.end()[-1 - r]) {
+            r++;
+        }
+
+        return l + r >= std::max(a.size() , b.size()) - 1;
+    };
+    std::vector<int> ans;
+
+    for(int i = 0; i < n; i++) {
+        if(similar(a[i] , t)) {
+            ans.emplace_back(i + 1);
+        }
+    }
+
+    std::cout << ans.size() << std::endl;
+    for(auto x : ans) {
+        std::cout << x << " ";
+    }
+}
+
+```
+
+### D
+
+> 题解
+
+题目是要看当前序列的幂次方总和是否是某一个数的平方，问这样的数有几个  
+
+如果有一个数满足这样的序列，那这个数必小于等于$10{N}$，只需要去找这样的数有几个即可
+
+```c++
+void solve() {
+    int n;
+    std::cin >> n;
+    std::string s;
+    std::cin >> s;
+    std::sort(s.begin() , s.end());
+
+    int ans = 0;
+    ll max_value = pow(10 , n);
+    for(ll i = 0; i * i <= max_value; i++) {
+        auto t = std::to_string(i * i);// 将当前数转换成字符串
+        t.resize(n , '0'); // 保证两个串长度一样，不足地方补0
+        std::sort(t.begin(), t.end());
+        if(s == t) {
+            ans++;
+        }
+    }
+
+    std::cout << ans << "\n";
+    
+}
+```
 
 ## vjudge
 
@@ -514,7 +592,7 @@ void solve() {
     }
   }
 }
-````
+```
 
 ### STL练习-vector、stack、queue
 
@@ -1103,6 +1181,7 @@ void solve() {
   cout << cnt << '\n';
 }
 ```
+
 ### Codeforces Round 903(div3)
 
 #### A
@@ -1133,7 +1212,7 @@ void solve() {
 
 #### B
 
-> 题解 解法一：  
+> 题解 解法一：
 
 要是每个元素都相等，先进行排序，要使得$a == b == c$，`b`和`c`必须是`a`的倍数。因为操作最多有三次，意味着最多分出3个`a`，最后$a == b == c$，所以`a`总的有6个，`b + c`最多有5个a
 
@@ -1144,7 +1223,7 @@ void solve() {
         std::cin >> x;
     }
     std::sort(a.begin() , a.end());
-    
+
     if(a[1] % a[0] == 0 && a[2] % a[0] == 0 && (a[2] + a[1]) / a[0] <= 5) {
         std::cout << "YES\n";
     } else {
@@ -1181,27 +1260,26 @@ void solve() {
         if(ok && cnt <= 3) {
             std::cout << "YES\n";
             return;
-        } 
+        }
     }
     std::cout << "NO\n";
 }
 ```
-
 
 #### C
 
 > 题解
 
 给定长度为n的二维正方形字符。  
-对于任一个位置，可以将其修改为**相邻、更大**的元素，代价为1，如`a`修改为`b`。如果字符为`z`，则无法修改  
+对于任一个位置，可以将其修改为**相邻、更大**的元素，代价为1，如`a`修改为`b`。如果字符为`z`，则无法修改
 
-如果二维矩阵顺时针翻转90度之后，和原来的相同，那么称其为完美矩阵  
+如果二维矩阵顺时针翻转90度之后，和原来的相同，那么称其为完美矩阵
 
-问，需要最少多少修改代价，使其成为完美矩阵。  
+问，需要最少多少修改代价，使其成为完美矩阵。
 
-枚举左上的$\frac{1}{4}$块，找出旋转位置对应的四个位置，记录字母出现的次数。  
+枚举左上的$\frac{1}{4}$块，找出旋转位置对应的四个位置，记录字母出现的次数。
 
-题目的操作是一次操作把字母+1，最多到z  
+题目的操作是一次操作把字母+1，最多到z
 
 所以最少的操作是把四个字母都变成最大的字母。
 
@@ -1213,7 +1291,7 @@ void solve() {
     for(auto& x : a) {
         std::cin >> x;
     }
-    
+
     int res = 0;
     for(int i = 0; i < n / 2; i++) {
         for(int j = 0; j < n / 2; j++) {
@@ -1233,6 +1311,7 @@ void solve() {
 > 题解
 
 给定一个数组
+
 - 每次可以选择2个不同元素$a_i , a_j$
 - 找$a_i$的因数$x$，令$a_i = \frac{a_i}{x} , a_j = a_j * x$
 
@@ -1244,8 +1323,4 @@ void solve() {
 
 ```
 
-
 #### E
-
-
-
