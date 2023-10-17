@@ -1,7 +1,6 @@
 # 比赛题目
 
 <!--toc:start-->
-
 - [比赛题目](#比赛题目)
   - [Atcoder](#atcoder)
     - [ABC 310](#abc-310)
@@ -13,16 +12,48 @@
       - [D - Grid Ice Floor](#d-grid-ice-floor)
     - [ABC 312](#abc-312)
       - [C - Invisible Hand](#c-invisible-hand)
+    - [ABC314](#abc314)
+      - [C - Rotate Colored Subsequence](#c-rotate-colored-subsequence)
+      - [D - LOWER](#d-lower)
+    - [ABC323](#abc323)
+    - [C World Tour Finals](#c-world-tour-finals)
+      - [D Merge Slimes](#d-merge-slimes)
+    - [ABC324](#abc324)
+      - [C](#c)
+    - [D](#d)
   - [vjudge](#vjudge)
     - [枚举算法](#枚举算法)
       - [D - Division](#d-division)
     - [STL练习-vector、stack、queue](#stl练习-vectorstackqueue)
       - [圆桌问题](#圆桌问题)
       - [简单计算器](#简单计算器)
+    - [搜索综合练习](#搜索综合练习)
+      - [A - 最短路计数](#a-最短路计数)
+    - [B - 八数码难题](#b-八数码难题)
+    - [F - 费解的开关](#f-费解的开关)
+  - [树和二叉树练习](#树和二叉树练习)
+    - [C - FBI 树](#c-fbi-树)
+    - [G - 合并果子](#g-合并果子)
   - [nowcoder](#nowcoder)
     - [“多校联赛” 第一次](#多校联赛-第一次)
-  - [CodeForces](#codeforces) - [Round 886(Div 4)](#round-886div-4) - [D. Balanced Round](#d-balanced-round) - [Round 888(Div 3)](#round-888div-3) - [A. Escalator Conversations](#a-escalator-conversations) - [B. Parity Sort](#b-parity-sort) - [C. Tiles Comeback](#c-tiles-comeback) - [Educational Codeforces Round 152 (Rated for Div. 2)](#educational-codeforces-round-152-rated-for-div-2) - [C. Binary String Copying](#c-binary-string-copying) - [Codeforces Round 889 (Div. 2)](#codeforces-round-889-div-2) - [B. Longest Divisors Interval](#b-longest-divisors-interval)
-  <!--toc:end-->
+  - [CodeForces](#codeforces)
+    - [Round 886(Div 4)](#round-886div-4)
+      - [D. Balanced Round](#d-balanced-round)
+    - [Round 888(Div 3)](#round-888div-3)
+      - [A. Escalator Conversations](#a-escalator-conversations)
+      - [B. Parity Sort](#b-parity-sort)
+      - [C. Tiles Comeback](#c-tiles-comeback)
+    - [Educational Codeforces Round 152 (Rated for Div. 2)](#educational-codeforces-round-152-rated-for-div-2)
+      - [C. Binary String Copying](#c-binary-string-copying)
+    - [Codeforces Round 889 (Div. 2)](#codeforces-round-889-div-2)
+      - [B. Longest Divisors Interval](#b-longest-divisors-interval)
+    - [Codeforces Round 903(div3)](#codeforces-round-903div3)
+      - [A](#a)
+      - [B](#b)
+      - [C](#c)
+      - [D](#d)
+      - [E](#e)
+<!--toc:end-->
 
 ## Atcoder
 
