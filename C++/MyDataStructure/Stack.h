@@ -47,7 +47,7 @@ public:
     }
 
     T& top() {
-        return *(first_of_free);
+        return *(first_of_free - 1);
     }
 
     bool empty() {
