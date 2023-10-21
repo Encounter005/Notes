@@ -18,7 +18,18 @@ template <typename T> List<T>::List( size_t num, T item ) {
     }
 }
 
-template <typename T> List<T>::List( std::initializer_list<T> &ilist ) {
+template <typename T> List<T>::List( std::initializer_list<T> &&ilist ) {
+    head = tail = nullptr;
+    cnt         = 0;
+    if ( ilist.size() == 0 ) {
+        return;
+    }
+
+    for ( const auto &elem : ilist ) {
+        insert( elem );
+    }
+}
+template <typename T> List<T>::List( const std::initializer_list<T> &ilist ) {
     head = tail = nullptr;
     cnt         = 0;
     if ( ilist.size() == 0 ) {
@@ -155,9 +166,7 @@ template <typename T> List<T> &List<T>::merge( List<T> &other ) {
     if ( head == nullptr ) {
         *this = other;
     }
-
-    List<T> res( 0 );
-    // res.clear();
+    List<T> res;
 
     size_t l = 0, r = 0;
     while ( l < this->size() && r < other.size() ) {

@@ -26,8 +26,9 @@ private:
 
 public:
     List();
-    List( size_t num = 0, T item = 0 );
-    List( std::initializer_list<T> &ilist );
+    List( size_t num , T item);
+    List( const std::initializer_list<T> &ilist );
+    List( std::initializer_list<T> &&ilist );
     List( List && );
     List( const List & );
     void clear();

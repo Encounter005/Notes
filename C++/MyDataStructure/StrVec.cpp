@@ -1,4 +1,4 @@
-#include "String.h"
+#include "StrVec.h"
 
 // 初始化静态成员
 std::allocator<std::string> StrVec::alloc;
