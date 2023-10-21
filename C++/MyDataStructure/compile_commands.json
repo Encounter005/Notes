@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/encounter/Notes/C++/MyDataStructure/build/linux-debug",
+  "command": "/usr/bin/c++   -g -std=gnu++17 -o CMakeFiles/project.dir/main.cpp.o -c /home/encounter/Notes/C++/MyDataStructure/main.cpp",
+  "file": "/home/encounter/Notes/C++/MyDataStructure/main.cpp",
+  "output": "CMakeFiles/project.dir/main.cpp.o"
+},
+{
+  "directory": "/home/encounter/Notes/C++/MyDataStructure/build/linux-debug",
+  "command": "/usr/bin/c++   -g -std=gnu++17 -o CMakeFiles/project.dir/StrVec.cpp.o -c /home/encounter/Notes/C++/MyDataStructure/StrVec.cpp",
+  "file": "/home/encounter/Notes/C++/MyDataStructure/StrVec.cpp",
+  "output": "CMakeFiles/project.dir/StrVec.cpp.o"
+}
+]
