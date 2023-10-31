@@ -1,3 +1,5 @@
+// Filename: Queue.hpp
+#pragma once
 #include "Queue.h"
 
 template<typename T>
@@ -7,20 +9,20 @@ template<typename T>
 void Queue<T>::reallocate() {
     T* newdata = nullptr;
 
-    if(elements == nullptr || cap == nullptr) {
+    if(elements == nullptr || cap == nullptr || st == nullptr) {
         newdata = alloc.allocate(1);
-        elements = newdata;
+        st = elements = newdata;
         first_of_free = newdata;
         cap = newdata + 1;
     } else {
-        newdata = alloc.allocate(size() * 2);
+        newdata = alloc.allocate(check_size() * 2);
         auto dest = newdata;
         auto src = elements;
         for(size_t i = 0; i < size(); i++ ) {
             alloc.construct(dest++, std::move(*src++));
         }
         free();
-        elements = newdata;
+        st = elements = newdata;
         first_of_free = dest;
         cap = elements + size() * 2;
     }
@@ -28,13 +30,15 @@ void Queue<T>::reallocate() {
 
 template<typename T>
 void Queue<T>::free() {
-    if(elements != nullptr) {
+    if(elements != nullptr && st != nullptr) {
         auto dest = elements;
         for(size_t i = 0; i < size(); i++) {
             alloc.destroy(dest + i);
         }
-        alloc.deallocate(elements , cap - elements);
-        elements = cap = first_of_free = nullptr;
+        alloc.deallocate(st , cap - st);
+        st = elements = cap = first_of_free = nullptr;
+        
+        
     }
 }
 
@@ -48,7 +52,7 @@ std::pair<T* , T*> Queue<T>::alloc_n_copy(const T* be , const T* ed) {
 template<typename T>
 Queue<T>::Queue(const Queue& other) {
     auto copy = alloc_n_copy(other.begin() , other.end());
-    elements = copy.first;
+    st = elements = copy.first;
     first_of_free = copy.second;
     cap = copy.second;
 }
@@ -56,7 +60,7 @@ Queue<T>::Queue(const Queue& other) {
 template<typename T>
 Queue<T>::Queue(Queue&& other) {
     auto copy = alloc_n_copy(other.begin() , other.end());
-    elements = copy.first;
+    st = elements = copy.first;
     first_of_free = copy.second;
     cap = copy.second;
 }
@@ -68,7 +72,7 @@ Queue<T>& Queue<T>::operator=(const Queue& other) {
     }
 
     auto copy = alloc_n_copy(other.begin() , other.end());
-    elements = copy.first;
+    st = elements = copy.first;
     first_of_free = copy.second;
     cap = copy.second;
 }
@@ -80,7 +84,7 @@ Queue<T>& Queue<T>::operator=(Queue&& other) noexcept {
     }
 
     auto copy = alloc_n_copy(other.begin() , other.end());
-    elements = copy.first;
+    st = elements = copy.first;
     first_of_free = copy.second;
     cap = copy.second;
 }
@@ -104,7 +108,7 @@ void Queue<T>::pop() {
 
     if(size() == 1) {
         alloc.destroy(elements);
-        elements = nullptr;
+        st = elements = nullptr;
         first_of_free = nullptr;
         return;
     }
