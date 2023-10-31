@@ -3,11 +3,10 @@
 
 #include "List.h"
 
-template <typename T> List<T>::List() {
-    head = tail = nullptr;
-    cnt         = 0;
-}
-
+/* 构造函数
+ *
+ * @param num 链表的大小， 元素的值
+ */
 template <typename T> List<T>::List( size_t num, T item ) {
     head = tail = nullptr;
     if ( num == 0 ) {
@@ -18,7 +17,12 @@ template <typename T> List<T>::List( size_t num, T item ) {
     }
 }
 
-template <typename T> List<T>::List( std::initializer_list<T> &&ilist ) {
+/*
+ *  构造函数
+ *
+ *  @param ilist 列表
+ * */
+template <typename T> List<T>::List( std::initializer_list<T> &ilist ) {
     head = tail = nullptr;
     cnt         = 0;
     if ( ilist.size() == 0 ) {
@@ -29,18 +33,12 @@ template <typename T> List<T>::List( std::initializer_list<T> &&ilist ) {
         insert( elem );
     }
 }
-template <typename T> List<T>::List( const std::initializer_list<T> &ilist ) {
-    head = tail = nullptr;
-    cnt         = 0;
-    if ( ilist.size() == 0 ) {
-        return;
-    }
 
-    for ( const auto &elem : ilist ) {
-        insert( elem );
-    }
-}
-
+/*
+ * 清空函数
+ *
+ * @brief 删除链表所有节点
+ * */
 template <typename T> void List<T>::clear() {
     if ( head != nullptr ) {
         for ( auto i = head; i != tail; ) {
@@ -64,6 +62,7 @@ template <typename T> bool List<T>::operator!=( const List &other ) {
            this->cnt != other.cnt;
 }
 
+// 复制构造函数
 template <typename T> List<T>::List( const List &other ) {
     head = tail = nullptr;
     cnt         = 0;
@@ -72,6 +71,7 @@ template <typename T> List<T>::List( const List &other ) {
     }
 }
 
+// 移动构造函数
 template <typename T> List<T>::List( List &&other ) {
     head = tail = nullptr;
     cnt         = 0;
@@ -80,6 +80,7 @@ template <typename T> List<T>::List( List &&other ) {
     }
 }
 
+// 复制运算符
 template <typename T> List<T> &List<T>::operator=( List &other ) {
     if ( this == &other ) {
         return *this;
@@ -92,6 +93,24 @@ template <typename T> List<T> &List<T>::operator=( List &other ) {
     return *this;
 }
 
+// 移动运算符
+template <typename T> List<T> &List<T>::operator=( List &&other ) {
+    if ( this == &other ) {
+        return *this;
+    } else {
+        clear();
+        for ( size_t i = 0; i < other.size(); i++ ) {
+            insert( other[i] );
+        }
+    }
+    return *this;
+}
+
+/* 插入函数
+ *
+ * @brief 在指定位置插入元素
+ * @param pos 位置 item 元素
+ * */
 template <typename T> void List<T>::insert( size_t pos, const T item ) {
     if ( pos == cnt ) {
         insert( item );
@@ -111,6 +130,12 @@ template <typename T> void List<T>::insert( size_t pos, const T item ) {
     cnt++;
 }
 
+/*
+ * 插入函数
+ *
+ * @brief 在尾节点后面插入新节点
+ * @param item 元素
+ * */
 template <typename T> void List<T>::insert( const T item ) {
     Node *ptr = new Node( item );
     if ( head == nullptr ) {
@@ -139,6 +164,14 @@ template <typename T> typename List<T>::Node *List<T>::find( size_t pos ) {
     return i;
 }
 
+/*
+ *
+ * 删除函数
+ *
+ * @brief 删除节点
+ * @param pos 节点位置
+ *
+ * */
 template <typename T> void List<T>::erase( size_t pos ) {
     auto i = find( pos );
     if ( i == head ) {
@@ -162,11 +195,19 @@ template <typename T> void List<T>::erase( size_t pos ) {
     cnt--;
 }
 
+/*
+ * 合并函数
+ *
+ * @brief 将两个链表有序合并
+ * @param 要合并的链表
+ *
+ * */
 template <typename T> List<T> &List<T>::merge( List<T> &other ) {
     if ( head == nullptr ) {
         *this = other;
     }
-    List<T> res;
+
+    List<T> res( 0 );
 
     size_t l = 0, r = 0;
     while ( l < this->size() && r < other.size() ) {
