@@ -1,7 +1,6 @@
 # html语法
 
 <!--toc:start-->
-
 - [html语法](#html语法)
   - [基础骨架](#基础骨架)
   - [标题](#标题)
@@ -9,7 +8,14 @@
   - [图片](#图片)
   - [超文本链接](#超文本链接)
   - [文本标签](#文本标签)
-  <!--toc:end-->
+  - [列表](#列表)
+    - [有序列表](#有序列表)
+    - [无序列表](#无序列表)
+  - [表格](#表格)
+    - [Form表单](#form表单)
+      - [表单元素](#表单元素)
+  - [块元素和行内元素](#块元素和行内元素)
+<!--toc:end-->
 
 ## 基础骨架
 
@@ -340,111 +346,160 @@ type属性
 - 垂直合并：rowspan
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <p>合并单元格6和7 :colspan</p>
     <p>合并单元格13和16 :rowspan</p>
     <table border="1" width="400px" height="300px">
-        <tr>
-            <td>单元格1</td>
-            <td>单元格2</td>
-            <td>单元格3</td>
-            <td>单元格4</td>
-        </tr>
-        <tr>
-            <td>单元格5</td>
-            <td colspan="2" align="center">单元格6</td>
-            <td>单元格8</td>
-        </tr>
-        <tr>
-            <td rowspan="2">单元格9</td>
-            <td>单元格10</td>
-            <td>单元格11</td>
-            <td>单元格12</td>
-        </tr>
-        <tr>
-            <td>单元格14</td>
-            <td>单元格15</td>
-            <td>单元格16</td>
-        </tr>
-
+      <tr>
+        <td>单元格1</td>
+        <td>单元格2</td>
+        <td>单元格3</td>
+        <td>单元格4</td>
+      </tr>
+      <tr>
+        <td>单元格5</td>
+        <td colspan="2" align="center">单元格6</td>
+        <td>单元格8</td>
+      </tr>
+      <tr>
+        <td rowspan="2">单元格9</td>
+        <td>单元格10</td>
+        <td>单元格11</td>
+        <td>单元格12</td>
+      </tr>
+      <tr>
+        <td>单元格14</td>
+        <td>单元格15</td>
+        <td>单元格16</td>
+      </tr>
     </table>
-</body>
-
+  </body>
 </html>
-
 ```
 
-## Form表单
+### Form表单
 
-表单是在web网页中用来给用户填写信息，从而采集用户信息，使网页具有交互功能  
+表单是在web网页中用来给用户填写信息，从而采集用户信息，使网页具有交互功能
 
 表单是由容器和控件组成，一个表单一般应该包含用户填写信息的输入框，提交按钮等，这些输入框、按钮叫做空间，表单就是容器，它能够容纳各种各样的控件
 
 ```html
 <form action="url" method="get|post" name="myform"></form>
 ```
+
 属性
 
 - action 服务器地址
 - name 表单名称
 
 method中的`get`和`post`的区别
+
 1. 数据的提交方式，get把提交的数据url可以看到，post看不到
 2. get一般用于提交少量数据，post用来提交大量数据
 
 表单元素
+
 > 一个完整的表单包含三个基本组成部分：表单标签、表单域、表单按钮
 
 1. 表单标签
 2. 表单域
 3. 表单按钮
 
-
 ```html
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-</head>
-<body>
-<form action="https://www.baidu.com" method="get" name="myform">
-    <input type="text">
-    <br>
-    <input type="submit">
-    <button>按钮</button>
-</form>
-
-</body>
+  </head>
+  <body>
+    <form action="https://www.baidu.com" method="get" name="myform">
+      <input type="text" />
+      <br />
+      <input type="submit" />
+      <button>按钮</button>
+    </form>
+  </body>
 </html>
 ```
+
+#### 表单元素
 
 文本框
 
 ```html
 <form method="get" name="myform">
-    First name: <input type="text" name="first">
-    <br>
-    Last name: <input type="text" name="last">
+  First name: <input type="text" name="first" />
+  <br />
+  Last name: <input type="text" name="last" />
 </form>
 ```
 
 密码框
 
 ```html
-
+<form method="get" name="myform">
+  Password: <input type="password" name="pwd" />
+</form>
 ```
 
+提交
+
+```html
+<form method="get" name="myform" action="index.html">
+  <input type="submit" value="登陆" />
+</form>
+```
+
+## 块元素和行内元素
+
+内联元素和块元素的区别
+
+| 块级元素                                   | 内联元素                                     |
+| ------------------------------------------ | -------------------------------------------- |
+| 块元素会在页面中独占一行(自上向下垂直排列) | 行内元素不会独占页面中的一行，只占自身的大小 |
+| 可以设置`width、height`属性                | 行内设置`width、height`属性无效              |
+| 一般块级元素可以包含行内元素和其它块级元素 | 一般内联元素包含内联元素不包含块级元素       |
+
+常见块级元素
+
+> div form h1~h6 hr p table ul
+
+常见内联元素
+
+> a b em i span strong
+
+div容器元素，也是页面中见到最多的容器元素
+
+```html
+<!-- 传统写法  -->
+<div id="header"></div>
+<div id="nav"></div>
+<div id="article">
+  <div id="section"></div>
+</div>
+<div id="silder"></div>
+<div id="footer"></div>
+
+<!-- html5新特性  -->
+<head></head>
+<nav></nav>
+<article>
+  <section></section>
+  <aside></aside>
+</article>
+<footer></footer>
+```
