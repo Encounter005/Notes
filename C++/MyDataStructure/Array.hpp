@@ -1,4 +1,43 @@
-#include "Array.h"
+#pragma once
+#include <iostream>
+#include <cassert>
+#include <memory>
+#include <initializer_list>
+#include <type_traits>
+#include <cstddef>
+
+template <typename T> class TD;
+
+template <typename T> struct get_type {
+    using type = T;
+};
+
+template <typename T> struct get_type<T *> {
+    using type = T;
+};
+
+template <typename T> class Array {
+public:
+    Array( size_t size_ );
+    Array( const std::initializer_list<T> &param );
+    Array( std::initializer_list<T> &&param );
+    Array( const Array &other );
+    Array( Array &&other );
+    ~Array();
+    void Insert( size_t pos, T value );
+    void Delete( size_t pos );
+    T find( size_t pos );
+    size_t cnt() const;
+    T &begin() const;
+    T &end() const;
+    T &operator[]( size_t pos ) const;
+    void clear();
+    bool empty();
+
+private:
+    size_t size;
+    std::unique_ptr<T[]> data;
+};
 
 template <typename T> Array<T>::Array( size_t size_ ) : size( size_ ) {
     if ( size ) {
@@ -68,11 +107,11 @@ template <typename T> void Array<T>::Delete( size_t pos ) {
     }
     std::unique_ptr<T[]> other( new T[size - 1]() );
     for ( int i = 0, j = 0; i < size; i++ ) {
-        if ( i != pos - 1) {
+        if ( i != pos - 1 ) {
             other[j++] = data[i];
         }
     }
-    std::swap(other , data);
+    std::swap( other, data );
     other.release();
     other = nullptr;
     size--;
@@ -130,7 +169,7 @@ template <typename T> Array<T>::Array( std::initializer_list<T> &&param ) {
     if ( param.size() ) {
         unsigned int cnt = 0;
         data             = std::unique_ptr<T[]>( new T[param.size()] );
-        for(const auto& elem : param) {
+        for ( const auto &elem : param ) {
             data[cnt++] = elem;
         }
         size = cnt;
@@ -149,7 +188,7 @@ template <typename T> Array<T>::Array( const std::initializer_list<T> &param ) {
     if ( param.size() ) {
         unsigned int cnt = 0;
         data             = std::unique_ptr<T[]>( new T[param.size()] );
-        for(const auto& elem : param) {
+        for ( const auto &elem : param ) {
             data[cnt++] = elem;
         }
         size = cnt;
@@ -159,21 +198,17 @@ template <typename T> Array<T>::Array( const std::initializer_list<T> &param ) {
 }
 
 template <typename T> T &Array<T>::operator[]( size_t pos ) const {
-    if(pos >= size) {
-        assert(pos >= size);
+    if ( pos >= size ) {
+        assert( pos >= size );
     } else {
         return data[pos];
     }
 }
 
-template<typename T>
-void Array<T>::clear() {
+template <typename T> void Array<T>::clear() {
     data.release();
     data = nullptr;
     size = 0;
 }
 
-template<typename T>
-bool Array<T>::empty() {
-    return size == 0;
-}
+template <typename T> bool Array<T>::empty() { return size == 0; }
