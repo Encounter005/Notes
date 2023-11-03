@@ -1,5 +1,4 @@
-#ifndef __LIST_HPP
-#define __LIST_HPP
+#pragma once
 
 #include <iostream>
 #include <memory>
@@ -331,5 +330,3 @@ template <typename T> List<T> &List<T>::merge( List<T> &other ) {
 
     return *this;
 }
-
-#endif
