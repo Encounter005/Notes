@@ -128,10 +128,10 @@ Stack<T>::Stack( const Stack &other ) {
 template <typename T>
 //@brief 移动构造函数
 Stack<T>::Stack( Stack &&other ) noexcept {
-    auto copy     = alloc_n_copy( other.begin(), other.end() );
-    elements      = copy.first;
-    first_of_free = copy.second;
-    cap           = copy.second;
+    elements = other.elements;
+    first_of_free = other.first_of_free;
+    cap = other.cap;
+    other.free();
 }
 
 template <typename T>
@@ -153,11 +153,10 @@ Stack<T> &Stack<T>::operator=( Stack &&other ) noexcept {
     if ( this == &other ) {
         return *this;
     }
-
-    auto copy     = alloc_n_copy( other.begin(), other.end() );
-    elements      = copy.first;
-    first_of_free = copy.second;
-    cap           = copy.second;
+    elements = other.elements;
+    first_of_free = other.first_of_free;
+    cap = other.cap;
+    other.free();
 }
 
 template <typename T>

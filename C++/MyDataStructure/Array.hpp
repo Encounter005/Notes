@@ -67,8 +67,7 @@ template <typename T> Array<T>::Array( Array &&other ) {
     if ( data != nullptr ) {
         data.release();
     }
-    data( other.data );
-    other.data.release();
+    data = other.data;
 }
 
 /*

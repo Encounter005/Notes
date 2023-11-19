@@ -35,7 +35,7 @@ public:
     // 复制构造函数
     Queue( const Queue & );
     // 移动构造函数
-    Queue( Queue && );
+    Queue( Queue && ) noexcept;
     // 复制操作符
     Queue &operator=( const Queue & );
     // 移动操作符
@@ -118,11 +118,12 @@ template <typename T> Queue<T>::Queue( const Queue &other ) {
     cap           = copy.second;
 }
 
-template <typename T> Queue<T>::Queue( Queue &&other ) {
-    auto copy = alloc_n_copy( other.begin(), other.end() );
-    st = elements = copy.first;
-    first_of_free = copy.second;
-    cap           = copy.second;
+template <typename T> Queue<T>::Queue( Queue &&other ) noexcept {
+    st = other.st;
+    elements = other.elements;
+    cap = other.cap;
+    first_of_free = other.first_of_free;
+    other.free();
 }
 
 template <typename T> Queue<T> &Queue<T>::operator=( const Queue &other ) {
@@ -140,11 +141,12 @@ template <typename T> Queue<T> &Queue<T>::operator=( Queue &&other ) noexcept {
     if ( this == &other ) {
         return *this;
     }
+    st = other.st;
+    elements = other.elements;
+    cap = other.cap;
+    first_of_free = other.first_of_free;
+    other.free();
 
-    auto copy = alloc_n_copy( other.begin(), other.end() );
-    st = elements = copy.first;
-    first_of_free = copy.second;
-    cap           = copy.second;
 }
 
 template <typename T> Queue<T>::~Queue() { free(); }
