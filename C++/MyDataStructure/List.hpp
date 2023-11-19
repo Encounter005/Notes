@@ -13,7 +13,7 @@ private:
         // 节点的next指针和last指针
         Node *nxt, *lst;
         // 节点的构造函数
-        Node( const T v ) {
+        Node( const T& v ) {
             nxt   = nullptr;
             lst   = nullptr;
             value = v;
@@ -28,14 +28,14 @@ private:
 
 public:
     List( size_t num = 0, T item = 0 );
-
     List( std::initializer_list<T> &ilist );
     List( List && );
     List( const List & );
     void clear();
     void insert( size_t pos, const T item );
 
-    void insert( const T item );
+    template<typename U>
+    void insert( U&& item );
     void erase( size_t pos );
     bool operator==( const List & );
     bool operator!=( const List & );
@@ -70,7 +70,11 @@ public:
     T operator[]( size_t pos ) { return find( pos )->value; }
     // @return 链表的大小
     size_t size() const { return cnt; }
-
+    bool empty() {
+        return head == nullptr ;
+    }
+    T front() const ;
+    T back() const;
 private:
     List &merge( List &other );
     /*
@@ -231,8 +235,11 @@ template <typename T> void List<T>::insert( size_t pos, const T item ) {
  * @brief 在尾节点后面插入新节点
  * @param item 元素
  * */
-template <typename T> void List<T>::insert( const T item ) {
+template <typename T> 
+template <typename U>
+void List<T>::insert( U&& item ) {
     Node *ptr = new Node( item );
+    cnt++;
     if ( head == nullptr ) {
         head = tail = ptr;
         head->nxt   = tail;
@@ -244,12 +251,11 @@ template <typename T> void List<T>::insert( const T item ) {
     }
     tail->nxt = head;
     head->lst = tail;
-    cnt++;
 }
 
 template <typename T> typename List<T>::Node *List<T>::find( size_t pos ) {
-    if ( pos >= cnt ) {
-        throw "pos is too large!\n";
+    if ( pos >= cnt  || pos < 0) {
+        throw "error pos!\n";
     }
 
     auto i = head;
@@ -269,6 +275,10 @@ template <typename T> typename List<T>::Node *List<T>::find( size_t pos ) {
  * */
 template <typename T> void List<T>::erase( size_t pos ) {
     auto i = find( pos );
+    if(cnt == 1) {
+        clear();
+        return;
+    }
     if ( i == head ) {
         auto p    = head->nxt;
         tail->nxt = p;
@@ -281,6 +291,7 @@ template <typename T> void List<T>::erase( size_t pos ) {
         head->lst = p;
         tail      = p;
         delete i;
+
     } else {
         auto front  = i->lst;
         front->nxt  = i->nxt;
@@ -329,4 +340,14 @@ template <typename T> List<T> &List<T>::merge( List<T> &other ) {
     }
 
     return *this;
+}
+
+template<typename T>
+T List<T>::front() const  {
+    return head->value; 
+}
+
+template<typename T>
+T List<T>::back() const {
+    return tail->value;
 }
