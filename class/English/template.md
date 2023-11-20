@@ -19,7 +19,9 @@ Moreover , `( the effect on children's minds are more serious than the effect on
 
 Indeed, these unique points can be connected to remind parents that `( they should pay close attention to and responsibilities for supervising their children's TV viewing )`.In this way ,children will not be influented too deeply .
 
-as is shown/indicated/illustrated by the figure/percentage in　the　table(graph/picture/pie/chart), **\_作文题目的议题\_\_\_** has been on rise/ decrease (goesup/increases/drops/decreases),significantly/dramatically/steadily rising/decreasing from**\_\_** in **\_\_\_** to **\_\_** in **\_**. From the sharp/marked decline/ rise in the chart, it goes without saying that **\_\_\_\_**.
+---
+
+as is shown/indicated/illustrated by the figure/percentage in　the　table(graph/picture/pie/chart), **\_作文题目的议题\_\_\_** has been on rise/ decrease (goesup/increases/drops/decreases),significantly/dramatically/steadily rising/decreasing from *\_\_* in **\_\_\_** to **\_\_** in **\_**. From the sharp/marked decline/ rise in the chart, it goes without saying that **\_\_\_\_**.
 
 There　are　at　least　two　good　reasons accounting for **\_\_**. On　the　one　hand, **\_\_\_\_**. On　the　other　hand,　**\_\_\_** is　due　to　the　fact　that **\_\_\_\_**.　In　addition, **\_\_\_\_** is　responsible　for **\_\_\_**.　Maybe　there　are　some　other　reasons　to　show **\_\_\_\_**.　But　it　is　generally　believed　that　the　above　mentioned　reasons　are　commonly convincing.
 
