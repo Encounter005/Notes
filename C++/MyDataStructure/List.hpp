@@ -37,8 +37,6 @@ public:
     template<typename U>
     void insert( U&& item );
     void erase( size_t pos );
-    bool operator==( const List & );
-    bool operator!=( const List & );
     List &operator=( List & );
     List &operator=( List && );
     // 重载+=运算符
@@ -152,14 +150,6 @@ template <typename T> void List<T>::clear() {
     cnt  = 0;
 }
 
-template <typename T> bool List<T>::operator==( const List &other ) {
-    return this->head == other.head && this->tail == other.tail &&
-           this->cnt == other.cnt;
-}
-template <typename T> bool List<T>::operator!=( const List &other ) {
-    return this->head != other.head || this->tail != other.tail ||
-           this->cnt != other.cnt;
-}
 
 // 复制构造函数
 template <typename T> List<T>::List( const List &other ) {
@@ -172,11 +162,9 @@ template <typename T> List<T>::List( const List &other ) {
 
 // 移动构造函数
 template <typename T> List<T>::List( List &&other ) {
-    head = tail = nullptr;
-    cnt         = 0;
-    for ( size_t i = 0; i < other.size(); i++ ) {
-        insert( other[i] );
-    }
+    head = other.head;
+    tail = other.tail;
+    cnt = other.cnt;
 }
 
 // 复制运算符
@@ -197,10 +185,13 @@ template <typename T> List<T> &List<T>::operator=( List &&other ) {
     if ( this == &other ) {
         return *this;
     } else {
-        clear();
-        for ( size_t i = 0; i < other.size(); i++ ) {
-            insert( other[i] );
-        }
+        this->clear();
+        this->cnt = other.cnt;
+        this->head = other.head;
+        this->tail = other.tail;
+        other.head = nullptr;
+        other.tail = nullptr;
+        other.cnt = 0;
     }
     return *this;
 }
