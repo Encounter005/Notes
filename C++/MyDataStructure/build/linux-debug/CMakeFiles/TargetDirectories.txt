@@ -1,3 +1,0 @@
-/home/encounter/Notes/C++/MyDataStructure/build/linux-debug/CMakeFiles/project.dir
-/home/encounter/Notes/C++/MyDataStructure/build/linux-debug/CMakeFiles/edit_cache.dir
-/home/encounter/Notes/C++/MyDataStructure/build/linux-debug/CMakeFiles/rebuild_cache.dir
