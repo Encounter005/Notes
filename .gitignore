@@ -1,8 +1,2 @@
-.task
-<<<<<<< HEAD
 /C++/MyDataStructure/.cache/*
 /C++/MyDataStructure/build/*
-=======
-/C++/MyDataStructure/.cache/
-/C++/MyDataStructure/build/
->>>>>>> refs/remotes/origin/main
