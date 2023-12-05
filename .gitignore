@@ -1,2 +1,3 @@
 .task
-/C++/MyDataStructure/.cache/
+/C++/MyDataStructure/.cache/*
+/C++/MyDataStructure/build/*
