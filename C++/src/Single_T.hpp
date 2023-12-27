@@ -5,10 +5,6 @@
 #include <thread>
 
 template<typename T>
-class TD;
-
-
-template<typename T>
 class Single_T;
 
 template<typename T>
