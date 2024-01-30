@@ -10,7 +10,6 @@
 #include <queue>
 #include <functional>
 
-template <typename T> class TD;
 
 class ThreadPool {
 public:
