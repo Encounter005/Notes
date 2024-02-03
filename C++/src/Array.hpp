@@ -49,6 +49,22 @@ public:
         num_items = other.num_items;
         data_     = std::unique_ptr( new T[num_items]() );
         std::copy( other.begin(), other.end(), this->data_.get() );
+        return *this;
+    }
+
+    Array( Array &&other ) noexcept : num_items(other.num_items) , data_(std::move(other.data_)) {
+        other.num_items = 0;
+    }
+
+    Array &operator=( Array &&other ) noexcept {
+        if ( this == &other ) {
+            return *this;
+        }
+
+        num_items = other.num_items;
+        other.num_items = 0;
+        data_.reset(other.data_.release());
+        return *this;
     }
 
     ~Array() { clear(); }
@@ -106,7 +122,7 @@ public:
     T &operator[]( size_t idx ) {
         try {
             if ( idx >= num_items ) {
-                throw std::runtime_error("The index is larger than size");
+                throw std::runtime_error( "The index is larger than size" );
             }
 
             return data_[idx];
