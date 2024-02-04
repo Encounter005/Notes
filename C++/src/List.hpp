@@ -1,344 +1,294 @@
 #pragma once
-
 #include <iostream>
-#include <memory>
-#include <vector>
 #include <initializer_list>
-template <typename T> class TD;
+#include <memory>
+#include <algorithm>
+#include <stdexcept>
+#include <functional>
 
 template <typename T> class List {
+public:
+    List() : num_items_( 0 ) {
+        puse_ = std::shared_ptr<Node>( new Node( 0 ) );
+        head_ = puse_;
+    }
+
+    explicit List( const std::initializer_list<T> &ilist ) : List() {
+        if ( ilist.size() ) {
+            for ( const auto &elm : ilist ) {
+                Push_back( elm );
+            }
+        }
+    }
+
+    explicit List( size_t n ) : List() {
+        while ( n-- ) {
+            Push_back( 0 );
+        }
+    }
+
+    List( const List &other ) { *this = other; }
+
+    List &operator=( const List &other ) {
+        if ( this == &other ) {
+            return *this;
+        }
+        clear();
+        for ( const auto &elm : other ) {
+            Push_back( elm );
+        }
+
+        return *this;
+    }
+
+    List( List &&other ) noexcept { *this = std::move( other ); }
+
+    List &operator=( List &&other ) noexcept {
+        if ( this == &other ) {
+            return *this;
+        }
+        Swap( other );
+        return *this;
+    }
+
+    ~List() { clear(); }
+
+    void Push_back( const T &elm ) {
+        auto new_node = std::shared_ptr<Node>( new Node( elm ) );
+        BindNodes( new_node, puse_ );
+        if ( tail_ == nullptr ) {
+            head_ = new_node;
+        } else {
+            BindNodes( tail_, new_node );
+        }
+
+        tail_ = new_node;
+        ++num_items_;
+    }
+
+    void Pop_back() {
+        if ( tail_ != nullptr ) {
+            if ( tail_->lst_ != nullptr ) {
+                tail_ = tail_->lst_;
+                tail_->nxt_.reset();
+                BindNodes( tail_, puse_ );
+            } else {
+                tail_.reset();
+                head_ = tail_ = nullptr;
+            }
+            --num_items_;
+        }
+    }
+
+    void Push_front( const T &item ) {
+        auto new_node = std::shared_ptr<Node>( new Node( item ) );
+        BindNodes( new_node, head_ );
+        head_ = new_node;
+        if ( tail_ == nullptr ) {
+            BindNodes( head_, puse_ );
+            tail_ = new_node;
+        }
+        ++num_items_;
+    }
+
+    void Pop_front() {
+        if ( head_ != nullptr ) {
+            if ( head_->nxt_ != nullptr ) {
+                head_ = head_->nxt_;
+                head_->lst_.reset();
+            } else {
+                head_.reset();
+                tail_.reset();
+            }
+            --num_items_;
+        }
+    }
+
+    void Swap( List &other ) {
+        if ( this == &other ) {
+            return;
+        }
+        std::swap( head_, other.head_ );
+        std::swap( tail_, other.tail_ );
+        std::swap( puse_, other.puse_ );
+    }
+
+    void Reverse() {
+        List tmp;
+        for ( const auto &elm : *this ) {
+            tmp.Push_front( elm );
+        }
+        this->Swap( tmp );
+    }
+
+    T &operator[]( size_t pos ) { return find( pos )->value_; }
+
+    bool empty() const { return num_items_ == 0; }
+
+    size_t size() const { return num_items_; }
+
+    T &front() const {
+        if ( head_ != nullptr ) {
+            return head_->value_;
+        }
+        return puse_->value_;
+    }
+
+    T &back() const {
+        if ( tail_ != nullptr ) {
+            return tail_->value_;
+        }
+        return puse_->value_;
+    }
+
+    void clear() {
+        while ( tail_ != nullptr ) {
+            Pop_back();
+        }
+    }
+
 private:
     struct Node {
-        T value;
-        // 节点的next指针和last指针
-        Node *nxt, *lst;
-        // 节点的构造函数
-        Node( const T& v ) {
-            nxt   = nullptr;
-            lst   = nullptr;
-            value = v;
+        std::shared_ptr<Node> lst_, nxt_;
+        T value_;
+        template <typename U>
+        Node( U &&item ) : value_( item ), lst_( nullptr ), nxt_( nullptr ) {}
+    };
+    std::shared_ptr<Node> find( size_t pos ) {
+        try {
+            if ( pos >= num_items_ ) {
+                throw std::runtime_error(
+                    "The pos is larger than the number of items" );
+            }
+
+            if ( pos == 0 ) {
+                return head_;
+            }
+            if ( pos == num_items_ - 1 ) {
+                return tail_;
+            }
+
+            auto DisToTail = num_items_ - pos - 1;
+            if ( DisToTail < pos ) {
+                auto pNode = tail_;
+                while ( DisToTail-- ) {
+                    pNode = pNode->lst_;
+                }
+                return pNode;
+            } else {
+                auto pNode = head_;
+                while ( pos-- ) {
+                    pNode = pNode->nxt_;
+                }
+                return pNode;
+            }
+
+        } catch ( const std::exception &e ) {
+            std::cerr << e.what() << std::endl;
         }
+    }
+
+    void BindNodes(
+        std::shared_ptr<Node> first, std::shared_ptr<Node> second ) {
+        if ( first != nullptr ) {
+            first->nxt_ = second;
+        }
+
+        if ( second != nullptr ) {
+            second->lst_ = first;
+        }
+    }
+
+    class Iterator {
+    public:
+        Iterator() : ptr_( nullptr ) {}
+        explicit Iterator( std::shared_ptr<Node> ptr ) : ptr_( ptr ) {}
+        Iterator( const Iterator &other ) { this->ptr_ = other.ptr_; }
+        Iterator( Iterator &&other ) : ptr_( nullptr ) {
+            std::swap( other.ptr_, this->ptr_ );
+        }
+        Iterator &operator=( const Iterator &other ) {
+            ptr_ = other.ptr_;
+            return *this;
+        }
+        Iterator &operator=( Iterator &&other ) {
+            ptr_       = other.ptr_;
+            other.ptr_ = nullptr;
+            return *this;
+        }
+        Iterator &operator++() {
+            ptr_ = ptr_->nxt_;
+            return *this;
+        }
+        Iterator &operator--() {
+            ptr_ = ptr_->lst_;
+            return *this;
+        }
+        Iterator operator++( int ) {
+            Iterator tmp( *this );
+            ++( *this );
+            return *this;
+        }
+        Iterator operator--( int ) {
+            Iterator tmp( *this );
+            --( this );
+            return *this;
+        }
+
+        ~Iterator() = default;
+        bool operator==( const Iterator &other ) { return ptr_ == other.ptr_; }
+        bool operator!=( const Iterator &other ) { return ptr_ != other.ptr_; }
+        T &operator*() const { return ptr_->value_; }
+        std::shared_ptr<Node> ptr_;
     };
 
-    // 链表的头节点和为节点
-    Node *head;
-    Node *tail;
-    // 链表的元素数量
-    size_t cnt = 0;
+    class ConstIterator : public Iterator {
+    public:
+        explicit ConstIterator( std::shared_ptr<Node> ptr ) : Iterator( ptr ) {}
+        const T &operator*() const { return this->ptr_->value_; }
+    };
 
 public:
-    List( size_t num = 0, T item = 0 );
-    List( std::initializer_list<T> &ilist );
-    List( List && );
-    List( const List & );
-    void clear();
-    void insert( size_t pos, const T item );
-
-    template<typename U>
-    void insert( U&& item );
-    void erase( size_t pos );
-    List &operator=( List & );
-    List &operator=( List && );
-    // 重载+=运算符
-    List &operator+=( List &other ) { return merge( other ); };
-    // 析构函数
-    ~List() { clear(); }
-    /* @brief 返回头节点
-     *
-     * @return 头节点指针
-     */
-    Node *begin() { return head; };
-    /*
-     * @brief 返回尾节点
-     *
-     * @return 尾节点指针
-     */
-    Node *end() { return tail; };
-    /* @brief 返回头节点
-     *
-     * @return 头节点指针，不可以修改
-     */
-    Node *cbegin() const { return head; };
-    /* @brief 返回尾节点
-     *
-     * @return 尾节点指针，不可以修改
-     */
-    Node *cend() const { return tail; };
-    // 重载[]运算符
-    T operator[]( size_t pos ) { return find( pos )->value; }
-    // @return 链表的大小
-    size_t size() const { return cnt; }
-    bool empty() {
-        return head == nullptr ;
+    Iterator begin() { return Iterator( head_ ); }
+    Iterator end() { return Iterator( puse_ ); }
+    ConstIterator begin() const { return ConstIterator( head_ ); }
+    ConstIterator end() const { return ConstIterator( puse_ ); }
+    ConstIterator cbegin() const { return ConstIterator( head_ ); }
+    ConstIterator cend() const { return ConstIterator( puse_ ); }
+    template <typename U> Iterator Insert( U &&elm, Iterator pos ) {
+        if ( pos == begin() ) {
+            Push_front( elm );
+            return begin();
+        }
+        if ( pos == end() ) {
+            Push_back( elm );
+            return --end();
+        }
+        auto new_node = std::shared_ptr<Node>( new Node( elm ) );
+        BindNodes( pos.ptr_->lst_, new_node );
+        BindNodes( new_node, pos.ptr_ );
+        ++num_items_;
+        return --pos;
     }
-    T front() const ;
-    T back() const;
+
+    template <typename... Args>
+    Iterator Emplace( ConstIterator pos, Args &&...args ) {
+        T args_data[sizeof...( Args )]{ args... };
+        for ( size_t i = 0; i < sizeof...( Args ); ++i ) {
+            Insert( args_data[i], pos );
+        }
+        return pos;
+    }
+
+    template <typename... Args> void Emplace_back( Args &&...args ) {
+        Emplace( cend(), std::forward<Args>( args )... );
+    }
+
+    template <typename... Args> void Emplace_front( Args &&...args ) {
+        Emplace( begin(), std::forward<Args>( args )... );
+    }
+
 private:
-    List &merge( List &other );
-    /*
-     *@brief 寻找节点的位置
-     *@param pos 节点位置
-     *@return 节点的指针
-     * */
-    Node *find( size_t pos );
-
-public:
-    // 重载<< 用于输出
-    friend std::ostream &operator<<( std::ostream &os, List &other ) {
-        if ( other.size() == 1 ) {
-            os << other.begin()->value << " ";
-        } else if ( other.size() == 0 ) {
-        } else {
-            auto i = other.begin();
-            os << i->value << " ";
-            i = i->nxt;
-            for ( ; i != other.begin(); i = i->nxt ) {
-                os << i->value << " ";
-            }
-        }
-        return os;
-    }
+    size_t num_items_ = 0;
+    std::shared_ptr<Node> head_, tail_, puse_;
 };
-
-/* 构造函数
- *
- * @param num 链表的大小， 元素的值
- */
-template <typename T> List<T>::List( size_t num, T item ) {
-    head = tail = nullptr;
-    if ( num == 0 ) {
-        return;
-    }
-    while ( num-- ) {
-        insert( item );
-    }
-}
-
-/*
- *  构造函数
- *
- *  @param ilist 列表
- * */
-template <typename T> List<T>::List( std::initializer_list<T> &ilist ) {
-    head = tail = nullptr;
-    cnt         = 0;
-    if ( ilist.size() == 0 ) {
-        return;
-    }
-
-    for ( const auto &elem : ilist ) {
-        insert( elem );
-    }
-}
-
-/*
- * 清空函数
- *
- * @brief 删除链表所有节点
- * */
-template <typename T> void List<T>::clear() {
-    if ( head != nullptr ) {
-        for ( auto i = head; i != tail; ) {
-            auto p = i;
-            i      = i->nxt;
-            delete p;
-        }
-        delete tail;
-    }
-    head = nullptr;
-    tail = nullptr;
-    cnt  = 0;
-}
-
-
-// 复制构造函数
-template <typename T> List<T>::List( const List &other ) {
-    head = tail = nullptr;
-    cnt         = 0;
-    for ( size_t i = 0; i < other.size(); i++ ) {
-        insert( other[i] );
-    }
-}
-
-// 移动构造函数
-template <typename T> List<T>::List( List &&other ) {
-    head = other.head;
-    tail = other.tail;
-    cnt = other.cnt;
-}
-
-// 复制运算符
-template <typename T> List<T> &List<T>::operator=( List &other ) {
-    if ( this == &other ) {
-        return *this;
-    } else {
-        clear();
-        for ( size_t i = 0; i < other.size(); i++ ) {
-            insert( other[i] );
-        }
-    }
-    return *this;
-}
-
-// 移动运算符
-template <typename T> List<T> &List<T>::operator=( List &&other ) {
-    if ( this == &other ) {
-        return *this;
-    } else {
-        this->clear();
-        this->cnt = other.cnt;
-        this->head = other.head;
-        this->tail = other.tail;
-        other.head = nullptr;
-        other.tail = nullptr;
-        other.cnt = 0;
-    }
-    return *this;
-}
-
-/* 插入函数
- *
- * @brief 在指定位置插入元素
- * @param pos 位置 item 元素
- * */
-template <typename T> void List<T>::insert( size_t pos, const T item ) {
-    if ( pos == cnt ) {
-        insert( item );
-        return;
-    }
-    auto i    = find( pos );
-    Node *ptr = new Node( item );
-    auto pre  = i->lst;
-    pre->nxt  = ptr;
-    i->lst    = ptr;
-    ptr->lst  = pre;
-    ptr->nxt  = i;
-
-    if ( pre == tail ) {
-        head = ptr;
-    }
-    cnt++;
-}
-
-/*
- * 插入函数
- *
- * @brief 在尾节点后面插入新节点
- * @param item 元素
- * */
-template <typename T> 
-template <typename U>
-void List<T>::insert( U&& item ) {
-    Node *ptr = new Node( item );
-    cnt++;
-    if ( head == nullptr ) {
-        head = tail = ptr;
-        head->nxt   = tail;
-        tail->lst   = head;
-    } else {
-        tail->nxt = ptr;
-        ptr->lst  = tail;
-        tail      = ptr;
-    }
-    tail->nxt = head;
-    head->lst = tail;
-}
-
-template <typename T> typename List<T>::Node *List<T>::find( size_t pos ) {
-    if ( pos >= cnt  || pos < 0) {
-        throw "error pos!\n";
-    }
-
-    auto i = head;
-    while ( pos-- ) {
-        i = i->nxt;
-    }
-    return i;
-}
-
-/*
- *
- * 删除函数
- *
- * @brief 删除节点
- * @param pos 节点位置
- *
- * */
-template <typename T> void List<T>::erase( size_t pos ) {
-    auto i = find( pos );
-    if(cnt == 1) {
-        clear();
-        return;
-    }
-    if ( i == head ) {
-        auto p    = head->nxt;
-        tail->nxt = p;
-        p->lst    = tail;
-        head      = p;
-        delete i;
-    } else if ( i == tail ) {
-        auto p    = tail->lst;
-        p->nxt    = head;
-        head->lst = p;
-        tail      = p;
-        delete i;
-
-    } else {
-        auto front  = i->lst;
-        front->nxt  = i->nxt;
-        i->nxt->lst = front;
-        delete i;
-    }
-    cnt--;
-}
-
-/*
- * 合并函数
- *
- * @brief 将两个链表有序合并
- * @param 要合并的链表
- *
- * */
-template <typename T> List<T> &List<T>::merge( List<T> &other ) {
-    if ( head == nullptr ) {
-        *this = other;
-    }
-
-    List<T> res( 0 );
-
-    size_t l = 0, r = 0;
-    while ( l < this->size() && r < other.size() ) {
-        if ( ( *this )[l] <= other[r] ) {
-            res.insert( ( *this )[l++] );
-        } else {
-            res.insert( other[r++] );
-        }
-    }
-
-    if ( l == this->size() && r == other.size() ) {
-        *this = res;
-    } else {
-        if ( l == this->size() ) {
-            for ( ; r < other.size(); r++ ) {
-                res.insert( other[r] );
-            }
-        } else {
-            for ( ; l < this->size(); l++ ) {
-                res.insert( ( *this )[l] );
-            }
-        }
-        *this = res;
-    }
-
-    return *this;
-}
-
-template<typename T>
-T List<T>::front() const  {
-    return head->value; 
-}
-
-template<typename T>
-T List<T>::back() const {
-    return tail->value;
-}
