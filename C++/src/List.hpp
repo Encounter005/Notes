@@ -127,14 +127,14 @@ public:
 
     size_t size() const { return num_items_; }
 
-    T &front() const {
+    T &Front() const {
         if ( head_ != nullptr ) {
             return head_->value_;
         }
         return puse_->value_;
     }
 
-    T &back() const {
+    T &Back() const {
         if ( tail_ != nullptr ) {
             return tail_->value_;
         }
