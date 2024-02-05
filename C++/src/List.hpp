@@ -285,7 +285,20 @@ public:
     }
 
     template <typename... Args> void Emplace_front( Args &&...args ) {
-        Emplace( begin(), std::forward<Args>( args )... );
+        Emplace( cbegin(), std::forward<Args>( args )... );
+    }
+
+    void Erase( Iterator pos ) {
+        if ( pos == begin() ) {
+            Pop_front();
+        } else if ( pos == --end() ) {
+            Pop_back();
+        } else {
+            auto iter = pos.ptr_;
+            BindNodes( iter->lst_, iter->nxt_ );
+            iter.reset();
+            --num_items_;
+        }
     }
 
 private:
