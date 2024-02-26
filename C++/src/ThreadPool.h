@@ -9,11 +9,10 @@
 #include <functional>
 #include <thread>
 #include <atomic>
+#include "NonCopy.hpp"
 
-class ThreadPool {
+class ThreadPool : public NonCopy {
 public:
-    ThreadPool( const ThreadPool & )            = delete;
-    ThreadPool &operator=( const ThreadPool & ) = delete;
 
     static ThreadPool &getInstance() {
         static ThreadPool ins;
@@ -51,7 +50,7 @@ public:
 private:
     ThreadPool( std::size_t num = std::thread::hardware_concurrency() ) {
         if ( num < 1 ) {
-            num = 1;
+            num = 2;
         } else {
             thread_num_ = num;
         }
