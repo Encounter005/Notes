@@ -4,11 +4,6 @@
 #include <initializer_list>
 #include <memory>
 
-template<typename T> 
-class TD;
-
-
-
 template <typename T> class Vector {
 private:
     T *first_of_free;
