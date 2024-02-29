@@ -4291,3 +4291,104 @@ memset(数组名字，值，数组长度);
 
 - memset 的值只能是 0 或者-1
 - 数组长度用 sizeof()来求
+
+## 可变参数
+> 这玩意对参数进行了高度泛化，它能表示0到任意个数、任意类型的参数
+
+实现方式：
+- 需要有一个只有一个参数的函数作为递归终止函数
+- 递归调用
+
+
+```c++
+template<typename T>
+void print(T&& x) {
+    std::cout << x << " ";
+}
+
+template<typename T , typename... Args>
+void print(T&& first , Args&&... args) {
+    std::cout << first << " ";
+    print(std::forward<Args>(args)...);
+}
+
+```
+
+这样写有时候又有点麻烦，有没有一种方法可以只需要写一个函数就可以了，不需要写递归终止函数，c++17就提出了折叠表达式
+
+### 折叠表达式
+
+```c++
+template<typename... Args>
+void print2(Args&&... args) {
+    ((std::cout << args << ' ') , ...); //NOTE: 这里为了让每个参数输出后，都得带一个空格，就使用了逗号表达式
+    std::cout << std::endl;
+}
+
+```
+
+#### 折叠分类
+
+分为左折叠和右折叠
+
+1. 左折叠
+
+```c++
+template<typename... Args>
+auto sum(Args&&... args) {
+    return (... + args);
+}
+
+// int sum(1 , 2 , 3 , 4 , 6) -> 1 + (2 + (3 + (4 + 6)))
+
+```
+
+2. 右折叠
+
+```c++
+template<typename... Args>
+auto sum(Args&&... args) {
+    return (args + ...);
+}
+
+// int sum(1 , 2 , 3 , 4 , 6) -> ((((1 + 2) + 3) + 4) + 5) + 6
+```
+
+总结： 
+
+只需要看`...`在操作符的左侧还是右侧即可，如果在左侧就是左折叠，如果在右侧就是右折叠。
+
+###### 空参数包问题
+
+空参数包就是没有参数，对于大多数操作符而言，空参数包将会引发编译错误。针对上面的例子，我们可以加上一个0,这个0相当于缺省值，这就变成了二元折叠。
+
+###### 二元折叠
+
+```c++
+template<typename... Args>
+auto sum(Args&&... args) {
+    return (args + ... + 0);
+}
+// int sum(1 , 2 , 3 , 4 , 6 , 0) -> (((((1 + 2) + 3) + 4) + 5) + 6) + 0
+```
+
+##### 其他例子
+
+1. 计算指定区间内包含指定数值的个数
+
+```c++
+template<typename T , typename... Args>
+size_t count(T&& range , Args&&... args) {
+    return (std::count(std::begin(range) , std::end(range) , args) + ...);
+}
+
+void test_variadic_template() {
+    std::string s = "abcdef";
+    std::cout << count(s , 'X' , 'c' , 'v') << std::endl;
+}
+
+```
+
+注意：
+在折叠表达式中，左折叠和右折叠的减法操作和除法操作由于操作顺序不一样，结果也会不一样
+
