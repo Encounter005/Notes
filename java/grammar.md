@@ -222,12 +222,10 @@ String类的静态方法format()能用来创建可复用的格式化字符串
 | String substring(int beginIndex, int endIndex) | 返回一个新字符串，它是此字符串的一个子字符串。                                 |
 | String substring(int beginIndex)               | 返回一个新的字符串，它是此字符串的一个子字符串。                               |
 
-
 ## StringBuffer & String Builder类
 
 > 在使用 StringBuffer 类时，每次都会对 StringBuffer 对象本身进行操作，而不是生成新的对象，所以如果需要对字符串进行修改推荐使用 StringBuffer。
 > 在不要求线程安全的情况下，使用String Builder类，String Builder会比StringBuffer快。
-
 
 ```java
         // NOTE: 先创建一个大小为10的空字符串
@@ -244,4 +242,211 @@ String类的静态方法format()能用来创建可复用的格式化字符串
         // NOTE: 删除指定区间的字符串
         sb.delete(5 , 8);
         System.out.println(sb);
+```
+
+## 数组
+
+### 创建数组
+
+```java
+        /*
+        *   NOTE: 创建数组
+        *   dataType[] array
+        *   dataType[] array = new dataType[size]
+        * */
+        Integer[] arr = {1 , 2 , 3 , 4 , 5};
+        Integer[] arr2 = new Integer[100];
+
+```
+
+### 遍历数组及访问数组
+
+```java
+        // NOTE: 遍历数组
+        for(int i = 0; i < arr.length; i++) {
+            System.out.println(arr[i]);
+        }
+        // NOTE: 范围遍历 for_each
+        for(Integer value : arr) {
+            System.out.println(value);
+        }
+```
+
+### 数组作为函数参数
+
+```java
+    public static void printArray(Integer[] arr) {
+        for(Integer value : arr) {
+            System.out.println(value);
+        }
+    }
+    printArray(new Integer[]{10 , 20 , 30 , 40});
+```
+
+### 数组作为返回值
+
+```java
+    public static Integer[] reverse(Integer[] arr) {
+        Integer[] res = new Integer[arr.length];
+        for(int i = 0, j = arr.length - 1; i < arr.length; i++ , j--) {
+            res[i] = arr[j];
+        }
+        return res;
+    }
+    printArray(reverse(arr));
+```
+
+### 多维数组
+
+```java
+        /*
+        *  NOTE: type[][] typeName = new type[length][length]
+        * */
+
+        String[][] arr = new String[20][30];
+
+```
+
+### Arrays类
+
+> 包含了排序、查找、打印等内容
+
+要先`import java.util.Arrays`
+
+1. 打印数组
+
+```java
+        int [] a = {1 , 2 , 3,  4,  5};
+        System.out.println(a);
+        System.out.println(Arrays.toString(a)); // 打印数组元素的值
+
+```
+
+2. 升序排序
+
+```java
+        int [] b = {2 , 56  ,12893 ,12 , 23 ,3  , 5 , 67123};
+        System.out.println(Arrays.toString(b)); // 打印数组元素的值
+        Arrays.sort(b);
+        System.out.println(Arrays.toString(b)); // 打印数组元素的值
+
+```
+
+3. 数组元素是引用类型的排序
+
+```java
+import java.util.Arrays;
+
+class Man implements Comparable{
+    int age , id;
+    String name;
+    public Man(int age , String name) {
+        super(); // 父类型特征，先初始化父类型特征，再初始化子类
+        this.age = age;
+        this.name = name;
+    }
+
+    public int compareTo(Object o) {
+        Man man = (Man) o;
+        if(this.age < man.age) {
+            return -1;
+        } else if(this.age > man.age) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Man[] msMans = {new Man(3, "a"), new Man(60, "b"),new Man(2, "c")};
+        Arrays.sort(msMans);
+        System.out.println(Arrays.toString(msMans));
+    }
+}
+
+```
+
+```java
+        Integer[] arr = {10 , 20 , 30 , 40 , 50 , 60 , 70};
+        int x = Arrays.binarySearch(arr , 30);
+        System.out.println(x);
+
+```
+
+5. 填充数组
+
+```java
+        int[] a = {1,2,323,23,543,12,59};
+        System.out.println(Arrays.toString(a));
+        Arrays.fill(a , 10);
+        System.out.println(Arrays.toString(a));
+```
+
+## 方法
+
+
+1. 定义
+
+```java
+修饰符 返回值类型 方法名(参数类型 参数名){
+    ...
+    方法体
+    ...
+    return 返回值;
+}
+```
+
+2. 可变参数
+
+```java
+    public static void print(double... args) {
+        if(args.length == 0) {
+            System.out.println("No argument passed");
+        }
+
+        for(double val : args) {
+            System.out.print(val + ' ');
+        }
+        System.out.println();
+    }
+    public static void main(String[] args) {
+        print(10.1 , 2.1 , 3.2);
+    }
+```
+
+3. finalize()方法 (弃用)
+
+> 这种方法在对象被垃圾收集器析构前调用，用来清除回收对象
+
+在finalize()方法里，必须指定在对象销毁时候要执行的操作  
+一般格式是
+```java
+protected void finalize() {
+    // NOTE: terminate your code
+}
+```
+实例
+```java
+    class Cake extends Object{
+        private int id;
+        public Cake(int id) {
+            this.id = id;
+            System.out.println("Cake Object " + id + "is created");
+        }
+
+        protected void finalize() throws java.lang.Throwable {
+            super.finalize();
+            System.out.println("Cake Object " + id + "is disposed");
+        }
+    }
+    public static void main(String[] args) {
+        Cake c1 = new Cake(1);
+        Cake c2 = new Cake(2);
+        Cake c3 = new Cake(3);
+
+        c2 = c3 = null;
+        System.gc();
+    }
 ```
