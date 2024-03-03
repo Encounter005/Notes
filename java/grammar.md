@@ -954,3 +954,256 @@ Sorry, but you are shot $1100.0
 
 
 ```
+
+## 面向对象
+
+### 继承
+
+#### 特性
+
+- 子类拥有父类非`private`属性、方法
+- 子类拥有自己的属性和方法，即子类可以对父类进行扩展
+- 子类可以用自己的方式实现父类的方法
+- Java的继承是单继承，但是可以多重继承，无法多继承
+
+
+![inherit](Pictures/inherit.png)
+
+
+继承格式:
+
+```java
+class 父类 {
+
+}
+
+class 子类 extends 父类 {
+
+}
+```
+
+#### 继承关键字
+
+继承可以使用`extends`和`implements`关键字，而且所有的类都是继承于`java.lang.Object`，当一个类没有继承的两个关键字，则默认继承`Object`祖先类
+
+**extends, super, this**关键字
+
+- extends只能继承一个类
+- super用来实现对父类成员的访问，用来引用当前的父类对象
+- this，指向自己的引用
+
+```java
+
+class Animal {
+    private String name;
+    private int id;
+
+    public Animal() {
+        this.name = "None";
+        this.id = 0;
+    }
+    public Animal(String name , int id) {
+        this.name = name;
+        this.id = id;
+    }
+
+    public void eat() {
+        System.out.println("Eating");
+    }
+
+    public void sleep() {
+        System.out.println("Sleeping");
+    }
+
+    public void introduction() {
+        System.out.println("My name is: " + name + " and my id is: " + id);
+    }
+
+    public void test() {
+        System.out.println("This is Animal");
+    }
+}
+
+class Penguin extends Animal {
+    public Penguin(String name , int id) {
+        super(name , id);
+    }
+}
+
+class Mouse extends Animal {
+    public Mouse(String name , int id) {
+        super(name , id);
+    }
+}
+
+class Dog extends Animal {
+    public void test() {
+        System.out.println("This is dog");
+    }
+    public void test2() {
+        super.test();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Mouse mou = new Mouse("Mou" , 1);
+        Penguin pen = new Penguin("Pen" , 1);
+        pen.eat();
+        mou.introduction();
+        Dog dog = new Dog();
+        dog.test();
+        dog.test2();
+    }
+}
+```
+
+**implements**关键字
+
+> 可以是java变相具有多继承的特性，使用范围为类继承接口的情况，可以同时继承多个接口
+
+```java
+interface A {
+    public void eat();
+    public void sleep();
+}
+
+interface B {
+    public void show();
+}
+
+abstract class C implements A , B {
+}
+
+```
+**final**关键字
+
+- 使用`final`关键字声明类，就是把类定义为最终类，不能被继承，或者用于修饰方法，该方法不能被子类重写
+
+格式：
+
+```java
+
+// 声明类
+final class A {}
+
+// 声明方法
+
+(public, private, default, protected) final return type functionName() {}
+```
+#### 构造器
+
+如果父类的构造器带有参数，则必须在子类的构造器中显式地通过`super`关键字调用父类的构造器并配以适当的参数列表，如果父类没有则不需要，系统会自动调用父类的无参构造器
+
+```java
+class SuperClass {
+    private int n;
+   public SuperClass() {
+       System.out.println("call SuperClass()");
+   }
+   public SuperClass(int n) {
+       this.n = n;
+       System.out.println("call SuperClass(int n)");
+   }
+}
+
+class SubClass extends SuperClass {
+   private int n;
+   public SubClass(int n) {
+       super(n);
+       System.out.println("SubClass(n)");
+       this.n = n;
+   }
+    public SubClass() {
+        System.out.println("SubClass");
+    }
+
+}
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("------SubClass 类继承------");
+        SubClass sc1 = new SubClass();
+        SubClass sc2 = new SubClass(100);
+        System.out.println("------SubClass2 类继承------");
+    }
+}
+```
+
+## Override & Overload
+
+### 重写(Override)
+
+重写是子类对父类的允许访问的方法的实现过程重写，返回值和形参都不改变。  
+重写方法不能抛出新的检查异常或者比被重写的方法声明更加广泛的异常。例如：父类的一个方法声明了一个检查异常IOException，但是在重写这个方法的时候不能抛出Exception异常，因为Exception是IOException的父类，抛出IOException或者IOException的子类异常
+
+```java
+class Animal {
+    public void move() {
+        System.out.println("Moving....");
+    }
+}
+
+class Dog extends Animal {
+    public void move() {
+        System.out.println("The dog is moving...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Animal();
+        Animal b = new Dog();
+        a.move();
+        b.move();
+    }
+}
+
+```
+
+在上面的代码中，Dog类继承自Animal类并重写了move方法，尽管b是属于Animal类型，但它运行的是Dog类的move方法。注意，如果Dog类存在Animal类中没有的方法，并且在调用了这个方法，编译不会通过。
+
+
+方法的重写原则
+
+- 参数列表和被重写的方法的参数列表必须完全相同
+- 返回类型与被重写的方法的返回类型可以不相同，但是必须是父类返回值的派生类
+- 访问权限不能比父类被重写的方法的访问权限更低。
+- 父类的成员方法只能被它的子类重写
+- 声明为 static 的方法不能被重写，但是能够被再次声明。
+- 声明为 final 的方法不能被重写。
+- 子类和父类在同一个包中，那么子类可以重写父类所有方法，除了声明为 private 和 final 的方法。
+- 子类和父类不在同一个包中，那么子类只能够重写父类的声明为 public 和 protected 的非 final 方法。
+- 重写的方法能够抛出任何非强制异常，无论被重写的方法是否抛出异常。但是，重写的方法不能抛出新的强制性异常，或者比被重写方法声明的更广泛的强制性异常，反之则可以。
+- 构造方法不能被重写。
+
+
+**Super**关键字
+
+当需要在子类中调用父类的被重写方法时，要使用 super 关键字。
+
+```java
+class Animal {
+    public void move() {
+        System.out.println("Moving....");
+    }
+}
+
+class Dog extends Animal {
+    public void move() {
+        super.move();
+        System.out.println("The dog is moving...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal b = new Dog();
+        b.move();
+    }
+}
+```
+
+### 重载(Overload)
+
+
