@@ -1,5 +1,60 @@
 # The grammar of java
 
+<!--toc:start-->
+
+- [The grammar of java](#the-grammar-of-java)
+  - [数据类型](#数据类型)
+  - [Number & Math类](#number-math类)
+    - [Number子类](#number子类)
+    - [Math类](#math类)
+  - [Character类](#character类)
+  - [String类](#string类)
+  - [StringBuffer & String Builder类](#stringbuffer-string-builder类)
+  - [数组](#数组)
+    - [创建数组](#创建数组)
+    - [遍历数组及访问数组](#遍历数组及访问数组)
+    - [数组作为函数参数](#数组作为函数参数)
+    - [数组作为返回值](#数组作为返回值)
+    - [多维数组](#多维数组)
+    - [Arrays类](#arrays类)
+  - [方法](#方法)
+  - [Stream, File, IO](#stream-file-io)
+    - [读取控制台输入](#读取控制台输入)
+    - [从控制台读取多字符输入](#从控制台读取多字符输入)
+    - [从控制台读取字符串](#从控制台读取字符串)
+    - [读写文件](#读写文件)
+      - [FileInputStream](#fileinputstream)
+      - [FileOutputStream](#fileoutputstream)
+      - [Scanner类](#scanner类)
+        - [next与nextLine的区别](#next与nextline的区别)
+  - [异常处理](#异常处理)
+    - [Exception类的层次](#exception类的层次)
+    - [捕获异常](#捕获异常)
+      - [多重捕获块](#多重捕获块)
+      - [throw / throws 关键字](#throw-throws-关键字)
+        - [throw 关键字](#throw-关键字)
+        - [throws 关键字](#throws-关键字)
+      - [finally 关键字](#finally-关键字)
+      - [try-with-source](#try-with-source)
+    - [声明自定义异常](#声明自定义异常)
+- [面向对象](#面向对象)
+  - [继承](#继承)
+    - [特性](#特性)
+    - [继承关键字](#继承关键字)
+    - [构造器](#构造器)
+  - [Override & Overload](#override-overload)
+    - [重写(Override)](#重写override)
+    - [重载(Overload)](#重载overload)
+  - [接口](#接口)
+    - [接口与类的区别:](#接口与类的区别)
+    - [接口特性](#接口特性)
+    - [接口实现](#接口实现)
+    - [接口中的私有方法和静态方法](#接口中的私有方法和静态方法)
+    - [接口中的默认方法](#接口中的默认方法)
+    - [接口与extends关键字](#接口与extends关键字)
+  - [java抽象类和抽象方法](#java抽象类和抽象方法) - [抽象类](#抽象类)
+  <!--toc:end-->
+
 ## 数据类型
 
 byte:
@@ -796,7 +851,6 @@ try {
 
 在 `finally` 代码块中，可以运行清理类型等收尾善后性质的语句。
 
-
 ```java
 try {
 
@@ -841,12 +895,11 @@ try {
             while(sc.hasNext()) {
                 writer.print(sc.next());
             }
-        } 
+        }
     }
 ```
 
 多个资源回收时，`try-with-source`语句以相反的顺序关闭这些资源
-
 
 ### 声明自定义异常
 
@@ -856,13 +909,14 @@ try {
 - 如果希望写一个检查性异常类，则需要继承`Exception`类。
 - 如果希望写一个运行时异常类，那么则需要继承`RuntimeException`类
 
-
 创建方式:
+
 ```java
 class MyException extends Exception {
 
 }
 ```
+
 例如我们要做一个检查银行账户类，用户在取款时，有可能余额小于取款额，这时我们就可以设计一个资金不足异常类，用于在这种情况下抛出异常
 
 ```java
@@ -895,7 +949,7 @@ class CheckingAccount {
     public void deposit(double amount) {
         this.balance = amount;
     }
-    
+
     // 取款
     public void withdraw(double amount) throws InsufficientFundsException {
         if(balance >= amount) {
@@ -955,20 +1009,18 @@ Sorry, but you are shot $1100.0
 
 ```
 
-## 面向对象
+# 面向对象
 
-### 继承
+## 继承
 
-#### 特性
+### 特性
 
 - 子类拥有父类非`private`属性、方法
 - 子类拥有自己的属性和方法，即子类可以对父类进行扩展
 - 子类可以用自己的方式实现父类的方法
 - Java的继承是单继承，但是可以多重继承，无法多继承
 
-
 ![inherit](Pictures/inherit.png)
-
 
 继承格式:
 
@@ -982,7 +1034,7 @@ class 子类 extends 父类 {
 }
 ```
 
-#### 继承关键字
+### 继承关键字
 
 继承可以使用`extends`和`implements`关键字，而且所有的类都是继承于`java.lang.Object`，当一个类没有继承的两个关键字，则默认继承`Object`祖先类
 
@@ -1076,6 +1128,7 @@ abstract class C implements A , B {
 }
 
 ```
+
 **final**关键字
 
 - 使用`final`关键字声明类，就是把类定义为最终类，不能被继承，或者用于修饰方法，该方法不能被子类重写
@@ -1091,7 +1144,8 @@ final class A {}
 
 (public, private, default, protected) final return type functionName() {}
 ```
-#### 构造器
+
+### 构造器
 
 如果父类的构造器带有参数，则必须在子类的构造器中显式地通过`super`关键字调用父类的构造器并配以适当的参数列表，如果父类没有则不需要，系统会自动调用父类的无参构造器
 
@@ -1163,7 +1217,6 @@ public class Main {
 
 在上面的代码中，Dog类继承自Animal类并重写了move方法，尽管b是属于Animal类型，但它运行的是Dog类的move方法。注意，如果Dog类存在Animal类中没有的方法，并且在调用了这个方法，编译不会通过。
 
-
 方法的重写原则
 
 - 参数列表和被重写的方法的参数列表必须完全相同
@@ -1176,7 +1229,6 @@ public class Main {
 - 子类和父类不在同一个包中，那么子类只能够重写父类的声明为 public 和 protected 的非 final 方法。
 - 重写的方法能够抛出任何非强制异常，无论被重写的方法是否抛出异常。但是，重写的方法不能抛出新的强制性异常，或者比被重写方法声明的更广泛的强制性异常，反之则可以。
 - 构造方法不能被重写。
-
 
 **Super**关键字
 
@@ -1206,4 +1258,150 @@ public class Main {
 
 ### 重载(Overload)
 
+## 接口
 
+接口（英文：Interface），在JAVA编程语言中是一个抽象类型，是抽象方法的集合，接口通常以interface来声明。一个类通过继承接口的方式，从而来继承接口的抽象方法。
+
+### 接口与类的区别:
+
+- 接口不能用于实例化对象
+- 接口没有构造方法
+- 接口中所有的方法都必须是抽象方法
+- 接口不能包含成员变量，除了`static`，`final`变量
+- 接口不是被类继承了，而是要被类实现
+- 接口支持多继承
+
+### 接口特性
+
+- 接口是隐式抽象的，当声明一个接口时，不必使用`abstract`关键字
+- 接口中的每一个方法也是隐式抽象的，所有字段是隐式的`public static final`，因此没必要在接口内部指定访问说明符
+
+### 接口实现
+
+和抽象类一样，无法创建接口的对象。可以使用`implements`关键字来实现接口
+
+```java
+interface Polygon {
+    void getArea(int length, int breadth);
+}
+
+class Rectangle implements Polygon {
+   public void getArea(int length, int breadth) {
+       System.out.println("the area is: " + length * breadth);
+   }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Rectangle r1 = new Rectangle();
+        r1.getArea(10, 20);
+    }
+}
+```
+
+### 接口中的私有方法和静态方法
+
+与类相似，可以使用其引用访问接口的静态方法
+
+```java
+Polygon.staticMethod();
+```
+
+### 接口中的默认方法
+
+要在接口内使用默认方法，可以使用`default`关键字
+
+```java
+public default void getSide() {
+    // do something...
+}
+```
+
+具体实现
+
+```java
+import java.lang.Math;
+
+interface Polygon {
+    void getArea();
+
+    default void getPerimeter(int... sides) {
+        int perimeter = 0;
+        for (int Side : sides) {
+            perimeter += Side;
+        }
+        System.out.println("The total sides is: " + perimeter);
+    }
+}
+
+class Trangle implements Polygon {
+    private int a, b, c;
+    private double s, area;
+
+    Trangle(int a, int b, int c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        s = 0;
+    }
+    public void getArea() {
+        s = (double) (a + b + c) / 2;
+        area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+        System.out.println("The area is: " + area);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Trangle t1 = new Trangle(2 , 3, 4);
+        t1.getArea();
+        t1.getPerimeter(2 , 3 , 4);
+    }
+}
+```
+
+### 接口与extends关键字
+
+接口可以继承其他接口
+
+```java
+
+interface Line {
+
+}
+
+interface Polygon extends Line {
+
+}
+```
+
+注意一个接口可以继承多个接口
+
+```java
+
+interface A {
+
+}
+
+interface B {
+
+}
+
+interface C extends A, B {
+
+}
+
+```
+
+## java抽象类和抽象方法
+
+### 抽象类
+
+java抽象类是无法实例化的类，使用`abstract`声明
+
+```java
+abstract class Animal {
+    // doing something...
+}
+
+```
