@@ -1,15 +1,17 @@
+
 #pragma once
 
 #include <iostream>
 #include <mutex>
 #include <memory>
+#include <atomic>
 
 template <typename T, size_t MaxSize>
 class CircularQueue : private std::allocator<T> {
 
 public:
     CircularQueue()
-        : max_size_( MaxSize + 1 ), head_( 0 ), tail_( 0 ),
+        : max_size_( MaxSize + 1 ), head_( 0 ), tail_( 0 ), _atomic_using(false) ,
           data_( std::allocator<T>::allocate( max_size_ ) ) {}
 
     CircularQueue( const CircularQueue & )                     = delete;
@@ -17,12 +19,25 @@ public:
     CircularQueue &operator=( const CircularQueue & ) volatile = delete;
 
     ~CircularQueue() {
-        std::lock_guard<std::mutex> lock( mtx_ );
+        // 循环销毁
+        bool use_expected = false;
+        bool use_desire = true;
+
+        do {
+            use_expected = false;
+            use_desire = true;
+        } while(!_atomic_using.compare_exchange_strong(use_expected , use_desire));
+
         while ( head_ != tail_ ) {
             std::allocator<T>::destroy( data_ + head_ );
             head_ = ( head_ + 1 ) % max_size_;
         }
         std::allocator<T>::deallocate( data_, max_size_ );
+
+        do {
+            use_expected = true;
+            use_desire = false;
+        } while(!_atomic_using.compare_exchange_strong(use_expected , use_desire));
     }
 
     template <typename... Args> bool emplace( Args &&...args ) {
@@ -69,6 +84,6 @@ private:
     T *data_;
     size_t head_;
     size_t tail_;
-    std::mutex mtx_;
+    std::atomic<bool> _atomic_using;
     size_t max_size_;
 };
