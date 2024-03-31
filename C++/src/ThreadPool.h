@@ -13,7 +13,6 @@
 
 class ThreadPool : public NonCopy {
 public:
-
     static ThreadPool &getInstance() {
         static ThreadPool ins;
         return ins;
@@ -36,7 +35,6 @@ public:
 
         auto task = std::make_shared<std::packaged_task<RetType()>>( std::bind(
             std::forward<F>( func ), std::forward<Args>( args )... ) );
-        
         std::future<RetType> ret = task->get_future();
         {
             std::lock_guard<std::mutex> lock( cv_lock_ );
@@ -58,16 +56,16 @@ private:
     }
 
     void start() {
-        for(int i = 0; i < thread_num_; i++) {
-            pools_.emplace_back([this](){
-                while(!this->stop_.load()) {
+        for ( int i = 0; i < thread_num_; i++ ) {
+            pools_.emplace_back( [this]() {
+                while ( !this->stop_.load() ) {
                     Task task;
-                    std::unique_lock<std::mutex> lock(cv_lock_);
-                    this->cv_var_.wait(lock , [this](){
+                    std::unique_lock<std::mutex> lock( cv_lock_ );
+                    this->cv_var_.wait( lock, [this]() {
                         return this->stop_.load() || !this->tasks_.empty();
-                    });
-                    
-                    if(this->tasks_.empty()) {
+                    } );
+
+                    if ( this->tasks_.empty() ) {
                         return;
                     }
 
@@ -76,17 +74,16 @@ private:
                     thread_num_--;
                     task();
                     thread_num_++;
-                    
                 }
-            });
+            } );
         }
     }
 
     void stop() {
-        stop_.store(true);
+        stop_.store( true );
         cv_var_.notify_all();
-        for(auto& t : pools_) {
-            if(t.joinable()) {
+        for ( auto &t : pools_ ) {
+            if ( t.joinable() ) {
                 std::cout << "join thread " << t.get_id() << std::endl;
                 t.join();
             }
