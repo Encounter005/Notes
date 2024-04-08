@@ -7,7 +7,20 @@
 #include "Stack_Thread_Safe.hpp"
 #include <algorithm>
 #include <atomic>
+#include "Single_TV2.hpp"
 
+class ParrelQuickSortWrapper : public Single_T<ParrelQuickSortWrapper> {
+public:
+template <typename T> 
+    static std::list<T> parallel_quick_sort( std::list<T> input ) {
+    if ( input.empty() ) {
+        return input;
+    }
+    sorter<T> s;
+    return s.do_sort( input );
+}
+
+private:
 template <typename T> struct sorter {
 
     // 需要排序的数据段
@@ -93,11 +106,7 @@ template <typename T> struct sorter {
         }
     }
 };
-template <typename T> std::list<T> parallel_quick_sort( std::list<T> input ) {
-    if ( input.empty() ) {
-        return input;
-    }
-    sorter<T> s;
-    return s.do_sort( input );
-}
+};
+
+
 
